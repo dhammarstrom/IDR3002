@@ -37,9 +37,9 @@ date: "2019 05 09"
 output: html_document
 ---
 
-\```{r setup, include=FALSE}
+```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-\```
+```
 
 ## R Markdown
 
@@ -131,8 +131,7 @@ Add citations to the file in bibtex-format. Here is an example:
    Volume="309",
    Number="7",
    Pages="R767--779",
-   Month="Oct"
-}
+   Month="Oct"}
 
 ```
 The part that says `refID1` can be edited to something appropriate. This is a reference identification, you use it to get the citation into the text. When citing you do it in the form 
