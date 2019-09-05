@@ -1,4 +1,5 @@
 name: "IDR3002 Course notes"
+output_dir: "docs"
 output:
   html_document:
     theme: cosmo

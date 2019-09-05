@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+
+<title>Creating reports using R, R Markdown and knitr</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-inverse  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">IDR3002 Course notes</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+    Home
+  </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Software
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="installation.html">Installing and starting up R and RStudio</a>
+    </li>
+    <li>
+      <a href="markdown.html">Creating a report using rmarkdown</a>
+    </li>
+    <li>
+      <a href="structure.html">Structuring an analysis</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Lessons
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">Data wrangling and plotting</li>
+    <li>
+      <a href="import_data.html">Import data</a>
+    </li>
+    <li>
+      <a href="make_summarise.html">Make summaries</a>
+    </li>
+    <li>
+      <a href="plot_ggplot2.html">Create plots with ggplot2</a>
+    </li>
+    <li>
+      <a href="descriptive_statistics.html">Assignment: Descriptive statistics</a>
+    </li>
+    <li class="divider"></li>
+    <li class="dropdown-header">Statistical inference</li>
+    <li>
+      <a href="hypothesis.html">What is an hypothesis?</a>
+    </li>
+    <li>
+      <a href="error_rates.html">Error-rates in frequentist statistics</a>
+    </li>
+    <li>
+      <a href="p_values.html">P-values</a>
+    </li>
+    <li>
+      <a href="confidence_intervals.html">Confidence intervals</a>
+    </li>
+    <li>
+      <a href="confidence_intervals.html">Assignment: Drawing inference</a>
+    </li>
+    <li class="divider"></li>
+    <li class="dropdown-header">Regression models</li>
+    <li>
+      <a href="straight_line.html">The straight line</a>
+    </li>
+    <li>
+      <a href="best_fit.html">Estimating the straight line</a>
+    </li>
+    <li>
+      <a href="fitting_regression.html">Fitting a regression model</a>
+    </li>
+    <li>
+      <a href="interpret_regression.html">Interpreting regression coefficients</a>
+    </li>
+    <li>
+      <a href="regression_assumptions.html">Checking assumptions about the model</a>
+    </li>
+    <li>
+      <a href="regression_test.html">Statistical tests as regression problems</a>
+    </li>
+    <li class="divider"></li>
+    <li class="dropdown-header">Analyzing trials</li>
+    <li>
+      <a href="designs.html">Commonly used designs in exercise science</a>
+    </li>
+    <li>
+      <a href="hypothesis_in_trial.html">Hypothesis testing in exercise trials</a>
+    </li>
+    <li>
+      <a href="missinterpretations.html">Missinterpretations of statistical tests in trials</a>
+    </li>
+    <li>
+      <a href="equivalence_test.html">Equivalence test</a>
+    </li>
+    <li>
+      <a href="baseline_covariate.html">Controlling for baseline values</a>
+    </li>
+    <li>
+      <a href="clinical_trial.html">Assignment: Analyzing a clinical trial</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="mixed_models_introduction.html">Repeated measures designs using mixed models</a>
+    </li>
+    <li>
+      <a href="fitting_lmm.html">Fitting a mixed model</a>
+    </li>
+    <li>
+      <a href="random_effects.html">Random effects</a>
+    </li>
+    <li>
+      <a href="fixed_effects.html">Fixed effects</a>
+    </li>
+    <li>
+      <a href="mixed_models_results.html">Interpretation of mixed model results</a>
+    </li>
+    <li>
+      <a href="mixed_models_assumptions.html">Assumptions about mixed models</a>
+    </li>
+    <li>
+      <a href="clinical_trial_lmm.html">Assignment: Analyzing a clinical trial using mixed models</a>
+    </li>
+    <li class="divider"></li>
+    <li class="dropdown-header">Sample-size calculations</li>
+    <li>
+      <a href="recap_power_error.html">Recap: Power, error rates and hypotheses</a>
+    </li>
+    <li>
+      <a href="effect_size.html">Determining effect sizes from previous research</a>
+    </li>
+    <li>
+      <a href="calculating_sample_size.html">Calculate the required sample size for a given hypothesis</a>
+    </li>
+    <li>
+      <a href="clinical_trial_power.html">Assignment: Planning a clinical trial</a>
+    </li>
+    <li class="divider"></li>
+    <li class="dropdown-header">Experimental design</li>
+    <li>
+      <a href="designs2.html">Different aim, different designs</a>
+    </li>
+    <li>
+      <a href="design3.html">Assignment: What signifies a good experimental design</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="faq.html">
+    <span class="fa fa-question fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Creating reports using R, R Markdown and knitr</h1>
+
+</div>
+
+
+<div id="reproducible-research" class="section level2">
+<h2>Reproducible research</h2>
+<p>Replication can be thought of as the golden standard when the aim is to <em>confirm</em> scientific results. When replicating a scientific study, we collect new data, independent from the study we wish to replicate. However, scientific interpretations of data are also affected by the way we analyze them. This has raised attention recently and <em>reproducible data analysis</em> and as argued by e.g. Peng <em>et al.</em> <span class="citation">(Peng, Dominici, and Zeger 2006)</span>, should be a minimum standard in scientific reporting. This standard requires that a scientific report (e.g. journal article or master’s thesis) is directly built upon the analyses. For many, this is a big change from a workflow where analyses are done and copied into the report. Today there are many software solutions available to create <em>reproducible reports</em>, answering the call for reproducible data analyses where data, code and software is available for scrutiny <span class="citation">(Peng 2011)</span>.</p>
+<p>In this course you will learn how to work with software designed to make analyses reproducible. We will use <a href="https://rmarkdown.rstudio.com/">R Markdown</a> to create reproducible reports.</p>
+<div id="resources" class="section level3">
+<h3>Resources</h3>
+<p>R Markdown is a markup language for text editing. Text written with R Markdown can be easily converted to different file formats. The nice thing about this is that you can specify formatting when writing (no more word processing difficulties).</p>
+<p>R Markdown is a <em>dialect</em> of <a href="https://en.wikipedia.org/wiki/Markdown">Markdown</a> with the addition that R Markdown-files (.Rmd) can contain R code that is evaluated in the creation of the report.</p>
+<p>To get started with R Markdown, do <a href="https://www.markdowntutorial.com/">this short tutorial</a>. After doing it you will be able to format text in R Markdown files.</p>
+<p>It is handy to have a <em>cheat sheet</em> close by when writing, <a href="https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf">here is an example</a><a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>.</p>
+<p>If you need more details, the book <a href="https://bookdown.org/yihui/rmarkdown/">R Markdown The Definitive Guide</a> is available online.</p>
+</div>
+<div id="how-it-works" class="section level3">
+<h3>How it works</h3>
+<p>A R markdown report is basically a text document containing plain text and code. When you compile your report, the code will be evaluated and figures, calculations and so on will be performed per your specifications. The resulting file will be an html, docx or pdf file. You can choose if you would like to display your code or not but your code is always available in your source document. R Markdown is very versatile, you can make word documents, <a href="https://bookdown.org/yihui/blogdown/">blog posts, websites</a> and pdf documents<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>.</p>
+<p>When in R Studio, you can start a new document using <em>File &gt; New File &gt; R Markdown…</em>. This will launch a file in your script window looking something like this:</p>
+<pre><code>---
+title: &quot;Untitled&quot;
+author: &quot;Daniel Hammarström&quot;
+date: &quot;2019 05 09&quot;
+output: html_document
+---
+
+
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see &lt;http://rmarkdown.rstudio.com&gt;.
+</code></pre>
+<p>This is not an empty document and you have to remove the pre-written instructions. These instructions are quite handy though.</p>
+<p>Basically, in <strong>code chunks</strong> you write R code, this code will be evaluated and the output will be displayed in the file you create. Between <strong>code chunks</strong> you can write markdown text. This will be displayed as ordinary text in your created document. The plain text sections can also contain code.</p>
+<p>A code chunk is created using</p>
+<pre><code>```{r, eval=TRUE}
+1 + 1
+```</code></pre>
+<p>This code chunk calculates <code>1+1</code>, when you compile the document, the result of this calculation will be shown below the code chunk. The same computation can be made “inline”. An inline code chunk is created using <code>`r 1+1`</code>, here only the result of this computation will be shown in your text.</p>
+<p>When you compile the doucument it is called “knitting”, R uses a package called <a href="https://yihui.name/knitr/"><code>knitr</code></a> made to compile R Markdown files. In the upper part of the source window, there is a button kalled Knit. When you press it, RStudio will aske you to save the Rmd file and an output file will be created.</p>
+</div>
+<div id="microsoft-word-intergration" class="section level3">
+<h3>Microsoft Word intergration</h3>
+<p>Sometimes it is usefull to “knit” to a word file. For example when you want to share a report with fellow students who are not familiar with R. R Markdown can be used as a source for word documents (.docx).</p>
+<p>To create a word document from your Rmd-file you need aworking installation of Microsoft Word. Settings for the output is specified in the YAML metadata field in the Rmd-file. This is the first section of a Rmd file, and when you want it to create a word file you specify it like this:</p>
+<pre><code>---
+title: &quot;A title&quot;
+author: Daniel Hammarström
+date: 2019-09-05
+output: word_document
+---
+</code></pre>
+<p>The <code>output: word_document</code> tells R to create a word file. If you are not happy with the style of the word document (e.g. size and font of text) you can tell R to use a template file. Save a word file that you have knitted as <code>reference.docx</code> and use specify in the YAML field that you will use thiss as reference.</p>
+<pre><code>---
+title: &quot;A title&quot;
+author: Daniel Hammarström
+date: 2019-09-05
+output: 
+        word_document:
+                reference_docx: reference.docx
+---
+</code></pre>
+<p>Edit styles (Stiler in Norwegian) used in the reference file (right click on the style and edit). For example, editing the “Title” style (Tittel in Norwegian) will change the main titel of the document. After you have edited the document, save it.</p>
+<p>When you knit the document again, your updated styles will be used your word document.</p>
+<p><a href="https://rmarkdown.rstudio.com/articles_docx.html">Here</a> you can read more about using R Markdown together with word. If you do not have word installed, you can also use Open Office. Read more about it <a href="https://bookdown.org/yihui/rmarkdown/opendocument-text-document.html">here</a>.</p>
+</div>
+</div>
+<div id="adding-references" class="section level2">
+<h2>Adding references</h2>
+<p>References/citations can be added to the report using the <code>bibliography</code> option in the YAML field. Citations needs to be listed in a file, multiple formats are avaliable. A convenient format is bibtex. When using this format, create a text file with the ending <code>.bib</code>, for example, <code>bibliography.bib</code>.</p>
+<p>The <code>bibliography.bib</code>-file needs to be activated in the YAML-field. Do it by adding this information:</p>
+<pre><code>---
+title: &quot;A title&quot;
+author: Daniel Hammarström
+date: 2019-09-05
+output: 
+        word_document:
+                reference_docx: reference.docx
+bibliography: bibliography.bib
+---</code></pre>
+<p>Add citations to the file in bibtex-format. Here is an example:</p>
+<pre><code>@Article{refID1,
+   Author=&quot;Ellefsen, S.  and Hammarstrom, D.  and Strand, T. A.  and Zacharoff, E.  and Whist, J. E.  and Rauk, I.  and Nygaard, H.  and Vegge, G.  and Hanestadhaugen, M.  and Wernbom, M.  and Cumming, K. T.  and Rønning, R.  and Raastad, T.  and Rønnestad, B. R. &quot;,
+   Title=&quot;{Blood flow-restricted strength training displays high functional and biological efficacy in women: a within-subject comparison with high-load strength training}&quot;,
+   Journal=&quot;Am. J. Physiol. Regul. Integr. Comp. Physiol.&quot;,
+   Year=&quot;2015&quot;,
+   Volume=&quot;309&quot;,
+   Number=&quot;7&quot;,
+   Pages=&quot;R767--779&quot;,
+   Month=&quot;Oct&quot;}
+</code></pre>
+<p>The part that says <code>refID1</code> can be edited to something appropriate. This is a reference identification, you use it to get the citation into the text. When citing you do it in the form</p>
+<pre><code>Blood flow-restricted training leads to similar adaptations as traditional training [@refID1].
+</code></pre>
+<p>This will appear in text as:</p>
+<blockquote>
+<p>Blood flow-restricted training leads to similar adaptations as traditional training <span class="citation">(Ellefsen et al. 2015)</span>.</p>
+</blockquote>
+<p>The reference will end up in the end of the document (as on this webpage).</p>
+<p>You can gather references in bibtex format from Oria (use the BIBTEX icon) and from PubMed using <a href="https://www.bioinformatics.org/texmed/">TeXMed</a>. You can also export reference in bibtex format from citation software like Endnote or Zotero. Make sure you check all references when entering them, especially MedTex gives some problems with “scandinavian” letters (å æ ä ø ö).</p>
+</div>
+<div id="a-note-on-folder-structures" class="section level2">
+<h2>A note on folder structures</h2>
+<p>When you build an analysis in a R markdown file. R will use the folder that the file is in as the <strong>root directory</strong>. This directory (or folder) is the top directory in a file system. This means that R will look for your bibtex file <code>bibliography.bib</code> in the same directory as where you have the Rmd-file.</p>
+<p>Think of this folder as <code>./</code> (confusing, I know! But bare with me!)</p>
+<p>Any subfolders to the root directory can be called things like</p>
+<p><code>./data/</code> (a folder where you keep data files),</p>
+<p><code>./figures/</code> (a folder where you output figures from analyses).</p>
+<p>The R markdown file, being in the root directory will have the “address” <code>./my_rmarkdown_file.Rmd</code></p>
+<p>This has several advantages, as long as you stick to one rule: When doing an analysis, always use relative paths (“addresses” to files and folders). Never reference a folder or file by their absolute path. The absolute path for the file I’m writing in now is <code>C:/Users/706194/Dropbox/Undervisning%20och%20kurser%20HIL/IDR3002%20Course%20notes/IDR3002/markdown.Rmd</code>. The relative path is <code>./markdown.Rmd</code>.</p>
+<p>If you want to share your analysis, all you need to do is share the folder with all content with your friend. If you use relative paths, everything will work on your friends computer. If you use absolute paths, nothing will work, unless your friends computer uses a very similar folder structure (highly unlikely).</p>
+<p>If you decide to move your analysis somewhere else on your computer, your scripts will only work if you used relative paths.</p>
+<p>Read more about this in <a href="structure.html">Structure of an analysis</a>.</p>
+</div>
+<div id="references" class="section level2 unnumbered">
+<h2>References</h2>
+<div id="refs" class="references">
+<div id="ref-refID1">
+<p>Ellefsen, S., D. Hammarstrom, T. A. Strand, E. Zacharoff, J. E. Whist, I. Rauk, H. Nygaard, et al. 2015. “Blood flow-restricted strength training displays high functional and biological efficacy in women: a within-subject comparison with high-load strength training.” <em>Am. J. Physiol. Regul. Integr. Comp. Physiol.</em> 309 (7): R767–779.</p>
+</div>
+<div id="ref-RN1600">
+<p>Peng, R. D. 2011. “Reproducible Research in Computational Science.” Journal Article. <em>Science</em> 334 (6060): 1226–7. <a href="https://doi.org/10.1126/science.1213847">https://doi.org/10.1126/science.1213847</a>.</p>
+</div>
+<div id="ref-RN1492">
+<p>Peng, R. D., F. Dominici, and S. L. Zeger. 2006. “Reproducible Epidemiologic Research.” Journal Article. <em>Am J Epidemiol</em> 163 (9): 783–9. <a href="https://doi.org/10.1093/aje/kwj093">https://doi.org/10.1093/aje/kwj093</a>.</p>
+</div>
+</div>
+</div>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>Cheat sheets are available in R Studio: <em>Help &gt; Cheatsheets</em><a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p>Make sure to look through the <a href="https://bookdown.org/yihui/rmarkdown/installation.html">installation instructions</a> to get pdf options working<a href="#fnref2" class="footnote-back">↩</a></p></li>
+</ol>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
