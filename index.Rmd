@@ -1,0 +1,31 @@
+---
+title: "Course notes: Quantitative methods and Statistics"
+bibliography: bib.bib
+---
+
+Welcome to the course **Quantitative methods and Statistics**. The course aims to give students an overview of methodological aspects within the field of sport and exercise-physiology. Specifically, planning, conducting and analyzing research projects with human participants will be covered. These pages specifically covers aspects of data analysis and statistics.
+
+During the course we will be using [R](https://www.r-project.org/). R is a programming language used for statistics and scientific graphics. It is extremely powerful (it can do many things), and it is free! During the course you will be instructed on how to use [R](https://www.r-project.org/) with the help of [RStudio](https://www.rstudio.com/) which is asoftware designed to make using R more convenient. You will learn how to write code, integrate code within your report, how to make figures and statistical analyses and how to do so in a reproducible way. Reproducible reports means that you can show your report, and show the code that creates the report.
+
+Learning R can be difficult[^fn1]
+
+[^fn1]: These advice are adopted from [here](https://evalf19.classes.andrewheiss.com/syllabus/). 
+
+If you have never written computer code before, you might think learning to code is overwhelming. When you first try it out, you might get frustrated and think "this is not for me". But it is! Everybody can do it! Take your time, ask questions, discuss with classmates and Google! A great thing about R is that there is a lot of information online on problems that you might encounter when writing code in R.
+
+It is not a prerequisite to know how to code and you can pass the course without using R, but it might actually be a lot harder. The tools that we will be using are designed to make your statistical analyses reproducible. You will therefore cover one goal in the syllabus just by using the proposed software.
+
+## Before the course, do this!
+
+1. [Install R and R Studio](installation.html) and get it started
+2. Create a report from R using [these notes](markdown.html)
+3. Start a [Project](structure.html)
+4. Go through the first course in [Swirl](https://swirlstats.com)
+5. Get to know the course literature, specifically: [@Wickham2017R; @diez2015openintro; @Navarro]
+
+## References
+
+
+
+
+

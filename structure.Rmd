@@ -1,0 +1,31 @@
+---
+title: "Structuring your analysis"
+---
+## Projects
+Before starting a new data analysis project, it is good to have an idea about how to organize it. An efficient way to organize a data anlysis using R Studio is to use [Projects](https://support.rstudio.com/hc/en-us/articles/200526207-Using-Projects).
+
+A project is essentially a file keeping track of your analysis. When starting a new project, it also defines your *working directory*. A *working directory* is the top directory of the file system that contains files needed for the analysis. The top directory (or root directory) may contain several subfolders that all can be accessed using relative paths. I talked about this on the page [creating reports using R, R Markdown and knitr](markdown.html). The same logic applies to *Projects* as with *knitting* a R Markdown file. When setting the working directory using *Projects* you can use relative paths for files like data files. This means you can copy your project (and folder) to another place and it will still work.
+
+## A nice folder structure
+When organizing a project, a good folder structure makes life easier. Here is a folder structure that I like. 
+
+- `./data/` This is where I structure my data, this folder may contain several data sets, structured in several folders (for order)
+- `./R/`  Here I keep R-scripts used for processing data
+- `./derived_data/` Here I keep data that is not raw, meaning it has been processed in some way
+- `./figures/` Contains scripts to create figures, and the figure files.
+- `./resources/` Here I keep that does not fit anywhere else, for example the bibliography file
+- `./` The root directory contains a R markdown file used to write the report. I wish to keep this folder as clean as possible (not always the case).
+
+Keeping the R markdown file in the root directory makes it easy to use the same relative paths when working in a R script and knitting the report. 
+
+## Structuring your course directory
+
+When doing this course, we will do several analyses. I suggest keeping them all in one project. Keep your data in a folder called `./data`, keep R scripts in the `./R` folder and so on. Keep R markdown files in the main (root/top) directory. Create the course directory using Project in R Studio. 
+
+
+
+
+
+
+
+
