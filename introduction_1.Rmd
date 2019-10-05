@@ -1,0 +1,24 @@
+---
+title: "Introduction to R and RStudio"
+---
+
+## Learning objectives
+
+By the end of this session you will be able to answer these questions:
+
+- What is R and RStudio?
+- How can I interact with R?
+- What is a reproducible computing?
+- How do I maintain a reproducible workflow in R and RStudio?
+
+
+## R and RStudio
+
+You have already downloaded and installed both R and RStudio. R is a software used for scientific/statistical computing. If R is the engine, RStudio is the rest of the car. What does this mean?
+
+When doing operations in R, you are actually writing interaction with R through RStudio. RStudio have some important components to help you interact with R.
+
+### The source
+
+![RStudio.](/img/rstudio_blank.png)
+

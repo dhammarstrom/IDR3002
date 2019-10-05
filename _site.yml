@@ -23,8 +23,8 @@ navbar:
     - text: "Lessons"
       menu:
         - text: "Data wrangling and plotting"
-        - text: "Import data"
-          href: import_data.html
+        - text: "Introduction to R"
+          href: introduction_1.html
         - text: "Make summaries"
           href: make_summarise.html
         - text: "Create plots with ggplot2"
