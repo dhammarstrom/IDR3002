@@ -1,0 +1,113 @@
+---
+title: "Exercises Week 1"
+---
+
+[Go to basic R](ex1_intro.html)
+
+[Go to summarising data](ex1_summarise.html)
+
+[Go to making figures](ex1_figures.html)
+
+## Importing data
+
+  <script language="javascript"> 
+    function toggle(num) {
+      var ele = document.getElementById("toggleText" + num);
+      var text = document.getElementById("displayText" + num);
+      if(ele.style.display == "block") {
+        ele.style.display = "none";
+        text.innerHTML = "show";
+      }
+      else {
+        ele.style.display = "block";
+        text.innerHTML = "hide";
+      }
+   } 
+  </script>
+
+**Exercise 1.** Data import in R is straight forward. We can import tabular files like .csv and .xlsx or specialized files from other statistical softwares (e.g. STATA-, SAS- and SPSS files).
+
+Using `read_excel()`, how would you import the file `cyclingStudy.xlsx` into your R session?
+
+  <a id="displayText" href="javascript:toggle(1);">Solution Ex. 1</a>
+  <div id="toggleText1" style="display: none">
+
+```{r eval = FALSE}
+# Install packages, you only need to do this once
+# install.packages("readxl")
+
+# Load packages
+library(readxl)
+
+# Store the data set as an object in the environment
+cyclingStudy <- read_excel("./notes/data/cyclingStudy.xlsx")
+
+
+# look at the data
+cyclingStudy
+
+```
+
+  </div>
+  </br>  
+  
+  
+**Exercise 3.** Notice that when looking at the cycling data set, the tibble (data frame) says that many variables containing numbers are character variables. Why do you think this is the case here?
+
+Try to change the import to make sure that the values are numeric. Read the help file and think about how you can change it (`?read_excel`).
+
+<br>
+
+  <a id="displayText" href="javascript:toggle(2);">Solution Ex. 2</a>
+  <div id="toggleText2" style="display: none">
+  
+The import function does not treat "NA" as missing values. The `read_excel()` function has a argument for missing values, setting `na = "NA"` tells R that all values that are "NA" should be treated as missing values. 
+
+```{r eval = FALSE}
+# Install packages, you only need to do this once
+# install.packages("readxl")
+
+# Load packages
+library(readxl)
+
+# Store the data set as an object in the environment
+cyclingStudy <- read_excel("./notes/data/cyclingStudy.xlsx", na = "NA")
+
+
+# look at the data
+cyclingStudy
+
+```
+
+
+  </div>
+  </br> 
+  
+**Exercise 3.** Download and save the data set that we will call `hypertrophy`
+
+<br>
+
+  <a id="displayText" href="javascript:toggle(3);">Solution Ex. 3</a>
+  <div id="toggleText3" style="display: none">
+```{r eval = FALSE}
+# Download and save the file
+download.file(url = "https://ndownloader.figshare.com/files/14702420", destfile = "./data/hypertrophy.csv")
+
+# load package to read csv files
+library(readr)
+
+hypertrophy <- read_csv("./data/hypertrophy.csv")
+
+# look at the data 
+hypertrophy
+```
+
+  </div>
+  </br> 
+
+
+
+
+
+
+

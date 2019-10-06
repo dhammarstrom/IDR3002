@@ -1,0 +1,107 @@
+---
+title: "Reliability"
+author: "Daniel Hammarström"
+date: "2019-08-26"
+output: beamer_presentation
+bibliography: references.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+# Background
+
+* **Reliability** can be thought of as the ability to reproduce a measurement 
+    - in the same individual 
+    - on the same equipment with
+    - the same operator
+    
+# Why is this interesting?
+
+* When we want to say something about "responses" to training...
+* We want to know about signal vs. noise
+
+# Within-subject variation
+* If an athlete is tested multiple times, the score/value in the test differs. 
+* This variation depends on...
+
+# Within-subject variation
+* If an athlete is tested multiple times, the score/value in the test differs. 
+* This variation depends on many potential variable factors
+  - Biological
+  - Psychological
+  - Technical
+
+# Some statistics!
+* The standard deviation (SD) is the "average deviation from the average". How do we calculate it?
+
+* Sum of deviations $=\sum{x_i-\bar{x}} = 0$. 
+
+* Sum of the square deviations $=\sum{(x_i-\bar{x})^2}$ 
+
+* Average square deviations = $\frac{\sum{(x_i-\bar{x})^2}}{n-1} = variance$
+
+* The variance is the average squared deviation from the mean
+* The standard deviation is the square root of the variance, thus on the same scale as the mean!
+
+$$\sqrt{\frac{\sum{(x_i-\bar{x})^2}}{n-1}} = SD$$
+
+
+# Within-subject variation
+* If an athlete is tested multiple times, the score/value in the test differs.
+* If we calculate the SD, this is the average deviation from the mean or the **typical error**
+* Instead of using one athlete/subject, we can calculate the typical error from a study of two or more measurements on a group of subjects. 
+
+# Typical error
+
+* The typical error is a measure of random error (e.g. biological and technical variation).
+* This variation is to be expected when performing two tests under similar circumstances
+
+# Calculation of the typical error (TE)
+
+* Two or more trials/tests are done in a control-group
+* Change-scores are calculated (Trial2 - Trial1)
+* The standard deviation of the change score is calculated (SD~change~)
+
+$$TE = \frac{SD_{change}}{\sqrt{2}}$$
+
+* Hopkins [@RN130], argues that $2\times TE$ is a suitable threshold when using TE as this increases the odds of a true change.
+
+# Smallest worthwhile change (SWC)
+
+* An alternative approach when no data on the error of measurement exists is to to use some clinically important threshold
+* When this is not possible, we can instead estimate the smallest worthwhile effect (SWC).
+* SWC is calculated as the $2\times SD_{between~subjects}$ where $SD_{between~subjects}$ is the estimate of the population standard deviation.
+* This is an arbitrary threshold connected to the concept of effect sizes. 
+
+# Internal validity
+* Are we testing what we are suppose to?
+
+
+# Improving reliability and internal validity
+
+* Reproducability can be increased by controlling internal-validity, the degree to which we test what we are suppose to test [@RN1739]
+* What factors can affect internal validity?
+
+# Assignment
+
+* We will perform two reliability studies:
+  * Mid thigh pull test [@RN2271]
+  * 1RM estimation from force-velocity curve [@RN2272]
+* You are to plan and conduct a small reliability study.
+* 5-10 participants tested twice.
+
+
+# Assignment
+
+The report includes:
+
+* A discussions on estimation of reliability [@RN130].
+* A short review of papers assessing reliability in the tested exercise (if there are any).
+* Estimates of reliability and smallest worthwhile change.
+* A detailed protocol written to maximize internal validity of the test [see @RN1739; @RN2271]
+
+
+# References
+\scriptsize

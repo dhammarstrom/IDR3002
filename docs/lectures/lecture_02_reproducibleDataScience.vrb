@@ -1,0 +1,12 @@
+\frametitle{Exploratory data analysis}
+\protect\hypertarget{exploratory-data-analysis-2}{}
+
+Checking assumptions using graphical methods, more information on one
+plot!
+
+\begin{verbatim}
+## Warning: package 'ggplot2' was built under R version 3.5.3
+\end{verbatim}
+
+\includegraphics{lecture_02_reproducibleDataScience_files/figure-beamer/unnamed-chunk-4-1.pdf}
+

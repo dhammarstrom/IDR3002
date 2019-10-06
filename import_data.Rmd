@@ -1,0 +1,78 @@
+---
+title: "Importing data"
+---
+
+## Resources
+
+[Chapter 11]("https://r4ds.had.co.nz/data-import.html") in R for data science describes data import of .csv. The [readxl]("https://readxl.tidyverse.org/) package is used for reading excel files. The [haven]("https://haven.tidyverse.org/") package can be used to import files from SAS, SPSS and STATA /(we will worry about that later).
+
+## Learning objectives
+
+Get familiar with importing data from 
+- Excel files
+- Flat files (.csv, .tsv)
+- And know about importing from other filetypes
+
+
+## Data sets used in the course
+We will primarily use four data sets in the course. Below is a table of where they can be found and publications connected to the data. The data sets will be used for different purposes. 
+
+|Data set      |Author/Year      |Public|Publication (DOI)           |Download                                       |Filetype |
+|--------------|-----------------|------|----------------------------|-----------------------------------------------|---------|
+|Hypertrophy   |Haun et al. 2019 |Yes   |10.3389/fphys.2019.00297    |https://ndownloader.figshare.com/files/14702420|.csv     |
+|Cycling       |Sylta et al. 2016|No    |10.1249/MSS.0000000000001007|Canvas                                         |.xlsx    |
+|Diet          |Hall et al. 2019 |Yes   |10.1016/j.cmet.2019.05.008  |https://osf.io/jh53q/ (multiple files)         |.sas7bdat| 
+|Ten vs. Thirty|Øfsteng et al.   |No    |NA                          |Canvas                                         |.xlsx    |
+
+## Importing excel-files
+Importing excel-files is straight forward as long as they are nicely formatted. A bad format is when the data is not tabular.
+
+To import excel files (.xls, and .xlsx) we need the package `readxl`. The package contains the function `read_excel()`. Install the package and access the help-file for the function `read_excel()`.
+
+We will start by importing a data set based on part of a cycling training study. This data set has to be downloaded manually from Canvas. Go to data Lectures/Data, there you will find a link to the `cyclingStudy.xlsx` file. Download the file and put it in your projects data folder.
+
+Importing the file could look like this:
+
+```{r, eval = FALSE}
+library(readxl)
+cyclingStudy <- read_excel("./data/cyclingStudy")
+```
+
+We "store" the file in the environment in an object called `cyclingStudy`. 
+
+Important arguments in the `read_excel()` function includes:
+
+- `path` which is the location of your file
+- `sheet` if you are working with a excel-file containing multiple sheets
+- `na` specifies what are missing data, this is important when you import numeric data that contains character string data to show e.g. missing values
+- `skip` tells `read_excel` how many rows to skip before reading the data. This can be helpful when the tabular part of the data does not start at row 1.
+
+There are more arguments, use `?read_excel` to find out.
+
+## Importing .csv files
+A csv-file (comma separated values) is a text-file type file. It could not be simpler! Important to know about them is that column is separated by a comma, semicolon or similar. If the file is comma separated we can simply use the `read_csv()` function from the `readr` package. 
+
+The .csv file we will be using during this course is available online. We can without so much fuzz load it directly using
+
+```{r, eval = FALSE}
+library(readr)
+hypertrophy <- read_csv("https://ndownloader.figshare.com/files/14702420")
+```
+
+When downloading files from the internet, we save the file first using the `download.file()` function. This function should be available in your R session.
+Let's store the file in the data folder:
+
+```{r, eval = FALSE}
+download.file(url = "https://ndownloader.figshare.com/files/14702420", destfile = "./data/hypertrophy.csv")
+```
+
+We can now access the file from our data folder.
+
+## Importing other file formats
+We will be analyzing a [diet study](https://www.cell.com/cell-metabolism/fulltext/S1550-4131(19)30248-7) in the course. This study has all the data and code (SAS) [published](https://osf.io/rx6vm/). However, it is zipped and needs manual download. We will use the [haven]("https://haven.tidyverse.org/") package to get the data into R.  
+
+
+
+
+
+

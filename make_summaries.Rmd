@@ -1,0 +1,89 @@
+---
+title: "Data wrangling and creating summaries"
+---
+
+## Introduction
+This course is about getting to know *how to* communicate data. Data are everywhere, sometimes we collect them in the lab, sometimes they are sitting in our computer or gets teased out from other peoples research projects. Before the data can tell us anything we must often do a lot of operations on them, test them in different statistical models, and visualize them. The aim of the course increase your data analysis proficiency. 
+
+Skills in data analysis is seldom taught in programs outside data science or statistics. There are courses in statistics and report writing but students often struggle getting the data in to the computer and/or in the right form to do statistical tests before they can write the report. Here we address the parts between the raw data and the report.
+
+## Resources
+
+Chapter 9-15 in [R for data science](https://r4ds.had.co.nz/) are good for getting more in depth. We will be using [tidyr](https://tidyr.tidyverse.org/) for create tidy data and [dplyr](https://dplyr.tidyverse.org/) to manipulate data and create summaries.
+
+## Learning objectives
+
+After the session, you should be able to answer:
+- What is a pipe?
+- What can these functions do?
+    - `mutate()`
+    - `select()`
+    - `filter()`
+    - `summarise()`
+    - `arrange()`
+- What is tidy data
+- How does `pivot_longer()` and `pivot_wider()` work.
+
+## Piping operations
+In R we can use the `%>%` pipe operator to do sequential tasks. This means operations that follow each other. the pipe operator works with packages like `dplyr` and `tidyr`. The packages are designed to make it easier to work and transform data from "raw" form to a form that is suitable for statistical modeling and visualizations.
+
+To load `dplyr` and `tidyr` into our R session we can use the package `tidyverse`, in addition to `dplyr` and `tidyr`it contains packages for reading data and visualize them. 
+
+```{r, message = FALSE, warning = FALSE, eval = FALSE}
+library(tidyverse)
+```
+
+When creating a data pipe with `%>%` we send the results from one function to the first argument of the next function.
+
+`function_1(data) %>% function_2(data_transformed) %>% function_2(data_transformed2)` 
+
+In the pipe above, each function does something with the data. The result from each function gets passed on to the next function. In this way we can read the pipe operator as *then do this*.
+
+As an example, the cycling data set
+
+```{r, eval = FALSE} 
+cyclingStudy <- read_excel("./notes/data/cyclingStudy.xlsx", na = "NA") # remember to use the na argument
+```
+
+The above code loads the data into the environment. Let's say that we want to calculate the squat jump height (`sj.max`) per kilo gram of body mass (`weight.T1`). We could describe this operation as *take the cycling data set* **then do** *divide squat jump height with body mass* **then do** *select the important variables* **then do** *show the results*.
+
+In code it would look like this.
+
+```{r, eval = FALSE}
+cyclingStudy %>%
+        mutate(sqj.bm = sj.max / weight.T1) %>%
+        select(subject, group, timepoint, sqj.bm) %>%
+        print()
+```
+
+The new variable has a funny name but stands for squat jump per body mass, the mutate function is used to create new function. The select function is used to select columns in the data frame. The print function prints the results of a pipe. 
+
+To have a function that works with pipes, it must have a `data` argument. The pipe puts the data as the first argument in the following function. If a function has a data argument, but it is not the first argument, you can just `.`period to point it where the data should go.
+
+This is e.g. the case when creating a linear model (we will do this later).
+
+Now we have tried `mutate()` and `select()`. Let's look into `filter()`.
+
+Filtering is good when you only want to select a few rows of a data frame corresponding to specific criteria. The cycling data set 
+
+
+```{r, eval = FALSE}
+
+library(dplyr); library(tidyr); library(readxl)
+
+cyclingStudy <- read_excel("./data/cyclingStudy.xlsx", na = "NA")
+
+
+cycling_wide <- cyclingStudy %>%
+        select(subject, timepoint, sj.max) %>%
+        pivot_wider(names_from = timepoint, values_from = sj.max) %>%
+        print()
+
+
+
+cycling_wide %>%
+        pivot_longer(cols = pre:meso3, names_to = "timepoint", values_to = "sj.max") %>%
+        print()
+
+```
+

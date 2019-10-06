@@ -1,9 +1,8 @@
 name: "IDR3002 Course notes"
 output_dir: "docs"
+exclude: ["notes/*", "lectures/*"]
 output:
   html_document:
-    theme: cosmo
-    highlight: textmate
 navbar:
   title: "IDR3002 Course notes"
   type: inverse
@@ -25,83 +24,42 @@ navbar:
         - text: "Data wrangling and plotting"
         - text: "Introduction to R"
           href: introduction_1.html
+        - text: "Import data"
+          href: import_data.html
         - text: "Make summaries"
-          href: make_summarise.html
+          href: make_summaries.html
         - text: "Create plots with ggplot2"
           href: plot_ggplot2.html
         - text: "Assignment: Descriptive statistics"
           href: descriptive_statistics.html
         - text: "-----------------------------------"
         - text: "Statistical inference"
-        - text: "What is an hypothesis?"
-          href: hypothesis.html
-        - text: "Error-rates in frequentist statistics"
-          href: error_rates.html
-        - text: "P-values"
-          href: p_values.html
-        - text: "Confidence intervals"
-          href: confidence_intervals.html
-        - text: "Assignment: Drawing inference"
-          href: confidence_intervals.html
+          href: inference.html
         - text: "-----------------------------------"
         - text: "Regression models"
-        - text: "The straight line"
-          href: straight_line.html
-        - text: "Estimating the straight line"
-          href: best_fit.html
-        - text: "Fitting a regression model"
-          href: fitting_regression.html
-        - text: "Interpreting regression coefficients"
-          href: interpret_regression.html
-        - text: "Checking assumptions about the model"
-          href: regression_assumptions.html
-        - text: "Statistical tests as regression problems"
-          href: regression_test.html    
+          href: regression_models.html
         - text: "-----------------------------------"
         - text: "Analyzing trials"
-        - text: "Commonly used designs in exercise science"
           href: designs.html
-        - text: "Hypothesis testing in exercise trials"
-          href: hypothesis_in_trial.html
-        - text: "Missinterpretations of statistical tests in trials"
-          href: missinterpretations.html
-        - text: "Equivalence test"
-          href: equivalence_test.html
-        - text: "Controlling for baseline values"
-          href: baseline_covariate.html
-        - text: "Assignment: Analyzing a clinical trial"
-          href: clinical_trial.html
         - text: "------------------------------"
         - text: "Repeated measures designs using mixed models"
           href: mixed_models_introduction.html
-        - text: "Fitting a mixed model"
-          href: fitting_lmm.html
-        - text: "Random effects"
-          href: random_effects.html        
-        - text: "Fixed effects"
-          href: fixed_effects.html            
-        - text: "Interpretation of mixed model results"
-          href: mixed_models_results.html
-        - text: "Assumptions about mixed models"
-          href: mixed_models_assumptions.html
-        - text: "Assignment: Analyzing a clinical trial using mixed models"
-          href: clinical_trial_lmm.html   
         - text: "-----------------------------------"        
         - text: "Sample-size calculations"
-        - text: "Recap: Power, error rates and hypotheses"
-          href: recap_power_error.html
-        - text: "Determining effect sizes from previous research"
-          href: effect_size.html
-        - text: "Calculate the required sample size for a given hypothesis"
-          href: calculating_sample_size.html        
-        - text: "Assignment: Planning a clinical trial"
-          href: clinical_trial_power.html   
+          href: statistical_power.html
         - text: "-----------------------------------"
         - text: "Experimental design"
-        - text: "Different aim, different designs"
-          href: designs2.html
-        - text: "Assignment: What signifies a good experimental design"
-          href: design3.html  
+          href: design.html
+    - text: "Exercises"
+      menu:
+        - text: "Introduction to R and RStudio"
+          href: ex1_intro.html
+        - text: "Import data"
+          href: ex1_import.html
+        - text: "Summarise data"
+          href: ex1_summarise.html
+        - text: "Making figures"
+          href: ex1_figures.html
   right:
     - icon: fa-question fa-lg
       href: faq.html

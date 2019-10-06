@@ -1,0 +1,302 @@
+---
+title: "Reproducible data analysis"
+author: "Daniel Hammarström"
+date: "2019-10-06"
+output:
+  beamer_presentation:
+    theme: "AnnArbor"
+    colortheme: "dolphin"
+    fonttheme: "structurebold"
+bibliography: lecture01_reproducibleDataScience.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Content
+
+
+- Defining replication and reproducibility
+- Identifying challenges facing the data analyst in the sport sciences
+- How to perform a reproducible data analysis - tools and workflow
+
+## Replication
+Replication is the degree to which scientific findings can be repeated using:
+
+- independent data,
+- independent research-groups, laboratories
+- different methods, instrumentations...
+
+[@RN1492]
+
+## The replication crisis
+
+Many scientific results are not possible to confirm. Ioannidis [-@RN1953] and others points out that scientific results most often are not true:
+
+- Smaller studies are more likely to produce untrue conclusions
+- Large amount of hypotheses produces large amount of false positives
+- Low degree of scientific stringency produces more false claims
+- E.g. financial interests increases the risk of false claims
+- New fields more likely to produce false conclusions
+
+## Reproducibility
+- Reproducibility is the degree to which the same conclusions/interpretations can be made using a single dataset.
+- A reproducible data analysis can be scrutinized on the level of the data, methods and documentation.
+- This can be seen as a "minimum standard" in reporting a study when replication is not feasible [@RN1492].
+- Reproducability is a way to bridge the gap between full replication to a non-replicable study [@RN1600]. 
+- A reproducible study report is a well documented and explicit data-analysis.
+
+
+## Why make data analysis explicit?
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+  
+
+Before calculating a p-value (and making inference), most of the "scientific black-box activities" takes place.  
+
+
+\end{column}
+\begin{column}{0.5\textwidth}  %%<--- here
+    \begin{center}
+     \includegraphics[width=0.5\textwidth]{img/Leek2015.png}
+     \end{center}
+\end{column}
+\end{columns}
+
+ [@RN1955]
+
+
+## The data analysis pipeline -- A crucial part of every scientific project
+
+- Not easy to fully implement...
+- "From sample to data-point" descibed prior to data collection
+- The goal is to make informed *a priori* decisions based on the question not a specific result (avoids bias [@RN1953]) 
+
+## The data analysis pipeline
+
+- Experimental design
+- Data collection
+- Raw data
+- Tidy data
+- Data cleaning
+- Exploratory data analysis
+- Statistical models
+- Summary statistics
+- Inference (p-values)
+
+[@RN1955]
+
+## Data collection
+
+- Errors during data collection could be human and non-human errors
+- Use data validation when entering data manually into a spreadsheet
+- Avoid "black-box" data-capturing to avoid non-human errors
+
+
+## Raw data
+
+- Raw data is not processed, manipulated or transformed from other data. 
+- This is however relative ... 
+- In order to use raw data in an analysis, many processing steps may be needed
+
+## Data cleaning
+
+- Data cleaning can be performed on your *raw data* to make it more suitable for analysis. 
+- Data cleaning is the process of formatting and sorting data into a suitable table-like format that is readable for you and your software.
+- Data cleaning also identifies missing data or incorrectly entered data
+
+## Data cleaning
+```{r, echo=FALSE}
+set.seed(1)
+dat<-rnorm(10000, 140, 10)
+dat[500]<-1400
+```
+
+- To identify e.g. problems in data collection (data entry or recording) we can use summary statistics
+- A data set contains `r length(dat)` observations. We expect an average value around 140 units, the observed average is `r round(mean(dat), 2)`. The standard deviation is `r round(sd(dat), 2)`, the data is quite concentrated. However the maximum is `r round(max(dat), 2)`, this means we should be careful with making the assumption that the data is correct as this number is about 10 times the expected value.
+- Graphical analysis of the data is useful as it summarises many aspects of the data
+
+## Graphical method for identifying data problems
+
+```{r, echo=FALSE}
+par(mfrow=c(1,2))
+plot(dat, ylab="Value", main="Plot of all data")
+hist(dat[-500], main="Histogram of all correct data")
+```
+
+## The goal of data cleaning -> Tidy data
+
+- Tidy data: each row is an **observation** and each column is a **variable** and each cell of the table contains **values**
+
+\begin{table}
+\begin{tabular}{l | c | c | c | c }
+Variable & Variable & Variable & Variable & Variable \\
+\hline \hline
+Value & Value & Value & Value & Value \\ 
+Value & Value & Value & Value & Value\\
+Value & Value & Value & Value & Value\\
+Value & Value & Value & Value & Value 
+\end{tabular}
+\caption{Example of tidy data}
+\end{table}
+
+## Tidy data?
+
+\begin{table}
+\begin{tabular}{l | c | c | c }
+Participant & StrengthWeek1 & StrengthWeek2 & StrengthWeek3 \\
+\hline \hline
+FP1 & 120 & 125 & 140 \\ 
+FP2 & 130 & 140 & 145 \\
+FP3 & 140 & 145 & 130 \\
+ 
+\end{tabular}
+\caption{Example of tidy data?}
+\end{table}
+
+## Tidy data?
+
+\begin{table}
+\begin{tabular}{l | c | c  }
+Participant & time & strength \\
+\hline \hline
+FP1 & week1 & 120 \\
+FP1 & week2 & 125 \\
+FP1 & week3 & 140 \\
+FP2 & week1 & 130 \\
+FP2 & week2 & 140 \\
+FP2 & week3 & 145 \\
+FP3 & week1 & 140 
+\end{tabular}
+\caption{Example of tidy data?}
+\end{table}
+
+## Why aim for tidy data?
+
+- Tidy data [@RN1956] builds upon a standard practice for organizing data
+- Makes data exploration and analysis easier
+- Standard for easy description and sharing of data
+- Tidy data is the standard input in many statistical modeling routines in R, SPSS, SAS and STATA
+
+## Exploratory data analysis
+
+- When you have a data analysis plan, the purpose of the exploratory data analysis is to check assumptions about your data.
+- Graphical methods is handy!
+- Tidy data makes your exploratory analysis easy
+
+## Exploratory data analysis
+
+Checking assumptions using graphical methods
+
+```{r, echo=FALSE}
+
+d<-data.frame(subject=rep(c(paste("FP", seq(1:10))), 2), 
+           time=c(rep("pre", 10), rep("post", 10)), 
+           variable1=c(rnorm(10, 150, 10), rnorm(10, 135, 15)),
+           variable2=c(rnorm(10, 2500, 150), rnorm(10, 2300, 150)))
+
+
+par(mfrow=c(1,2))
+hist(d$variable1, main="Histogram of Variable 1", xlab="Variable 1")
+hist(d$variable2, main="Histogram of Variable 2", xlab="Variable 2")
+```
+
+## Exploratory data analysis
+
+Checking assumptions using graphical methods, more information on one plot!
+
+```{r, echo=FALSE, fig.height = 2.5, fig.width = 5}
+library(ggplot2)
+p1<-ggplot(d, aes(variable1, variable2, color=time, label=subject, group=subject))+geom_line(color="black")+geom_point(size=5)
+
+p1
+
+```
+
+## How to do explicit data analyses -- Prior to, or after data collection
+
+Make a data analysis plan based on the goal of the study:
+
+- Describe variables that are going to be collected, this is your **codebook**.
+- Create specific data storage for grouped data variables (e.g. spreadsheets). 
+- Describe how *raw-data* is transformed to *analytic data* (e.g. force-curves from isokinetic testing is converted to maximal torque).
+- Describe how summary statistics are to be calculated
+- Make *dummy-*tables and figures
+- Describe what tests you need to draw inference
+
+## Setting up an analysis workflow
+Use a standard folder system that contains all data, analyses and reports. The whole project is contained in one *root folder*.
+
+- Write a **codebook.txt** containing all variables in the dataset, how is data stored and accessed.
+- **./data/**: contains all your data, e.g. spreadsheets with data from specific tests
+- **./analysis/**: contains all analysis-files, e.g. SPSS-files that does analyses
+- **./output/**: contains results from analyses, figures etc.
+
+## Working with spreadsheets
+
+- Spreadsheets are mainly suitable for data storage and entry.
+- Making statistical analyses and or figures in spreadsheets is not adviced
+- If you plan to make analyses in spreadsheets, store data in one sheet and make analyses and data manipulation in another spreadsheet.
+
+[@RN1954]
+
+## Guidelines for working with spreadsheets
+- The goal is to make human- and computer-readable spreadsheets.
+- Consistency, use the same variable names, coding etc for all data storage (e.g. *Male*, *Female*, *M*, *F* etc.)
+- Good naming strategy, do not use spaces (e.g use *strength_week_1* instead of *Strength week 1*), avoid special characters (£, @, €).
+- Write dates like YYYY-MM-DD
+- Don't leave cells empty, don't comment if you have missing values, use a specific variable for comments
+- Keep the data tidy, in a rectangle. 
+- Do not use color, different fonts etc.
+- Use data validation when entering data
+- No summary statistics or calculations!
+- Make a separate **codebook** (data dictionary)
+
+[@RN1954]
+
+## The **codebook**
+- Variable names
+- Explanation of the variable name, how was it recorded/collected
+- Unit of measurement
+- Expected values min-max 
+
+## Why work with reproducible methods
+- You may want to collaborate
+- Your most frequent collaborator is yourselfe in the future
+- Standard practices helps your collaborators (you!) to pick up where you left off
+
+## Don't do the data analysis, tell the computer how to! Learn how to program!
+
+- *Scripting* a data analysis will increase the potential for full reproducibility
+- A sucessfull data analyst is **lazy**, tell the computer to do boring stuff!
+
+## Don't do the data analysis, tell the computer how to! Learn how to program!
+
+- Investing time in a programming language is investing in a generic skill
+- The demand for data-analysis skills will likely increase (especially in sport science)
+
+## Data anlysis
+
+ \begin{center}
+    \includegraphics[width=0.5\textwidth]{img/wickham.png}
+  \end{center}
+
+
+## What to learn if you want to be a better analyst/researcher
+
+- [R](https://cran.r-project.org/) is a good place to start if you want do data analysis
+- [R](https://cran.r-project.org/) has a large user community, easy to find help
+- [R](https://cran.r-project.org/) is free, open source and users contribute with programs (this is not true for e.g. SPSS, SAS...)
+- [R](https://cran.r-project.org/) is implemented in many graphical user-interface programs like [Jamovi](https://www.jamovi.org/)
+- Using [R](https://cran.r-project.org/) with [RStudio](https://www.rstudio.com/) makes a very productive analyst environment
+- With [R](https://cran.r-project.org/) and resources like [R Markdown](http://rmarkdown.rstudio.com/) you can write reports with based on your data. 
+- Many statistical courses, books and resources use R
+
+
+## References
+\footnotesize
+\bibliography{bibfile}
+
+

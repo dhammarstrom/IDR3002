@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+
+<title>Exercises Week 1</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-inverse  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">IDR3002 Course notes</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+    Home
+  </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Software
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="installation.html">Installing and starting up R and RStudio</a>
+    </li>
+    <li>
+      <a href="markdown.html">Creating a report using rmarkdown</a>
+    </li>
+    <li>
+      <a href="structure.html">Structuring an analysis</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Lessons
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">Data wrangling and plotting</li>
+    <li>
+      <a href="introduction_1.html">Introduction to R</a>
+    </li>
+    <li>
+      <a href="import_data.html">Import data</a>
+    </li>
+    <li>
+      <a href="make_summaries.html">Make summaries</a>
+    </li>
+    <li>
+      <a href="plot_ggplot2.html">Create plots with ggplot2</a>
+    </li>
+    <li>
+      <a href="descriptive_statistics.html">Assignment: Descriptive statistics</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="inference.html">Statistical inference</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="regression_models.html">Regression models</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="designs.html">Analyzing trials</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="mixed_models_introduction.html">Repeated measures designs using mixed models</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="statistical_power.html">Sample-size calculations</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="design.html">Experimental design</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Exercises
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="ex1_intro.html">Introduction to R and RStudio</a>
+    </li>
+    <li>
+      <a href="ex1_import.html">Import data</a>
+    </li>
+    <li>
+      <a href="ex1_summarise.html">Summarise data</a>
+    </li>
+    <li>
+      <a href="ex1_figures.html">Making figures</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="faq.html">
+    <span class="fa fa-question fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Exercises Week 1</h1>
+
+</div>
+
+
+<p><a href="ex1_import.html">Go to importing data</a></p>
+<p><a href="ex1_summarise.html">Go to summarising data</a></p>
+<p><a href="ex1_figures.html">Go to making figures</a></p>
+<div id="basic-r-operations-data-frames-functions-and-packages" class="section level2">
+<h2>Basic R operations, data frames, functions and packages</h2>
+<script language="javascript"> 
+    function toggle(num) {
+      var ele = document.getElementById("toggleText" + num);
+      var text = document.getElementById("displayText" + num);
+      if(ele.style.display == "block") {
+        ele.style.display = "none";
+        text.innerHTML = "show";
+      }
+      else {
+        ele.style.display = "block";
+        text.innerHTML = "hide";
+      }
+   } 
+  </script>
+<p><strong>Exercise 1.</strong> Assign the numeric <code>3</code> to an object called <code>a</code>.</p>
+<a id="displayText" href="javascript:toggle(1);">Solution Ex. 1</a>
+<div id="toggleText1" style="display: none">
+<pre class="r"><code>a &lt;- 3</code></pre>
+</div>
+<p></br></p>
+<p><em>Exercise 2.</em> What are the differences between these operations?</p>
+<pre class="r"><code>a &lt;- 3</code></pre>
+<pre class="r"><code>a = 3</code></pre>
+<pre class="r"><code>3 -&gt; a</code></pre>
+<pre class="r"><code>3 = a</code></pre>
+<p>Try to explain your results.</p>
+<a id="displayText" href="javascript:toggle(2);">Solution Ex. 2</a>
+<div id="toggleText2" style="display: none">
+<p><br></p>
+<p>Using the assign operator <code>&lt;-</code> gives the direction of the assignment. This means that <code>a &lt;- 3</code> is equivalent to <code>a = 3</code>. However the assign oerator <code>&lt;-</code> can be reversed and thus gives the direction of assignment <code>-&gt;</code>. Using the equal sign as a assignment oeperator is restricted to one direction.</p>
+</div>
+<p><br></p>
+<p><strong>Exercise 3</strong>. Combine the numeric values 3, 5, 6, 7 in a vector.</p>
+<a id="displayText" href="javascript:toggle(3);">Solution Ex. 3</a>
+<div id="toggleText3" style="display: none">
+<pre class="r"><code>my_vector &lt;- c(3, 5, 6, 7)</code></pre>
+</div>
+<p><br></p>
+<p><strong>Exercise 4</strong>. Print the second value from your vector.</p>
+<a id="displayText" href="javascript:toggle(4);">Solution Ex. 4</a>
+<div id="toggleText4" style="display: none">
+<pre class="r"><code>my_vector[2]</code></pre>
+</div>
+<p><br> <strong>Exercise 5</strong>. Change the second value of your vector to 23.</p>
+<a id="displayText" href="javascript:toggle(5);">Solution Ex. 5</a>
+<div id="toggleText5" style="display: none">
+<pre class="r"><code>my_vector[2] &lt;- 23</code></pre>
+</div>
+<p><br></p>
+<p><strong>Exercise 6</strong>. A <em>parameter</em> can be regarded as a constant in a given situation but can take different values in other situations. The benefit of working with parameters is that we can use the name of the parameter to describe for example mathematical operations.</p>
+<p>Write code that corresponds to the following equation:</p>
+<p><span class="math display">\[a = \frac{beta}{alpha}\]</span></p>
+<p>given that <span class="math inline">\(beta = 3\)</span> and <span class="math inline">\(alpha = 6\)</span>.</p>
+<a id="displayText" href="javascript:toggle(6);">Solution Ex. 6</a>
+<div id="toggleText6" style="display: none">
+<pre class="r"><code>beta &lt;- 3
+alpha &lt;- 6
+
+a &lt;- beta/alpha</code></pre>
+</div>
+<p><br></p>
+<p><strong>Exercise 7.</strong> What is the problem with the following operation:</p>
+<pre class="r"><code>vector_a &lt;- c(3, 5, 2, 7, 9)
+
+vector_b &lt;- c(3, 3)
+
+vector_a * vector_b</code></pre>
+<p><br> And how is this correct?</p>
+<pre class="r"><code>vector_c &lt;- c(3, 5, 2, 7)
+
+vector_d &lt;- c(3, 2)
+
+vector_c * vector_d</code></pre>
+<p>How do R calculate the second situation?</p>
+<a id="displayText" href="javascript:toggle(7);">Solution Ex. 7</a>
+<div id="toggleText7" style="display: none">
+<p>Read the warning meassage in from situation 1. What does that mean?</p>
+<a id="displayText" href="javascript:toggle(8);">Solution 7a</a>
+<div id="toggleText8" style="display: none">
+<p>Vector can only be multiplied if they have corresponding length or the longer object is a multiple of the shorter. In the second situation the shorter is a multiple of the longer object. The operations are <span class="math inline">\(3*5,~ 2*5,~ 3*2,~ 2*7\)</span>.</p>
+</div>
+</div>
+<p><br></p>
+<p><strong>Exercise 8</strong>. A data frame is basically multiple vectors of data stacked in columns. Create a data frame by hand that corresponds to the table below.</p>
+<table>
+<thead>
+<tr class="header">
+<th>ID</th>
+<th>Age</th>
+<th>Sex</th>
+<th>Performance</th>
+<th>Body_mass</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>id1</td>
+<td>24</td>
+<td>M</td>
+<td>250</td>
+<td>82</td>
+</tr>
+<tr class="even">
+<td>id2</td>
+<td>25</td>
+<td>F</td>
+<td>180</td>
+<td>65</td>
+</tr>
+<tr class="odd">
+<td>id3</td>
+<td>22</td>
+<td>F</td>
+<td>187</td>
+<td>55</td>
+</tr>
+<tr class="even">
+<td>id4</td>
+<td>26</td>
+<td>F</td>
+<td>210</td>
+<td>59</td>
+</tr>
+<tr class="odd">
+<td>id5</td>
+<td>25</td>
+<td>M</td>
+<td>205</td>
+<td>75</td>
+</tr>
+<tr class="even">
+<td>id6</td>
+<td>29</td>
+<td>M</td>
+<td>199</td>
+<td>89</td>
+</tr>
+</tbody>
+</table>
+<a id="displayText" href="javascript:toggle(9);">Solution 8</a>
+<div id="toggleText9" style="display: none">
+<p>A data frame can be created using the <code>data.frame()</code>-function, name the columns in the data frame and enter values using the <code>c()</code> function.</p>
+<a id="displayText" href="javascript:toggle(10);">Solution 8</a>
+<div id="toggleText10" style="display: none">
+<pre class="r"><code>my_df &lt;- data.frame(ID = c(&quot;id1&quot;, &quot;id2&quot;, &quot;id3&quot;, &quot;id4&quot;, &quot;id5&quot;, &quot;id6&quot;), 
+                    Age = c(24, 25, 22, 26, 25, 29), 
+                    Sex = c(&quot;M&quot;, &quot;F&quot;, &quot;F&quot;, &quot;F&quot;, &quot;M&quot;, &quot;M&quot;),
+                    Performance = c(250, 180, 187, 210, 205, 199), 
+                    Body_mass = c(82, 65, 55, 59, 75, 89))
+
+
+my_df</code></pre>
+</div>
+</div>
+<p><br></p>
+<p>Write code to: 1. return the first row in the data frame 2. create a new variable calculated as Performance per Body mass 3. print the the new variable from the data frame</p>
+<a id="displayText" href="javascript:toggle(11);">Solution 9.1</a>
+<div id="toggleText11" style="display: none">
+<pre class="r"><code>my_df[1, ] # read as [row, column]</code></pre>
+</div>
+<p><br></p>
+<a id="displayText" href="javascript:toggle(12);">Solution 9.2</a>
+<div id="toggleText12" style="display: none">
+<pre class="r"><code>my_df$p_bm &lt;- my_df$Performance / my_df$Body_mass
+
+# An alternative is
+
+my_df$p_bm &lt;- my_df[,4] / my_df[,5]</code></pre>
+</div>
+<p><br></p>
+<a id="displayText" href="javascript:toggle(13);">Solution 9.3</a>
+<div id="toggleText13" style="display: none">
+<pre class="r"><code>my_df$p_bm</code></pre>
+</div>
+<p><br></p>
+<p><strong>Exercise 10</strong>. We can use functions to calculate mean, standard deviation, minimum and so on. Calculate the mean and standard deviation of Performance and Body mass. Store the results in a new data frame.</p>
+<br> <a id="displayText" href="javascript:toggle(14);">Solution 10</a>
+<div id="toggleText14" style="display: none">
+<pre class="r"><code>data.frame(variable = c(&quot;Peromance&quot;, &quot;Body_mass&quot;), 
+           m = c(mean(my_df$Performance), mean(my_df$Body_mass)), 
+           s = c(sd(my_df$Performance), sd(my_df$Body_mass)))</code></pre>
+</div>
+<p><br></p>
+<p><strong>Exercise 11</strong>. We will be using several packages during the course. Install the follwing packages using the <code>install.package()</code> function:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Package</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>dplyr</td>
+</tr>
+<tr class="even">
+<td>tidyr</td>
+</tr>
+<tr class="odd">
+<td>readxl</td>
+</tr>
+<tr class="even">
+<td>ggplot2</td>
+</tr>
+</tbody>
+</table>
+<br> <a id="displayText" href="javascript:toggle(15);">Solution 10</a>
+<div id="toggleText15" style="display: none">
+<pre class="r"><code>install.packages(c(&quot;dplyr&quot;, &quot;tidyr&quot;, &quot;readxl&quot;, &quot;ggplot2&quot;))</code></pre>
+</div>
+<p><br></p>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

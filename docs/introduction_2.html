@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+
+<title>Introduction part 2</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-inverse  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">IDR3002 Course notes</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+    Home
+  </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Software
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="installation.html">Installing and starting up R and RStudio</a>
+    </li>
+    <li>
+      <a href="markdown.html">Creating a report using rmarkdown</a>
+    </li>
+    <li>
+      <a href="structure.html">Structuring an analysis</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Lessons
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">Data wrangling and plotting</li>
+    <li>
+      <a href="introduction_1.html">Introduction to R</a>
+    </li>
+    <li>
+      <a href="import_data.html">Import data</a>
+    </li>
+    <li>
+      <a href="make_summaries.html">Make summaries</a>
+    </li>
+    <li>
+      <a href="plot_ggplot2.html">Create plots with ggplot2</a>
+    </li>
+    <li>
+      <a href="descriptive_statistics.html">Assignment: Descriptive statistics</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="inference.html">Statistical inference</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="regression_models.html">Regression models</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="designs.html">Analyzing trials</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="mixed_models_introduction.html">Repeated measures designs using mixed models</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="statistical_power.html">Sample-size calculations</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="design.html">Experimental design</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Exercises
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="ex1_intro.html">Introduction to R and RStudio</a>
+    </li>
+    <li>
+      <a href="ex1_import.html">Import data</a>
+    </li>
+    <li>
+      <a href="ex1_summarise.html">Summarise data</a>
+    </li>
+    <li>
+      <a href="ex1_figures.html">Making figures</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="faq.html">
+    <span class="fa fa-question fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Introduction part 2</h1>
+
+</div>
+
+
+<div id="learning-objectives" class="section level2">
+<h2>Learning objectives</h2>
+<p>By the end of this session you will be able to answer these questions:</p>
+<ul>
+<li>What is a project?</li>
+<li>What data types are there?</li>
+<li>What types of “data containers” are there?</li>
+<li>What is vectorized operations?</li>
+<li>What is a function?</li>
+<li>What is a package?</li>
+<li>How do you structure a script?</li>
+</ul>
+</div>
+<div id="projects" class="section level2">
+<h2>Projects</h2>
+<p>It is convenient to gather all your scripts, data files and output in one folder. This makes it easier to share your analyses and makes it easier to make it reproducible. When starting a new analysis, make sure you start a new project! A project should be self-contained, meaning that all scripts should be able to run based on the information that is in the project folder. If your analyses dependens on something (e.g. a script) outside the project, your analyses are not reproducible unless you also share the external file.</p>
+<p>Data can be collected from external sources, but do this with a script!</p>
+<p>To organize your project, think about it as a folder, containing several sub-folder.</p>
+<div class="figure">
+<img src="img/project_description.png" alt="A project" />
+<p class="caption">A project</p>
+</div>
+<p>The root folder is the uppermost level in the folder structure. In this folder you can have report files (R-markdown files). This is a good idea as when you compile them, thay will have the same folder structure as your project.</p>
+<p>The R folder contains scripts, all written to perform specific tasks (see below). The data folder contains data used in analyses. I like to have a derived_data-folder, here I gather data that has been created with scripts. An output folder can be used to gather reports and figures that you create.</p>
+<div id="starting-a-project" class="section level3">
+<h3>Starting a project</h3>
+<p>Start a new project by clicking in the right upper corner ()</p>
+<p><img src="img/rstudio_newproject.png" /></p>
+<p>You will be asked what kind of project you want to start. A new directory will launch a new folder. Existing directory will let you select a folder where you want to have your project. Version control is very good to have, especially when collaborating or when you do big project. This lets you track changes that are made and store your scripts online. It requires <a href="www.github.com">GitHub</a> or similar version control system. We will not cover it in this course, but I recommend interested students to discover it by yourself.</p>
+<p><img src="img/rstudio_newproject2.png" /></p>
+<p>When you select “New directrory” you will be asked, dependning on your configuration, what type of project you want to start. Choose “New Project”, this is generic and suited to our needs.</p>
+<p><img src="img/rstudio_newproject3.png" /></p>
+<p>Select a good name for your project (specific enough so you can easily find it). And choose the location where you want it on your local computer.</p>
+<p><img src="img/rstudio_newproject4.png" /></p>
+<p>Done! When your are active in a project, RStudio will show you the name of the project in the upper right corner.</p>
+<p><img src="img/rstudio_newproject5.png" /></p>
+<p>The Files tab will show an almost empty folder. The only file should be the project file. This file contains information about the project needed when you want to launch it again. You can also launch the project by double clicking it (this will start RStudio). If you click it from whitin RStudio, you will be able to control some settings.</p>
+<p>By now you should have set the .RData/workspace settings to facilitate reproducible workflow (see previous page). Do not save workspace on exit.</p>
+</div>
+<div id="start-coding" class="section level3">
+<h3>Start coding!</h3>
+<p>The online book <a href="https://learningstatisticswithr.com/book">Learning statistics with R</a> has an updated chapter about installing and setting up R (<a href="https://learningstatisticswithr.com/book/introR.html">Chapter 3</a>). This chapter also goes through how commands are typed into R.</p>
+<p>When you have installed your copy of R and RStudio, start up RStuido and type the following in the consol window:</p>
+<pre class="r"><code>x &lt;- 2
+
+z &lt;- 4
+
+x + z</code></pre>
+<p>These “commands” tells R to store the number 2 in an object that we name <code>x</code>. Then we store the number 4 in an object named <code>z</code> . Next we tell R to add these two together. If you enter each command followed by pressing enter in the console, R will return the sum of x and z which should be 6.</p>
+<p>The operations that you did above using the <code>&lt;-</code> operator is called variable assignment. Read more about it in <a href="https://learningstatisticswithr.com/book/introR.html#assign">section 3.4 of Learning statistics with R</a>.</p>
+<p>Before going any futher it can be usefull to know that you can save your code as R scripts. In RStudio, go to <code>File &gt; New File &gt; R Script</code>. The R script is a text-file where you can write code that can be sent to the console. To execute a line of code, have the cursor on the line you would like to run and press <code>Ctrl + Enter</code> on your keyboard. If you would want to run the whole script, either press <code>Source</code> in the top right corner of the Source window in RStudio or select all lines and pre <code>Ctrl + Enter</code>. R scripts can be saved, this makes for an opportunity to make reproducible analyses. We will talk more about this later.</p>
+<p>In the R script we can “comment out” lines of text using the <code>#</code> symbol. An R script with comments can look like this:</p>
+<pre class="r"><code># This line is a comment, the line below is code
+
+x &lt;- 34
+
+# This line is a comment, in this script only x &lt;- 34 will be evaluated.</code></pre>
+</div>
+<div id="types-of-data-in-r" class="section level3">
+<h3>Types of data in R</h3>
+<p>R can store many types of data.</p>
+<div id="scalars" class="section level4">
+<h4>Scalars</h4>
+<p><strong>Scalars</strong> are objects that can take only one value at a time. We have already worked with scalars when we assigned a single number to the objects we named <code>x</code> and <code>z</code> above. Scalars can also be <code>TRUE</code> or <code>FALSE</code>, these “are reserved words denoting logical constants in the R language”<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> meaning that they have special meaning and cannot be used for assigning different values to. If we try, R returns an error message:</p>
+<pre class="r"><code># Trying to assign a value to TRUE
+TRUE &lt;- 3</code></pre>
+<pre><code>## Error in TRUE &lt;- 3 : invalid (do_set) left-hand side to assignment</code></pre>
+<p>The message says that the left-hand side of the assignment is invalid. <code>TRUE</code> is on the left-hand sign of the <code>&lt;-</code> operator.</p>
+<p><strong>Scalars</strong> can also be character strings, this means text. We can thus store text in an object like this:</p>
+<pre class="r"><code># Store text in an object, named text
+text &lt;- &quot;This is text, more specifically a character string&quot;</code></pre>
+<p>When asking R to return (or print) what is stored in the object <code>text</code> we will ge this in the console:</p>
+<pre class="r"><code>text</code></pre>
+<pre><code>## [1] &quot;This is text, more specifically a character string&quot;</code></pre>
+</div>
+<div id="vectors" class="section level4">
+<h4>Vectors</h4>
+<p>A <strong>vector</strong> is an object containing multiple entries of data, or multiple scalars. These can be of different types; <code>numeric</code>, <code>character</code> or <code>logical</code>. A vector can be created by storing data in an object using the <code>c()</code>function. The <code>c()</code> function <em>combines</em> data into a vector.</p>
+<pre class="r"><code>numeric_vector &lt;- c(1, 4, 6, 8) # A numeric vector
+logical_vector &lt;- c(TRUE, FALSE, TRUE, TRUE) # A logical vector
+character_vector &lt;- c(&quot;a&quot;, &quot;character&quot;, &quot;vector&quot;, &quot;!&quot;)</code></pre>
+<p>We can access specific parts of the vector by specifying the place in the vector. For example if we want to print the word “character” from the object <code>character_vector</code> we access it by <code>character_vector[2]</code></p>
+<pre class="r"><code># Access the second element of the vector
+character_vector[2]</code></pre>
+<pre><code>## [1] &quot;character&quot;</code></pre>
+<p>We can name the elements of the vector and access them by calling their names</p>
+<pre class="r"><code># Check the names (Should be NULL, nothing there)
+names(character_vector)</code></pre>
+<pre><code>## NULL</code></pre>
+<pre class="r"><code># Name the elements using another vector
+names(character_vector) &lt;- c(&quot;the first name&quot;, &quot;the second name&quot;, &quot;the third name&quot;, &quot;the fourth name&quot;)
+
+# Access the second element
+character_vector[&quot;the second name&quot;]</code></pre>
+<pre><code>## the second name 
+##     &quot;character&quot;</code></pre>
+<p>This is sometimes usefull, but more importantly, it shows how you can acces data from a vector.</p>
+<p>One of the nice things about the R language is the mathematical operations can be done on vectors. If we multiply the numeric vector with 2, all element of the vector will be multiplied with 2.</p>
+<pre class="r"><code>numeric_vector * 2</code></pre>
+<p>This command does the following:</p>
+<table>
+<thead>
+<tr class="header">
+<th align="right">vector</th>
+<th align="center">operator</th>
+<th align="left">value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1</td>
+<td align="center">*</td>
+<td align="left">2</td>
+</tr>
+<tr class="even">
+<td align="right">4</td>
+<td align="center">*</td>
+<td align="left">2</td>
+</tr>
+<tr class="odd">
+<td align="right">6</td>
+<td align="center">*</td>
+<td align="left">2</td>
+</tr>
+<tr class="even">
+<td align="right">8</td>
+<td align="center">*</td>
+<td align="left">2</td>
+</tr>
+</tbody>
+</table>
+<p>If the numeric vector is multiplied with another vector of the same length, the operation is done row-wise.</p>
+<pre class="r"><code>numeric_vector * c(2, 1, 2, 3)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="right">vector 1</th>
+<th align="center">operator</th>
+<th align="left">vector 2</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1</td>
+<td align="center">*</td>
+<td align="left">2</td>
+</tr>
+<tr class="even">
+<td align="right">4</td>
+<td align="center">*</td>
+<td align="left">1</td>
+</tr>
+<tr class="odd">
+<td align="right">6</td>
+<td align="center">*</td>
+<td align="left">2</td>
+</tr>
+<tr class="even">
+<td align="right">8</td>
+<td align="center">*</td>
+<td align="left">3</td>
+</tr>
+</tbody>
+</table>
+<p>Note that if vectors are not the same length (or a multiple of shorter object length), R will give you a warning.</p>
+<pre class="r"><code>numeric_vector * c(2, 1, 4)</code></pre>
+<pre><code>## Warning in numeric_vector * c(2, 1, 4): longer object length is not a
+## multiple of shorter object length</code></pre>
+<pre><code>## [1]  2  4 24 16</code></pre>
+<p>A vector of length 4 can be multiplied with a vector length 2 as the shorter vector can be used two times over the longer vector.</p>
+<p>Character vector can not be used in mathematical operations, try it out, what do the error message say? What does it mean?</p>
+<p>Logical vectors can be “coerced” to numeric vector. But why do we get the results below, how do R interet the logical vector?</p>
+<pre class="r"><code>numeric_vector * logical_vector</code></pre>
+<pre><code>## [1] 1 0 6 8</code></pre>
+</div>
+</div>
+<div id="data-frame" class="section level3">
+<h3>Data frame</h3>
+<p>We will work alot with data frames. These are tables of data with rows and columns. A data frame can be created using the <code>data.frame()</code></p>
+<pre class="r"><code># Create my data frame
+my_df &lt;- data.frame(Variable1 = c(1,2,3,4), Variable2 = c(5, 5, 5, 5), Variable3 = c(&quot;one&quot;, &quot;two&quot;, &quot;three&quot;, &quot;four&quot;))</code></pre>
+<p>The data frame can combine different types of data into one table. The data frame can be viewed in the console by calling it, we can also access different rows and columns by specifying it when calling it e.g. using the logic <code>my_df[row, column]</code></p>
+<pre class="r"><code># The whole data frame
+my_df</code></pre>
+<pre><code>##   Variable1 Variable2 Variable3
+## 1         1         5       one
+## 2         2         5       two
+## 3         3         5     three
+## 4         4         5      four</code></pre>
+<pre class="r"><code># The last row
+my_df[4, ]</code></pre>
+<pre><code>##   Variable1 Variable2 Variable3
+## 4         4         5      four</code></pre>
+<pre class="r"><code># The firts column
+my_df[,1]</code></pre>
+<pre><code>## [1] 1 2 3 4</code></pre>
+<pre class="r"><code># The first row, second column
+my_df[1,2]</code></pre>
+<pre><code>## [1] 5</code></pre>
+<p>We can also access and create new columns in a data frame by using the <code>$</code> operator. We can use variables in the data frame to create these new variables.</p>
+<pre class="r"><code>my_df$Variable4 &lt;- my_df$Variable1 + my_df$Variable2
+
+my_df</code></pre>
+<pre><code>##   Variable1 Variable2 Variable3 Variable4
+## 1         1         5       one         6
+## 2         2         5       two         7
+## 3         3         5     three         8
+## 4         4         5      four         9</code></pre>
+<p>Later we will learn different ways of manipulating data frames that will turn out to be a bit more convinient.</p>
+<div id="matrix" class="section level4">
+<h4>Matrix</h4>
+<p>A martrix is a type of table, similar to a data frame, but all element must be of the same type e.g. numeric.</p>
+</div>
+<div id="lists" class="section level4">
+<h4>Lists</h4>
+<p>Lists are objects containing other objects. We can combine objects in a list, this is sometimes usefull for storage of data. We can name the objects in the list when listing them or by using the <code>names()</code> function. This is nice, becauese we can access it by using the <code>$</code> operator.</p>
+<pre class="r"><code># Store objects in a list
+my_list &lt;- list(my.vector = numeric_vector, 
+             my.dataframe = my_df)
+
+
+my_list$my.vector</code></pre>
+<pre><code>## [1] 1 4 6 8</code></pre>
+</div>
+<div id="functions" class="section level4">
+<h4>Functions</h4>
+<p>R can store data and functions. Functions are usuallly used to take some input, do something and return an output. R contains alot of functions as this is the basis of how we work with data. There is no need to write functions, these are already written by others and can be used by you to analyze data or make figures. However, it can be useful to know how a function works.</p>
+<p>A quick look! We will create a function that calculates the mean of a vector. This function already exists, it is called by the <code>mean()</code> command.</p>
+<p>We can use our numeric vector and calculate its mean</p>
+<pre class="r"><code>mean(numeric_vector)</code></pre>
+<pre><code>## [1] 4.75</code></pre>
+<p>Lets create a function that does the same:</p>
+<pre class="r"><code># Define a name of the function and start the code block creating the function 
+# Inside function(), the arguments of the function is defined
+my_mean &lt;- function(data = data){  # The curly brackts tells R that this code is written over multiple lines (group statement)
+        
+        n &lt;- length(data) # Length is a function that gives the number of entries in a vector
+        
+        sum &lt;- sum(data) # Sum calculates the sum of a vector
+        
+        my_mean &lt;- sum/n # Sum over number of entries
+        
+        return(my_mean) # return is a function (used in functions) that tells R to print a specified value 
+        
+        }
+
+# See if it works
+my_mean(numeric_vector)</code></pre>
+<pre><code>## [1] 4.75</code></pre>
+<p>Our own function returns the same number as the built in function. Great success!</p>
+<p>All functions (included or self-made) are used in the same form as for example <code>mean()</code>, inside parentheses you write your <code>arguments</code> these can be data or “settings” for the function. You will be familiar with this way of working with functions.</p>
+</div>
+</div>
+<div id="packages" class="section level3">
+<h3>Packages</h3>
+<p>Functions are created with a specialized task. Functions are collected in <strong>packages</strong> made to do a series of tasks, usually within a specific area. In this course we will use different packages, for example <a href="https://dplyr.tidyverse.org/">dplyr</a>, <a href="https://tidyr.tidyverse.org/">tidyr</a> and <a href="https://ggplot2.tidyverse.org/">ggplot2</a>. These have to be installed through R/RStudio.</p>
+<p>To install a package, you use the <code>install.packages()</code> function. You only need to do this once.</p>
+<pre class="r"><code>install.packages(&quot;dplyr&quot;)</code></pre>
+<p>To use a package, you have to load it into your environment. Use the <code>library()</code> function to load a package.</p>
+<pre class="r"><code>library(&quot;dplyr&quot;)</code></pre>
+</div>
+</div>
+<div id="looking-for-help" class="section level2">
+<h2>Looking for help</h2>
+<p>In this course you will trained to do and communicate analyses of data. Often, an analysis require that you do stuff that you have never done before with software you have never used. This means that you need to develope your problem-solving skills. A good thing about using the R ecosystem is that there is a lot of help online. The key is to know what to look for!</p>
+<p>When you google a more general concept, like “importing data into R”, there are alot of websites with guides on how to do that. For example <a href="https://www.statmethods.net/input/importingdata.html">Quick-R</a> has really good step-by-step instructions.</p>
+<p>When you google a specific problem like “how do i interpret results from lm in r”, you will usually find results from StackExchange/Cross validate (<a href="https://stats.stackexchange.com/questions/59250/how-to-interpret-the-output-of-the-summary-method-for-an-lm-object-in-r">for example this</a>). These are forum posts answered by very knowledge people. Often multiple answers are given to forum questions, the best answer gets more attention so it is easy to find.</p>
+<p>There are many blogposts, websites and other resources that describe specific analyses. Learn how to read them and you will increase your chances of solving your analysis tasks.</p>
+<p>Inside R, you always have the R documentation. If you are interested in a specific function, for example <code>lm()</code>, type <code>?lm</code> in your console and you will access the help files.</p>
+</div>
+<div id="the-structure-of-a-script" class="section level2">
+<h2>The structure of a script</h2>
+<p>R scripts can be thought of as small programs. They are executed from top to bottom. This means that you need to structure them in a certain way.</p>
+<p>Start by loading any packages that you need for your analysis. Then you can define functions (this is a bit premature, we will cover it later). Then you write the code that does what you intend with the script and last you may save your results. The order is simply because you probably need the packages to be loaded to use functions from them. To save results you must first create them. It is a natural order.</p>
+<p>Be sure to comment what you do! If you use alot of comment it will be easier to catch up where you stopped last time.</p>
+<div class="figure">
+<img src="img/rstudio_newproject.png" alt="A new script" />
+<p class="caption">A new script</p>
+</div>
+<p>Start a new script trough the File menu. A simple script with lots of comments can look like this</p>
+<pre class="r"><code># My first script
+
+# Purpose: load some data and make a plot
+
+
+### Load packages
+library(dplyr) # needed for data manipulation
+library(ggplot2) # needed for making figures
+
+
+### Load data
+data(&quot;mtcars&quot;) # mtcars is a dataset that exists in R (for examples)
+
+fig &lt;- mtcars %&gt;%
+        mutate(car = rownames(.),
+               lpkm =  2.35214583 / mpg * 10) %&gt;%  # Converts miles per gallon to litre per 10 km 
+        ggplot(aes(hp, lpkm, label = car)) + geom_label() # plots horsepower against litre per 10 km 
+        
+
+ggsave(&quot;./output/figure1.png&quot;, plot = fig) # Saves figure in output</code></pre>
+<div id="resources" class="section level4">
+<h4>Resources</h4>
+<p>The above is not at all a complete introduction to data types, functions or usage. Below are some usefull resources to have at hand when you discover R:</p>
+<ul>
+<li><a href="https://www.statmethods.net/index.html">Quick R</a> contains several tutorials, including <a href="https://www.statmethods.net/input/datatypes.html">Data types</a> and <a href="https://www.statmethods.net/management/variables.html">creating new variables</a>.</li>
+<li><a href="https://learningstatisticswithr.com/book/">Learning statistics with R</a> Chapter 3 is a good introduction to R.</li>
+</ul>
+</div>
+</div>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>This is information from the R documentation, these can be accessed using the <code>?</code> symbol followed by a name of a function, e.g. <code>?logical</code> typed into the console<a href="#fnref1" class="footnote-back">↩</a></p></li>
+</ol>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,309 @@
+---
+title: "Exercises Week 1"
+---
+
+[Go to importing data](ex1_import.html)
+
+[Go to summarising data](ex1_summarise.html)
+
+[Go to making figures](ex1_figures.html)
+
+## Basic R operations, data frames, functions and packages
+
+  <script language="javascript"> 
+    function toggle(num) {
+      var ele = document.getElementById("toggleText" + num);
+      var text = document.getElementById("displayText" + num);
+      if(ele.style.display == "block") {
+        ele.style.display = "none";
+        text.innerHTML = "show";
+      }
+      else {
+        ele.style.display = "block";
+        text.innerHTML = "hide";
+      }
+   } 
+  </script>
+
+**Exercise 1.** Assign the numeric `3` to an object called `a`.
+
+  <a id="displayText" href="javascript:toggle(1);">Solution Ex. 1</a>
+  <div id="toggleText1" style="display: none">
+
+```{r, eval = FALSE}
+a <- 3
+```
+
+  </div>
+  </br>  
+  
+*Exercise 2.* What are the differences between these operations? 
+
+```{r, eval = FALSE}
+a <- 3
+```
+
+
+
+```{r, eval = FALSE}
+a = 3
+```
+
+
+```{r, eval = FALSE}
+3 -> a
+```
+
+
+```{r, eval = FALSE}
+3 = a
+```
+
+Try to explain your results.
+
+
+  <a id="displayText" href="javascript:toggle(2);">Solution Ex. 2</a>
+  <div id="toggleText2" style="display: none">
+<br> 
+
+Using the assign operator `<-` gives the direction of the assignment. This means that `a <- 3` is equivalent to `a = 3`. However the assign oerator `<-` can be reversed and thus gives the direction of assignment `->`. Using the equal sign as a assignment oeperator is restricted to one direction. 
+
+  </div>
+<br>  
+  
+  
+ 
+**Exercise 3**. Combine the numeric values 3, 5, 6, 7 in a vector.
+ 
+  <a id="displayText" href="javascript:toggle(3);">Solution Ex. 3</a>
+  <div id="toggleText3" style="display: none">
+
+```{r, eval = FALSE}
+
+my_vector <- c(3, 5, 6, 7)
+
+```
+
+  </div>
+ <br>
+ 
+**Exercise 4**. Print the second value from your vector.
+ 
+  <a id="displayText" href="javascript:toggle(4);">Solution Ex. 4</a>
+  <div id="toggleText4" style="display: none">
+
+```{r, eval = FALSE}
+
+my_vector[2]
+
+```
+
+  </div>
+ <br> 
+**Exercise 5**. Change the second value of your vector to 23.
+ 
+  <a id="displayText" href="javascript:toggle(5);">Solution Ex. 5</a>
+  <div id="toggleText5" style="display: none">
+
+```{r, eval = FALSE}
+
+my_vector[2] <- 23
+
+```
+
+  </div>
+<br>
+
+**Exercise 6**. A *parameter* can be regarded as a constant in a given situation but can take different values in other situations. The benefit of working with parameters is that we can use the name of the parameter to describe for example mathematical operations. 
+
+Write code that corresponds to the following equation:
+
+$$a = \frac{beta}{alpha}$$
+
+given that $beta = 3$ and $alpha = 6$.
+
+ 
+  <a id="displayText" href="javascript:toggle(6);">Solution Ex. 6</a>
+  <div id="toggleText6" style="display: none">
+
+```{r, eval = FALSE}
+
+beta <- 3
+alpha <- 6
+
+a <- beta/alpha
+
+```
+
+  </div>
+<br>
+
+
+**Exercise 7.** What is the problem with the following operation:
+
+```{r, eval = FALSE}
+vector_a <- c(3, 5, 2, 7, 9)
+
+vector_b <- c(3, 3)
+
+vector_a * vector_b
+```
+
+<br>
+And how is this correct?
+
+```{r, eval = FALSE}
+vector_c <- c(3, 5, 2, 7)
+
+vector_d <- c(3, 2)
+
+vector_c * vector_d
+```
+
+How do R calculate the second situation?
+
+  <a id="displayText" href="javascript:toggle(7);">Solution Ex. 7</a>
+  <div id="toggleText7" style="display: none">
+
+Read the warning meassage in from situation 1. What does that mean?
+
+  <a id="displayText" href="javascript:toggle(8);">Solution 7a</a>
+  <div id="toggleText8" style="display: none">
+  
+  Vector can only be multiplied if they have corresponding length or the longer object is a multiple of the shorter. In the second situation the shorter is a multiple of the longer object. The operations are $3*5,~ 2*5,~ 3*2,~ 2*7$.
+  
+
+  </div>
+  </div>
+<br>
+
+**Exercise 8**. A data frame is basically multiple vectors of data stacked in columns. Create a data frame by hand that corresponds to the table below.
+
+|ID   |Age  |Sex  |Performance |Body_mass|
+|-----|-----|-----|------------|---------|
+|id1  |24   |M    |250         |82       |
+|id2  |25   |F    |180         |65       |
+|id3  |22   |F    |187         |55       |
+|id4  |26   |F    |210         |59       |
+|id5  |25   |M    |205         |75       |
+|id6  |29   |M    |199         |89       |
+
+
+  <a id="displayText" href="javascript:toggle(9);">Solution 8</a>
+  <div id="toggleText9" style="display: none">
+  
+  A data frame can be created using the `data.frame()`-function, name the columns in the data frame and enter values using the `c()` function.
+  
+  <a id="displayText" href="javascript:toggle(10);">Solution 8</a>
+  <div id="toggleText10" style="display: none">
+  
+```{r, eval = FALSE}
+
+my_df <- data.frame(ID = c("id1", "id2", "id3", "id4", "id5", "id6"), 
+                    Age = c(24, 25, 22, 26, 25, 29), 
+                    Sex = c("M", "F", "F", "F", "M", "M"),
+                    Performance = c(250, 180, 187, 210, 205, 199), 
+                    Body_mass = c(82, 65, 55, 59, 75, 89))
+
+
+my_df
+
+```
+
+
+
+  </div>
+  </div>
+
+<br>
+
+Write code to:
+1. return the first row in the data frame
+2. create a new variable calculated as Performance per Body mass
+3. print the the new variable from the data frame
+
+  <a id="displayText" href="javascript:toggle(11);">Solution 9.1</a>
+  <div id="toggleText11" style="display: none">
+  
+```{r, eval = FALSE}
+
+my_df[1, ] # read as [row, column]
+
+```
+  
+  </div>
+<br>
+  
+  <a id="displayText" href="javascript:toggle(12);">Solution 9.2</a>
+  <div id="toggleText12" style="display: none">
+  
+```{r, eval = FALSE}
+
+my_df$p_bm <- my_df$Performance / my_df$Body_mass
+
+# An alternative is
+
+my_df$p_bm <- my_df[,4] / my_df[,5]
+
+```
+  
+  </div>
+<br>
+  
+  <a id="displayText" href="javascript:toggle(13);">Solution 9.3</a>
+  <div id="toggleText13" style="display: none">
+  
+```{r, eval = FALSE}
+
+my_df$p_bm
+
+```
+  
+  </div>
+<br>
+
+
+**Exercise 10**. We can use functions to calculate mean, standard deviation, minimum and so on. Calculate the mean and standard deviation of Performance and Body mass. Store the results in a new data frame.
+
+<br>
+  <a id="displayText" href="javascript:toggle(14);">Solution 10</a>
+  <div id="toggleText14" style="display: none">
+  
+```{r, eval = FALSE}
+
+data.frame(variable = c("Peromance", "Body_mass"), 
+           m = c(mean(my_df$Performance), mean(my_df$Body_mass)), 
+           s = c(sd(my_df$Performance), sd(my_df$Body_mass)))
+
+
+```
+  
+</div>
+<br>
+
+**Exercise 11**. We will be using several packages during the course. Install the follwing packages using the `install.package()` function:
+
+|Package     |
+|------------|
+|dplyr|
+|tidyr|
+|readxl|
+|ggplot2|
+
+
+<br>
+  <a id="displayText" href="javascript:toggle(15);">Solution 10</a>
+  <div id="toggleText15" style="display: none">
+
+```{r, eval = FALSE}
+
+install.packages(c("dplyr", "tidyr", "readxl", "ggplot2"))
+
+```
+
+  
+</div>
+<br>
+
+
+  
