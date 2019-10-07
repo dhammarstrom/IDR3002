@@ -21,7 +21,6 @@ navbar:
           
     - text: "Lessons"
       menu:
-        - text: "Data wrangling and plotting"
         - text: "Introduction to R"
           href: introduction_1.html
         - text: "Import data"
