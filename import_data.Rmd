@@ -8,11 +8,11 @@ title: "Importing data"
 
 ## Learning objectives
 
-Get familiar with importing data from 
+Get familiar with importing data from
+
 - Excel files
 - Flat files (.csv, .tsv)
 - And know about importing from other filetypes
-
 
 ## Data sets used in the course
 We will primarily use four data sets in the course. Below is a table of where they can be found and publications connected to the data. The data sets will be used for different purposes. 

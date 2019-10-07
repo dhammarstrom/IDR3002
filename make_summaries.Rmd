@@ -16,13 +16,14 @@ Chapter 9-15 in [R for data science](https://r4ds.had.co.nz/) are good for getti
 ## Learning objectives
 
 After the session, you should be able to answer:
+
 - What is a pipe?
 - What can these functions do?
-    - `mutate()`
-    - `select()`
-    - `filter()`
-    - `summarise()`
-    - `arrange()`
+    + `mutate()`
+    + `select()`
+    + `filter()`
+    + `summarise()`
+    + `arrange()`
 - What is tidy data
 - How does `pivot_longer()` and `pivot_wider()` work.
 
