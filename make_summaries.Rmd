@@ -7,6 +7,8 @@ This course is about getting to know *how to* communicate data. Data are everywh
 
 Skills in data analysis is seldom taught in programs outside data science or statistics. There are courses in statistics and report writing but students often struggle getting the data in to the computer and/or in the right form to do statistical tests before they can write the report. Here we address the parts between the raw data and the report.
 
+R has excellent capabilities for "data wrangling". This means that we can perform operations to import, clean and transform data to suit downstream analyses.  
+
 ## Resources
 
 Chapter 9-15 in [R for data science](https://r4ds.had.co.nz/) are good for getting more in depth. We will be using [tidyr](https://tidyr.tidyverse.org/) for create tidy data and [dplyr](https://dplyr.tidyverse.org/) to manipulate data and create summaries.
