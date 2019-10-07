@@ -1,8 +1,6 @@
 name: "IDR3002 Course notes"
 output_dir: "docs"
 exclude: ["notes/*", "lectures/*"]
-output:
-  html_document:
 navbar:
   title: "IDR3002 Course notes"
   type: inverse
