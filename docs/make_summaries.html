@@ -421,7 +421,7 @@ $(document).ready(function () {
 <li><code>mutate()</code></li>
 <li><code>select()</code></li>
 <li><code>filter()</code></li>
-<li><code>summarise()</code></li>
+<li><code>group_by()</code> and <code>summarise()</code></li>
 <li><code>arrange()</code></li>
 </ul></li>
 <li>What is tidy data</li>
@@ -432,38 +432,166 @@ $(document).ready(function () {
 <h2>Piping operations</h2>
 <p>In R we can use the <code>%&gt;%</code> pipe operator to do sequential tasks. This means operations that follow each other. the pipe operator works with packages like <code>dplyr</code> and <code>tidyr</code>. The packages are designed to make it easier to work and transform data from “raw” form to a form that is suitable for statistical modeling and visualizations.</p>
 <p>To load <code>dplyr</code> and <code>tidyr</code> into our R session we can use the package <code>tidyverse</code>, in addition to <code>dplyr</code> and <code>tidyr</code>it contains packages for reading data and visualize them.</p>
-<pre class="r"><code>library(tidyverse)</code></pre>
+<pre class="r"><code>library(tidyverse)
+library(readxl)</code></pre>
 <p>When creating a data pipe with <code>%&gt;%</code> we send the results from one function to the first argument of the next function.</p>
 <p><code>function_1(data) %&gt;% function_2(data_transformed) %&gt;% function_2(data_transformed2)</code></p>
 <p>In the pipe above, each function does something with the data. The result from each function gets passed on to the next function. In this way we can read the pipe operator as <em>then do this</em>.</p>
 <p>As an example, the cycling data set</p>
 <pre class="r"><code>cyclingStudy &lt;- read_excel(&quot;./notes/data/cyclingStudy.xlsx&quot;, na = &quot;NA&quot;) # remember to use the na argument</code></pre>
-<p>The above code loads the data into the environment. Let’s say that we want to calculate the squat jump height (<code>sj.max</code>) per kilo gram of body mass (<code>weight.T1</code>). We could describe this operation as <em>take the cycling data set</em> <strong>then do</strong> <em>divide squat jump height with body mass</em> <strong>then do</strong> <em>select the important variables</em> <strong>then do</strong> <em>show the results</em>.</p>
+<p>The above code loads the data into the environment. Let’s say that we want to calculate the squat jump height (<code>sj.max</code>) per kilo gram of body mass (<code>weight.T1</code>). We could describe this operation as</p>
+<ul>
+<li><em>take the cycling data set</em> <strong>then do</strong></li>
+<li><em>divide squat jump height with body mass</em> <strong>then do</strong></li>
+<li><em>select the important variables</em> <strong>then do</strong></li>
+<li><em>show the results</em>.</li>
+</ul>
 <p>In code it would look like this.</p>
 <pre class="r"><code>cyclingStudy %&gt;%
         mutate(sqj.bm = sj.max / weight.T1) %&gt;%
         select(subject, group, timepoint, sqj.bm) %&gt;%
         print()</code></pre>
-<p>The new variable has a funny name but stands for squat jump per body mass, the mutate function is used to create new function. The select function is used to select columns in the data frame. The print function prints the results of a pipe.</p>
-<p>To have a function that works with pipes, it must have a <code>data</code> argument. The pipe puts the data as the first argument in the following function. If a function has a data argument, but it is not the first argument, you can just <code>.</code>period to point it where the data should go.</p>
+<p>The new variable has a funny name but stands for squat jump per body mass, the mutate function is used to create a new variable. The select function is used to select columns in the data frame. The print function prints the results of a pipe.</p>
+<p>The pipe puts the data or argument as the first argument in the following function. If the sequent function has another place for the argument/data but it is not the first argument, you can just <code>.</code> (period) as a place holder to point it where the data/argument should go.</p>
 <p>This is e.g. the case when creating a linear model (we will do this later).</p>
 <p>Now we have tried <code>mutate()</code> and <code>select()</code>. Let’s look into <code>filter()</code>.</p>
-<p>Filtering is good when you only want to select a few rows of a data frame corresponding to specific criteria. The cycling data set</p>
-<pre class="r"><code>library(dplyr); library(tidyr); library(readxl)
+<p>Filtering is good when you only want to select a few rows of a data frame corresponding to specific criteria. The cycling data set consists of several time-points. We can see what values the <code>timepoint</code> variable can take using the following code:</p>
+<pre class="r"><code>cyclingStudy %&gt;%
+    distinct(timepoint) %&gt;%
+    print()</code></pre>
+<p>The distinct function returns unique entries of a variable. Read more about it <code>?distinct</code>.</p>
+<p>We now have information on what values the <code>timepoint</code> variable can take. The study is performed with testing after three meso-cycles. Each meso-cycle was four weeks. If we are interested in data only from the pre-training tests, the <code>timepoint</code> should be <code>pre</code>.</p>
+<p>To accomplish thid we have to tell R to look for entries that match our criteria exactly.</p>
+<pre class="r"><code>cyclingStudy %&gt;%
+    filter(timepoint == &quot;pre&quot;) %&gt;%
+    print()</code></pre>
+<p>Looking at the output will reveal that the tibble contains 20 rows and 101 columns. This is what we want, we hav filtered based on <code>timepoint == "pre"</code>. Notice that we are using double equal signs here as the single equal sign is a assign operator. The double equal sign is used for testing equality.</p>
+<p>If two entities are equal it is <code>TRUE</code> otherwise it is <code>FALSE</code>.</p>
+<p>We can test this in code.</p>
+<pre class="r"><code>2 == 2 # should be TRUE
 
-cyclingStudy &lt;- read_excel(&quot;./data/cyclingStudy.xlsx&quot;, na = &quot;NA&quot;)
+&quot;pre&quot; == &quot;meso2&quot; # Should be false
 
+&quot;pre&quot; == &quot;pre&quot;</code></pre>
+<p>So, under the hood the filtering function tests equality and returns rows that are <code>TRUE</code></p>
+<p>In R we can inverse equality testing by putting a <code>!</code> before a statement. We can also use the <code>!=</code> wich means not equal to. Below we are using this logic in two ways.</p>
+<pre class="r"><code>!(&quot;pre&quot; == &quot;pre&quot;)
 
-cycling_wide &lt;- cyclingStudy %&gt;%
-        select(subject, timepoint, sj.max) %&gt;%
-        pivot_wider(names_from = timepoint, values_from = sj.max) %&gt;%
-        print()
+&quot;pre&quot; != &quot;pre&quot;</code></pre>
+<p>If we want to filter out only the pre test and keep every other test we can use</p>
+<pre class="r"><code>cyclingStudy %&gt;%
+    filter(timepoint != &quot;pre&quot;) %&gt;%
+    print()</code></pre>
+<p>This will give us a data frame with 60 rows.</p>
+<p>If we want to filter to keep two timpoints, say pre and meso1 we need to do it a bit different.</p>
+<pre class="r"><code>cyclingStudy %&gt;%
+    filter(timepoint %in% c(&quot;pre&quot;, &quot;meso1&quot;)) %&gt;%
+    print()</code></pre>
+<p>The <code>timepoint %in% c("pre", "meso1")</code> can be read filter out observations that are in the vector <code>c("pre", "meso1")</code>. Using the equality sign <code>==</code> does not work as no observation is exactly <code>c("pre", "meso1")</code>. Meaning that we get more than one answer from such test. Test for your self:</p>
+<pre class="r"><code>&quot;pre&quot; == c(&quot;pre&quot;, &quot;meso1&quot;)
 
-
-
-cycling_wide %&gt;%
-        pivot_longer(cols = pre:meso3, names_to = &quot;timepoint&quot;, values_to = &quot;sj.max&quot;) %&gt;%
-        print()</code></pre>
+&quot;pre&quot; %in% c(&quot;pre&quot;, &quot;meso1&quot;)</code></pre>
+<p>The filter function can also be used to filter based on numeric variables. Let’s say that we want to see rows corresponding to values of squat jump height higher than 30 units.</p>
+<pre class="r"><code>cyclingStudy %&gt;%
+    filter(sj.max &gt; 30) %&gt;%
+    print()</code></pre>
+<p>This should produce a data frame (tibble) with 41 rows.</p>
+<p>We can use multiple arguments in filter. For example squat jump &gt; 30 and time point eqaul to “pre”.</p>
+<pre class="r"><code>cyclingStudy %&gt;%
+    filter(timepoint == &quot;pre&quot;, sj.max &gt; 30) %&gt;%
+    print()</code></pre>
+<p>Did you get 13 rows?</p>
+<p>A data frame can be arranged based on values of a variable. This may be useful when we want to get an overview of the data. Let’s use the <code>sj.max</code> variable again.</p>
+<pre class="r"><code>cyclingStudy %&gt;%
+    arrange(sj.max) %&gt;%
+    print()</code></pre>
+<p>Compare the results of the above to below.</p>
+<pre class="r"><code>cyclingStudy %&gt;%
+    arrange(desc(sj.max)) %&gt;%
+    print()</code></pre>
+</div>
+<div id="group-by" class="section level2">
+<h2>Group by</h2>
+<p>A real super-pwer in the dplyr package is the capabilities to group data by and the summarise. Often we want to know the mean or standard deviation of variables. But we are also interested in doing this within “groups”. The <code>group_by</code> fnction tells R that operations should be done per specified groupings.</p>
+<p>We want to know the mean squat jump per time-point in the cycling data set. We will combine <code>group_by</code> with <code>summarise</code>.</p>
+<pre class="r"><code>cyclingStudy %&gt;%
+    group_by(timepoint) %&gt;%
+    summarise(m = mean(sj.max)) %&gt;%
+    print()</code></pre>
+<p>Notice that the results from the above will return a smaller data frame with two variables. <code>timepoint</code> and <code>m</code>which in this case is short for “mean”.</p>
+<p>Notice also that we get some NA (not available). This is because we tried to calculate the mean on a vector with missing values (NA). The <code>mean()</code> function has the capabilities to exclude NAs.</p>
+<pre class="r"><code>mean(c(2, 3, 4, NA, 30)) # Gives NA</code></pre>
+<pre><code>## [1] NA</code></pre>
+<pre class="r"><code>mean(c(2, 3, 4, NA, 30), na.rm = TRUE) # Gives a mean</code></pre>
+<pre><code>## [1] 9.75</code></pre>
+<p><code>na.rm = TRUE</code> means taht we don’t want to include NAs in the calculation. We will get the mean of values, not including the missing data.</p>
+<pre class="r"><code>cyclingStudy %&gt;%
+    group_by(timepoint) %&gt;%
+    summarise(m = mean(sj.max, na.rm = TRUE)) %&gt;%
+    print()</code></pre>
+<p>A grouping can contain multiple variables that can form groupings. Let’s say that we want to extend our analysis to time-point and group. We also want to include the standard deviation.</p>
+<pre class="r"><code>cyclingStudy %&gt;%
+    group_by(timepoint, group) %&gt;%
+    summarise(m = mean(sj.max, na.rm = TRUE), 
+              s = sd(sj.max, na.rm = TRUE)) %&gt;%
+    print()</code></pre>
+<p>Group by can also be used with the mutate function. Let’s say that we want to calculate the squat jump height as a percentage of the time-point specific mean.</p>
+<p><span class="math display">\[Squat~jump~\%~of~mean_t = \frac{Squat~jump}{mean_t} * 100\]</span></p>
+<pre class="r"><code>cyclingStudy %&gt;%
+    group_by(timepoint) %&gt;%
+    mutate(sqjmp = (sj.max / mean(sj.max, na.rm = TRUE)) * 100) %&gt;%
+    select(subject, timepoint, sj.max, sqjmp) %&gt;%
+    print()</code></pre>
+</div>
+<div id="pivot-longer-and-wider" class="section level2">
+<h2>Pivot longer and wider</h2>
+<p>Data is not always in tidy form, meaning that we don’t have one observation per row and one variable per column. The cycling data set contains such a situation as several lactate measurements are gathered in the same time-point. If we want to model lactate threshold, this is a problem.</p>
+<p>Let’s first select variables that we may use to do lacatate analysis. In the cycling data set lactate measurement were collected in a submaximal test from 125 to 375 watts.</p>
+<pre class="r"><code>cyclingStudy %&gt;%
+    select(subject, timepoint, lac.125:lac.375) %&gt;%
+    print()</code></pre>
+<p>The select function selects <code>subject</code>, <code>timepoint</code> and columns <code>lac.125</code> to <code>lac.375</code>.</p>
+<p>The above code does not produce a tidy data set (each observation a row, each column a variable, each cell a value). The data set can be said to be in wide format, a variable (watt) is spread over multiple columns. We can use the function <code>pivot_longer()</code> to get the data into long form.</p>
+<p>The pivot longer takes three important arguments (togehter with several others). <code>names_to</code> specifies the name of the column that gets all the previous column names (think if it as column names to). <code>values_to</code> specifies the column name where we get the values. The <code>cols</code> argument specifies what columns to use in the operation.</p>
+<pre class="r"><code>cyclingStudy %&gt;%
+    select(subject, timepoint, lac.125:lac.375) %&gt;%
+    pivot_longer(names_to = &quot;watt&quot;, values_to = &quot;lactate&quot;, cols = lac.125:lac.375) %&gt;%
+    print()</code></pre>
+<p>Notice that the <code>watt</code> column has the exact names of the previous columns. We can remove the prefix by using the <code>names_prefix</code> argument.</p>
+<pre class="r"><code>cyclingStudy %&gt;%
+    select(subject, timepoint, lac.125:lac.375) %&gt;%
+    pivot_longer(names_to = &quot;watt&quot;, 
+                 values_to = &quot;lactate&quot;, 
+                 cols = lac.125:lac.375, 
+                 names_prefix = &quot;lac.&quot;) %&gt;%
+    print()</code></pre>
+<p>Using <code>names_prefix = "lac."</code> removes “lac.” from all values. Notice that the variable is still a character variable.</p>
+<p>We can use <code>names_ptypes</code> to tell R that the new column should be a integer value.</p>
+<pre class="r"><code>cyclingStudy %&gt;%
+    select(subject, timepoint, lac.125:lac.375) %&gt;%
+    pivot_longer(names_to = &quot;watt&quot;, 
+                 values_to = &quot;lactate&quot;, 
+                 cols = lac.125:lac.375, 
+                 names_prefix = &quot;lac.&quot;, 
+                 names_ptypes = list(watt = numeric())) %&gt;%
+    print()</code></pre>
+<p>This is a bit non-intuitive. <code>names_ptypes</code> takes a list that needs a variable that in turn can be defined.</p>
+<p>We now have a tidy data set that can be used for modeling/visualizations.</p>
+<div id="pivot-wider" class="section level3">
+<h3>Pivot wider</h3>
+<p>Sometimes it is convenient to be able to make a data set wide. Even though other solutions exists we might want to calculate the percentage change in a variable. Let’s say <code>sj.max</code> is to be transformed to percentages of the pre-value. Let’s select the needed variables.</p>
+<pre class="r"><code>cyclingStudy %&gt;%
+    select(subject, timepoint, sj.max) %&gt;%
+    print()</code></pre>
+<p><code>pivot_wider</code> creates the opposite situation from <code>pivot_longer</code>. Similarly, <code>names_from</code> and <code>values_from</code> specifies what columns should be used to make the data set wide.</p>
+<pre class="r"><code>cyclingStudy %&gt;%
+    select(subject, timepoint, sj.max) %&gt;%
+    pivot_wider(names_from = timepoint, values_from = sj.max) %&gt;%
+    print()</code></pre>
+<p>There are several more arguments not needed in the simple case. Look at <code>?pivot_wider</code> and <code>vignette("pivot")</code> for more.</p>
+<p>cycling_wide &lt;- cyclingStudy %&gt;% select(subject, timepoint, sj.max) %&gt;% pivot_wider(names_from = timepoint, values_from = sj.max) %&gt;% print()</p>
+<p>cycling_wide %&gt;% pivot_longer(cols = pre:meso3, names_to = “timepoint”, values_to = “sj.max”) %&gt;% print()</p>
+</div>
 </div>
 
 

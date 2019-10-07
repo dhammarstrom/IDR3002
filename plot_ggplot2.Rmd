@@ -1,0 +1,58 @@
+---
+title: "Making figures"
+---
+
+## Introduction
+Another super-power of R is its capabilities to create great figures. We will use [ggplot2](https://ggplot2.tidyverse.org/) but R has more plotting systems of winch base R ([see this tutorial](https://rstudio-pubs-static.s3.amazonaws.com/84527_6b8334fd3d9348579681b24d156e7e9d.html), or [this](http://www.sthda.com/english/wiki/r-base-graphs) and [lattice](https://www.statmethods.net/advgraphs/trellis.html) are the most well described and often used. The choice of using ggplot2 is that it is most intuitive and works well with the [tidyverse](https://www.tidyverse.org/).
+
+## Resources
+There are several good resources aimed at ggplot2: 
+
+- [Chapter 4 in R for data science](https://r4ds.had.co.nz/data-visualisation.html)
+- [The ggplot2 book](https://ggplot2-book.org/)
+- [The ggplot2 cheatsheet](https://github.com/rstudio/cheatsheets/raw/master/data-visualization-2.1.pdf)
+
+## Learning objectives
+
+After this session, you should be able to answer:
+
+- What are geoms?
+- What is mapping data to aesthetics?
+- What are theme components?
+
+## The `ggplot2` system
+When using the ggplot2 system we can think of the resulting graph as containing data that has been mapped to different shapes, coordinates, colors and sizes. We are using geometric representations to display the data. 
+
+We map data using the `aes()` function inside the `ggplot()` function. Different geometric representations is added to the plot these are called geoms `geom_point()` is commonly used.
+
+Differently from piping we add objects together with the `+` sign. 
+
+The following is a short introduction. 
+
+## Building a figure
+
+```{r, message = FALSE, warning=FALSE}
+library(tidyverse)
+```
+
+We will use the cycling data set in this tutorial. Let's first plot squat jump performance. We might be interested in the development over time. The ggplot function can be used in the end of a pipe.
+
+```{r, eval = FALSE}
+
+cyclingStudy <- read_excel("./data/cyclingStudy.xlsx", na = "NA") 
+
+cyclingStudy %>%
+        select(subject, timepoint, group, sj.max) %>%
+        ggplot(aes(x = timepoint, y = sj.max))
+
+```
+
+The above code gives a plot without geometric representations.
+
+
+
+
+
+
+
+

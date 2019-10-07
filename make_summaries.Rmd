@@ -22,7 +22,7 @@ After the session, you should be able to answer:
     + `mutate()`
     + `select()`
     + `filter()`
-    + `summarise()`
+    + `group_by()` and `summarise()`
     + `arrange()`
 - What is tidy data
 - How does `pivot_longer()` and `pivot_wider()` work.
@@ -32,8 +32,9 @@ In R we can use the `%>%` pipe operator to do sequential tasks. This means opera
 
 To load `dplyr` and `tidyr` into our R session we can use the package `tidyverse`, in addition to `dplyr` and `tidyr`it contains packages for reading data and visualize them. 
 
-```{r, message = FALSE, warning = FALSE, eval = FALSE}
+```{r, message = FALSE, warning = FALSE}
 library(tidyverse)
+library(readxl)
 ```
 
 When creating a data pipe with `%>%` we send the results from one function to the first argument of the next function.
@@ -48,7 +49,16 @@ As an example, the cycling data set
 cyclingStudy <- read_excel("./notes/data/cyclingStudy.xlsx", na = "NA") # remember to use the na argument
 ```
 
-The above code loads the data into the environment. Let's say that we want to calculate the squat jump height (`sj.max`) per kilo gram of body mass (`weight.T1`). We could describe this operation as *take the cycling data set* **then do** *divide squat jump height with body mass* **then do** *select the important variables* **then do** *show the results*.
+```{r, include= FALSE} 
+cyclingStudy <- read_excel("./notes/data/cyclingStudy.xlsx", na = "NA") # remember to use the na argument
+```
+
+The above code loads the data into the environment. Let's say that we want to calculate the squat jump height (`sj.max`) per kilo gram of body mass (`weight.T1`). We could describe this operation as
+
+- *take the cycling data set* **then do** 
+- *divide squat jump height with body mass* **then do** 
+- *select the important variables* **then do** 
+- *show the results*.
 
 In code it would look like this.
 
@@ -59,22 +69,252 @@ cyclingStudy %>%
         print()
 ```
 
-The new variable has a funny name but stands for squat jump per body mass, the mutate function is used to create new function. The select function is used to select columns in the data frame. The print function prints the results of a pipe. 
+The new variable has a funny name but stands for squat jump per body mass, the mutate function is used to create a new variable. The select function is used to select columns in the data frame. The print function prints the results of a pipe. 
 
-To have a function that works with pipes, it must have a `data` argument. The pipe puts the data as the first argument in the following function. If a function has a data argument, but it is not the first argument, you can just `.`period to point it where the data should go.
+The pipe puts the data or argument as the first argument in the following function. If the sequent function has another place for the argument/data but it is not the first argument, you can just `.` (period) as a place holder to point it where the data/argument should go.
 
 This is e.g. the case when creating a linear model (we will do this later).
 
 Now we have tried `mutate()` and `select()`. Let's look into `filter()`.
 
-Filtering is good when you only want to select a few rows of a data frame corresponding to specific criteria. The cycling data set 
+Filtering is good when you only want to select a few rows of a data frame corresponding to specific criteria. The cycling data set consists of several time-points. We can see what values the `timepoint` variable can take using the following code:
+
+```{r eval = FALSE}
+cyclingStudy %>%
+    distinct(timepoint) %>%
+    print()
+```
+
+The distinct function returns unique entries of a variable. Read more about it `?distinct`.
+
+We now have information on what values the `timepoint` variable can take. The study is performed with testing after three meso-cycles. Each meso-cycle was four weeks. If we are interested in data only from the pre-training tests, the `timepoint` should be `pre`.
+
+To accomplish thid we have to tell R to look for entries that match our criteria exactly. 
 
 
 ```{r, eval = FALSE}
+cyclingStudy %>%
+    filter(timepoint == "pre") %>%
+    print()
+```
 
-library(dplyr); library(tidyr); library(readxl)
+Looking at the output will reveal that the tibble contains 20 rows and 101 columns. This is what we want, we hav filtered based on `timepoint == "pre"`. Notice that we are using double equal signs here as the single equal sign is a assign operator. The double equal sign is used for testing equality. 
 
-cyclingStudy <- read_excel("./data/cyclingStudy.xlsx", na = "NA")
+If two entities are equal it is `TRUE` otherwise it is `FALSE`.
+
+We can test this in code.
+
+```{r, eval = FALSE}
+2 == 2 # should be TRUE
+
+"pre" == "meso2" # Should be false
+
+"pre" == "pre"
+```
+
+So, under the hood the filtering function tests equality and returns rows that are `TRUE`
+
+In R we can inverse equality testing by putting a `!` before a statement. We can also use the `!=` wich means not equal to. Below we are using this logic in two ways.
+
+```{r, eval = FALSE}
+!("pre" == "pre")
+
+"pre" != "pre"
+``` 
+
+If we want to filter out only the pre test and keep every other test we can use 
+
+```{r, eval = FALSE}
+cyclingStudy %>%
+    filter(timepoint != "pre") %>%
+    print()
+```
+
+This will give us a data frame with 60 rows. 
+
+If we want to filter to keep two timpoints, say pre and meso1 we need to do it a bit different.
+
+```{r, eval = FALSE}
+cyclingStudy %>%
+    filter(timepoint %in% c("pre", "meso1")) %>%
+    print()
+```
+
+The `timepoint %in% c("pre", "meso1")` can be read filter out observations that are in the vector `c("pre", "meso1")`. Using the equality sign `==` does not work as no observation is exactly `c("pre", "meso1")`. Meaning that we get more than one answer from such test. Test for your self:
+
+```{r, eval = FALSE}
+"pre" == c("pre", "meso1")
+
+"pre" %in% c("pre", "meso1")
+```
+
+The filter function can also be used to filter based on numeric variables. Let's say that we want to see rows corresponding to values of squat jump height higher than 30 units.
+
+```{r, eval = FALSE}
+cyclingStudy %>%
+    filter(sj.max > 30) %>%
+    print()
+```
+
+This should produce a data frame (tibble) with 41 rows.
+
+We can use multiple arguments in filter. For example squat jump > 30 and time point eqaul to "pre".
+
+```{r, eval = FALSE}
+cyclingStudy %>%
+    filter(timepoint == "pre", sj.max > 30) %>%
+    print()
+```
+
+Did you get 13 rows?
+
+A data frame can be arranged based on values of a variable. This may be useful when we want to get an overview of the data. Let's use the `sj.max` variable again.
+
+```{r, eval = FALSE}
+cyclingStudy %>%
+    arrange(sj.max) %>%
+    print()
+```
+
+Compare the results of the above to below. 
+
+```{r, eval = FALSE}
+cyclingStudy %>%
+    arrange(desc(sj.max)) %>%
+    print()
+```
+
+## Group by
+A real super-pwer in the dplyr package is the capabilities to group data by and the summarise. Often we want to know the mean or standard deviation of variables. But we are also interested in doing this within "groups". 
+The `group_by` fnction tells R that operations should be done per specified groupings.
+
+We want to know the mean squat jump per time-point in the cycling data set. We will combine `group_by` with `summarise`.
+
+```{r, eval = FALSE}
+cyclingStudy %>%
+    group_by(timepoint) %>%
+    summarise(m = mean(sj.max)) %>%
+    print()
+```
+
+Notice that the results from the above will return a smaller data frame with two variables. `timepoint` and `m`which in this case is short for "mean". 
+
+Notice also that we get some NA (not available). This is because we tried to calculate the mean on a vector with missing values (NA). The `mean()` function has the capabilities to exclude NAs.
+
+```{r}
+mean(c(2, 3, 4, NA, 30)) # Gives NA
+
+mean(c(2, 3, 4, NA, 30), na.rm = TRUE) # Gives a mean
+```
+
+`na.rm = TRUE` means taht we don't want to include NAs in the calculation. We will get the mean of values, not including the missing data.
+
+```{r, eval = FALSE}
+cyclingStudy %>%
+    group_by(timepoint) %>%
+    summarise(m = mean(sj.max, na.rm = TRUE)) %>%
+    print()
+```
+
+A grouping can contain multiple variables that can form groupings. Let's say that we want to extend our analysis to time-point and group. We also want to include the standard deviation.
+
+```{r, eval = FALSE}
+cyclingStudy %>%
+    group_by(timepoint, group) %>%
+    summarise(m = mean(sj.max, na.rm = TRUE), 
+              s = sd(sj.max, na.rm = TRUE)) %>%
+    print()
+```
+
+Group by can also be used with the mutate function. Let's say that we want to calculate the squat jump height as a percentage of the time-point specific mean.
+
+$$Squat~jump~\%~of~mean_t = \frac{Squat~jump}{mean_t} * 100$$
+
+```{r, eval = FALSE}
+cyclingStudy %>%
+    group_by(timepoint) %>%
+    mutate(sqjmp = (sj.max / mean(sj.max, na.rm = TRUE)) * 100) %>%
+    select(subject, timepoint, sj.max, sqjmp) %>%
+    print()
+```
+
+## Pivot longer and wider
+
+Data is not always in tidy form, meaning that we don't have one observation per row and one variable per column. The cycling data set contains such a situation as several lactate measurements are gathered in the same time-point. If we want to model lactate threshold, this is a problem.
+
+Let's first select variables that we may use to do lacatate analysis. In the cycling data set lactate measurement were collected in a submaximal test from 125 to 375 watts. 
+
+```{r, eval = FALSE}
+cyclingStudy %>%
+    select(subject, timepoint, lac.125:lac.375) %>%
+    print()
+```
+
+The select function selects `subject`, `timepoint` and columns `lac.125` to `lac.375`.
+
+The above code does not produce a tidy data set (each observation a row, each column a variable, each cell a value). The data set can be said to be in wide format, a variable (watt) is spread over multiple columns. We can use the function `pivot_longer()` to get the data into long form.
+
+The pivot longer takes three important arguments (togehter with several others). `names_to` specifies the name of the column that gets all the previous column names (think if it as column names to). `values_to` specifies the column name where we get the values. The `cols` argument specifies what columns to use in the operation.
+
+```{r, eval = FALSE}
+cyclingStudy %>%
+    select(subject, timepoint, lac.125:lac.375) %>%
+    pivot_longer(names_to = "watt", values_to = "lactate", cols = lac.125:lac.375) %>%
+    print()
+```
+
+Notice that the `watt` column has the exact names of the previous columns. We can remove the prefix by using the `names_prefix` argument. 
+
+```{r, eval = FALSE}
+cyclingStudy %>%
+    select(subject, timepoint, lac.125:lac.375) %>%
+    pivot_longer(names_to = "watt", 
+                 values_to = "lactate", 
+                 cols = lac.125:lac.375, 
+                 names_prefix = "lac.") %>%
+    print()
+```
+
+Using `names_prefix = "lac."` removes "lac." from all values. Notice that the variable is still a character variable.
+
+We can use `names_ptypes` to tell R that the new column should be a integer value.
+
+
+```{r, eval = FALSE}
+cyclingStudy %>%
+    select(subject, timepoint, lac.125:lac.375) %>%
+    pivot_longer(names_to = "watt", 
+                 values_to = "lactate", 
+                 cols = lac.125:lac.375, 
+                 names_prefix = "lac.", 
+                 names_ptypes = list(watt = numeric())) %>%
+    print()
+```
+
+This is a bit non-intuitive. `names_ptypes` takes a list that needs a variable that in turn can be defined.  
+
+We now have a tidy data set that can be used for modeling/visualizations.
+
+### Pivot wider
+
+Sometimes it is convenient to be able to make a data set wide. Even though other solutions exists we might want to calculate the percentage change in a variable. Let's say `sj.max` is to be transformed to percentages of the pre-value. Let's select the needed variables.
+
+```{r, eval = FALSE}
+cyclingStudy %>%
+    select(subject, timepoint, sj.max) %>%
+    print()
+```
+
+`pivot_wider` creates the opposite situation from `pivot_longer`. Similarly, `names_from` and `values_from` specifies what columns should be used to make the data set wide.
+
+```{r, eval = FALSE}
+cyclingStudy %>%
+    select(subject, timepoint, sj.max) %>%
+    pivot_wider(names_from = timepoint, values_from = sj.max) %>%
+    print()
+```
+
+There are several more arguments not needed in the simple case. Look at `?pivot_wider` and `vignette("pivot")` for more.
 
 
 cycling_wide <- cyclingStudy %>%
@@ -88,5 +328,5 @@ cycling_wide %>%
         pivot_longer(cols = pre:meso3, names_to = "timepoint", values_to = "sj.max") %>%
         print()
 
-```
+
 

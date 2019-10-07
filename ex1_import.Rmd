@@ -40,7 +40,7 @@ Using `read_excel()`, how would you import the file `cyclingStudy.xlsx` into you
 library(readxl)
 
 # Store the data set as an object in the environment
-cyclingStudy <- read_excel("./notes/data/cyclingStudy.xlsx")
+cyclingStudy <- read_excel("./data/cyclingStudy.xlsx")
 
 
 # look at the data
@@ -71,7 +71,7 @@ The import function does not treat "NA" as missing values. The `read_excel()` fu
 library(readxl)
 
 # Store the data set as an object in the environment
-cyclingStudy <- read_excel("./notes/data/cyclingStudy.xlsx", na = "NA")
+cyclingStudy <- read_excel("./data/cyclingStudy.xlsx", na = "NA")
 
 
 # look at the data
