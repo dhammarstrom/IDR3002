@@ -21,11 +21,11 @@ After this session, you should be able to answer:
 - What are theme components?
 
 ## The `ggplot2` system
-When using the ggplot2 system we can think of the resulting graph as containing data that has been mapped to different shapes, coordinates, colors and sizes. We are using geometric representations to display the data. 
+When using the ggplot2 system we can think of the resulting graph as containing data that has been *mapped* to different shapes, coordinates, colors and sizes. We are using geometric representations to display the data. 
 
 We map data using the `aes()` function inside the `ggplot()` function. Different geometric representations is added to the plot these are called geoms `geom_point()` is commonly used.
 
-Differently from piping we add objects together with the `+` sign. 
+Differently from piping, we add objects together with the `+` sign. 
 
 The following is a short introduction. 
 
@@ -33,6 +33,7 @@ The following is a short introduction.
 
 ```{r, message = FALSE, warning=FALSE}
 library(tidyverse)
+library(readxl)
 ```
 
 We will use the cycling data set in this tutorial. Let's first plot squat jump performance. We might be interested in the development over time. The ggplot function can be used in the end of a pipe.
@@ -47,7 +48,317 @@ cyclingStudy %>%
 
 ```
 
-The above code gives a plot without geometric representations.
+The above code gives a plot without geometric representations. The x- and y-axis has values corresponding to the range of values in the data. We can add a geometric representation by adding a geom. Let's try `geom_point()`.
+
+```{r, eval = FALSE}
+
+cyclingStudy %>%
+        select(subject, timepoint, group, sj.max) %>%
+        ggplot(aes(x = timepoint, y = sj.max)) + geom_point()
+
+```
+
+The addition of this geom maps the data to points on the graph. Each point represents an observation. There are several problems with this graph, these problems can be thought of as problems due to the fact that we have not formatted the data well and that we have not formatted the graph well.
+
+Most changes can be made in ggplot, but some are more easily understood if we change the data first. 
+
+### Formatting factor variables
+The time-point variable is interpreted as a factor variable (read more about factors in [R for data science, Chapter 15](https://r4ds.had.co.nz/factors.html)). Factor variables are categorical variables that can be ordered and labelled. This is convenient when making a graph. By modifying the factor variable we can change the way ggplot2 creates the graph, and control what each level of the `timepoint` variable should be called.
+
+Let's say that instead of `meso1`, `meso2`, `meso3` and `pre` we want the graph to read "Pre-training", "Period 1", "Period 2" and "Period 3". We can change this by mutating the `timepoint` variable before the graph.
+
+```{r, eval = FALSE}
+
+cyclingStudy %>%
+        select(subject, timepoint, group, sj.max) %>%
+        
+        mutate(timepoint = factor(timepoint, 
+                                  levels = c("pre", "meso1", "meso2", "meso3"),
+                                  labels = c("Pre-training", "Period 1", "Period 2", "Period 3"))) %>%
+        
+        ggplot(aes(x = timepoint, y = sj.max)) + geom_point()
+
+```
+
+In the above the mutate function is used, we modify `timepoint` to be a factor using the `factor()` function. The factor function first takes the variable we want to convert to a factor (or change), then we specify levels of the factor. Levels are the order of the factor, this will transfer to the graph wehere the first level will be plotted first. Second we use the `labels =` argument which puts labels on each factor. 
+
+Often the labels are a bit akward to work with but nice to plot. This is because we might want to have spaces and special signs in there, something that makes it difficult to handle in e.g. filtering functions. So, if we need to change a factor befor plotting, do it last in the pipe prior to the ggplot call.
+
+We can look at the factor prior to plotting to see what we have done so far.
+
+```{r, eval = FALSE}
+
+cyclingStudy %>%
+        select(subject, timepoint, group, sj.max) %>%
+        
+        mutate(timepoint = factor(timepoint, 
+                                  levels = c("pre", "meso1", "meso2", "meso3"),
+                                  labels = c("Pre-training", "Period 1", "Period 2", "Period 3"))) %>%
+       print()
+```
+
+
+The labels can be row-breaks. This is handy when you want to describe alot in the label in the graph. Let's say that the first level should read "Prior to trainining period". This is a long label and it will probably over plot other aspects of the graph. We can use "\\n" as a row break indicator.
+
+
+```{r, eval = FALSE}
+
+cyclingStudy %>%
+        select(subject, timepoint, group, sj.max) %>%
+        
+        mutate(timepoint = factor(timepoint, 
+                                  levels = c("pre", "meso1", "meso2", "meso3"),
+                                  labels = c("Prior to\ntrainining\nperiod", "Period 1", "Period 2", "Period 3"))) %>%
+        
+        ggplot(aes(x = timepoint, y = sj.max)) + geom_point()
+
+```
+
+### Plotting summaries instead of all data
+
+Sometimes we want to plot summaries of the data instead of all data points. There some geoms that does statistical summaries of the data. `geom_boxplot` and `geom_violin` for example. Thes geoms do not need summary statistics, instead they convert the underlying data to a summary and plot it.
+
+```{r, eval = FALSE}
+cyclingStudy %>%
+        select(subject, timepoint, group, sj.max) %>%
+        
+        mutate(timepoint = factor(timepoint, 
+                                  levels = c("pre", "meso1", "meso2", "meso3"),
+                                  labels = c("Prior to\ntrainining\nperiod", "Period 1", "Period 2", "Period 3"))) %>%
+        
+        ggplot(aes(timepoint, sj.max))  + geom_boxplot()
+```
+
+Look in the reference under [Computed variables](https://ggplot2.tidyverse.org/reference/geom_boxplot.html) to see what statistics are calculated and plotted.
+
+Another "borderline summary" plotting method is the `geom_violin`. It adds a dimention to the plot where the width of the geom corresponds to the number of points. 
+
+```{r, eval = FALSE}
+cyclingStudy %>%
+        select(subject, timepoint, group, sj.max) %>%
+        
+        mutate(timepoint = factor(timepoint, 
+                                  levels = c("pre", "meso1", "meso2", "meso3"),
+                                  labels = c("Prior to\ntrainining\nperiod", "Period 1", "Period 2", "Period 3"))) %>%
+        
+        ggplot(aes(timepoint, sj.max))  + geom_violin()
+```
+
+If we want to plot other summary statistics we usually have to compute them prior to plotting. 
+
+Let's say that we want to plot the mean of each group (INCR, DECR, MIX) at each time-point. Then we would first calculate the summary followed by plotting.
+
+```{r, eval = FALSE}
+cyclingStudy %>%
+        select(subject, group, timepoint, group, sj.max) %>%
+        
+        mutate(timepoint = factor(timepoint, 
+                                  levels = c("pre", "meso1", "meso2", "meso3"),
+                                  labels = c("Prior to\ntrainining\nperiod", "Period 1", "Period 2", "Period 3"))) %>%
+        group_by(timepoint, group) %>%
+        summarise(sj.max = mean(sj.max, na.rm = TRUE)) %>%
+        
+        ggplot(aes(timepoint, sj.max))  + geom_point()
+```
+
+I've added the group variable in the select call and made a `group_by()`/`summarise()` to calculate the mean. I called the new mean variable the same (`sj.max`). Each point now represents the mean of each group. Let's remove the plotting and examine the underlying data. 
+
+```{r, eval = FALSE}
+cyclingStudy %>%
+        select(subject, group, timepoint, group, sj.max) %>%
+        
+        mutate(timepoint = factor(timepoint, 
+                                  levels = c("pre", "meso1", "meso2", "meso3"),
+                                  labels = c("Prior to\ntrainining\nperiod", "Period 1", "Period 2", "Period 3"))) %>%
+        group_by(timepoint, group) %>%
+        summarise(sj.max = mean(sj.max, na.rm = TRUE)) %>%
+        print()
+```
+
+The factor variable `timepoint` and the `group` variable exists in a new data frame, `sj.max` represents the mean.
+
+Since have not mapped the `group` variable to data, it is impossible to see in the graph what group corresponds to what point. We need to add aesthetics to make this happend. Let's add different colors to different groups.
+
+```{r, eval = FALSE}
+cyclingStudy %>%
+        select(subject, group, timepoint, group, sj.max) %>%
+        
+        mutate(timepoint = factor(timepoint, 
+                                  levels = c("pre", "meso1", "meso2", "meso3"),
+                                  labels = c("Prior to\ntrainining\nperiod", "Period 1", "Period 2", "Period 3"))) %>%
+        group_by(timepoint, group) %>%
+        summarise(sj.max = mean(sj.max, na.rm = TRUE)) %>%
+        ggplot(aes(timepoint, sj.max, color = group))  + geom_point()
+        
+```
+
+The above code maps group to color. We get a legend in the graph telling us about the grouping of the data. Another nice thing to do is to connect the dots to be able to look at development over time. We can do this by adding `geom_line()`. 
+
+However, we will need som extra information in the `aes()` call. Let's try
+
+```{r, eval = FALSE}
+cyclingStudy %>%
+        select(subject, group, timepoint, group, sj.max) %>%
+        
+        mutate(timepoint = factor(timepoint, 
+                                  levels = c("pre", "meso1", "meso2", "meso3"),
+                                  labels = c("Prior to\ntrainining\nperiod", "Period 1", "Period 2", "Period 3"))) %>%
+        group_by(timepoint, group) %>%
+        summarise(sj.max = mean(sj.max, na.rm = TRUE)) %>%
+        ggplot(aes(timepoint, sj.max, color = group))  + geom_point()  + geom_line()
+        
+```
+
+The warning message should say that "each group consists of only one observation", this is because we have not told ggplot the kind of grouping we want. Right now ggplot draws a line per timepoint per group resulting in no line.
+We can add `group = group` in `aes()`.
+
+```{r, eval = FALSE}
+cyclingStudy %>%
+        select(subject, group, timepoint, group, sj.max) %>%
+        
+        mutate(timepoint = factor(timepoint, 
+                                  levels = c("pre", "meso1", "meso2", "meso3"),
+                                  labels = c("Prior to\ntrainining\nperiod", "Period 1", "Period 2", "Period 3"))) %>%
+        group_by(timepoint, group) %>%
+        summarise(sj.max = mean(sj.max, na.rm = TRUE)) %>%
+        ggplot(aes(timepoint, sj.max, color = group, group = group))  + geom_point()  + geom_line()
+        
+```
+
+Let's say that we want another statistic, the standard deviation represented in the graph. We can first calculate it in the pipe. 
+
+```{r, eval = FALSE}
+cyclingStudy %>%
+        select(subject, group, timepoint, group, sj.max) %>%
+        
+        mutate(timepoint = factor(timepoint, 
+                                  levels = c("pre", "meso1", "meso2", "meso3"),
+                                  labels = c("Prior to\ntrainining\nperiod", "Period 1", "Period 2", "Period 3"))) %>%
+        group_by(timepoint, group) %>%
+        summarise(sd.sj.max = sd(sj.max, na.rm = TRUE),
+                  sj.max = mean(sj.max, na.rm = TRUE)) %>%
+        print()
+
+        
+```
+
+Notice that I add the `sd()` function first as I call the mean the same thing as the variable we calcculate the sd from. Placining the in the reveresed order would mean that we calculate SD from on the mean (only one number would result in a NA).
+
+The SD can now be mapped to the graph. Let's try something crazy, by using size in `aes()`
+
+```{r, eval = FALSE}
+cyclingStudy %>%
+        select(subject, group, timepoint, group, sj.max) %>%
+        
+        mutate(timepoint = factor(timepoint, 
+                                  levels = c("pre", "meso1", "meso2", "meso3"),
+                                  labels = c("Prior to\ntrainining\nperiod", "Period 1", "Period 2", "Period 3"))) %>%
+        group_by(timepoint, group) %>%
+        summarise(sd.sj.max = sd(sj.max, na.rm = TRUE),
+                  sj.max = mean(sj.max, na.rm = TRUE)) %>%
+         ggplot(aes(timepoint, sj.max, color = group, group = group, size = sd.sj.max))  + geom_point()  + geom_line()
+
+        
+```
+
+The standard deviation is now mapped to size wich control the size of both the points and lines. This is **not a common procedure**. To remove an aesthetic from a geom we can specify aes inside that specific geom. Let's say we want to keep size on the points but remove it on the lines. The we would set `size = NULL` in the `geom_line()` like this:
+
+```{r, eval = FALSE}
+cyclingStudy %>%
+        select(subject, group, timepoint, group, sj.max) %>%
+        
+        mutate(timepoint = factor(timepoint, 
+                                  levels = c("pre", "meso1", "meso2", "meso3"),
+                                  labels = c("Prior to\ntrainining\nperiod", "Period 1", "Period 2", "Period 3"))) %>%
+        group_by(timepoint, group) %>%
+        summarise(sd.sj.max = sd(sj.max, na.rm = TRUE),
+                  sj.max = mean(sj.max, na.rm = TRUE)) %>%
+         ggplot(aes(timepoint, sj.max, color = group, group = group, size = sd.sj.max))  + 
+        geom_point()  +
+        geom_line(aes(size = NULL))
+
+        
+```
+
+Now only the points has the SD mapped to them. As mentioned above, mapping the SD to size is not something you wold normally do as the scale do not correspond to the scale on the y axis. Instead we would like to use error bars.
+
+Error bars can be added to the plot by using another geom, `geom_errorbar()`. This geom need some extra information in `aes()`, `ymin` and `ymax` which tells ggplot to map something to each error bar. Let's map the standard deviation to $\pm$ the mean.
+
+
+```{r, eval = FALSE}
+cyclingStudy %>%
+        select(subject, group, timepoint, group, sj.max) %>%
+        
+        mutate(timepoint = factor(timepoint, 
+                                  levels = c("pre", "meso1", "meso2", "meso3"),
+                                  labels = c("Prior to\ntrainining\nperiod", "Period 1", "Period 2", "Period 3"))) %>%
+        group_by(timepoint, group) %>%
+        summarise(sd.sj.max = sd(sj.max, na.rm = TRUE),
+                  sj.max = mean(sj.max, na.rm = TRUE)) %>%
+         ggplot(aes(timepoint, sj.max, color = group, group = group))  + 
+        geom_errorbar(aes(ymin = sj.max - sd.sj.max, 
+                          ymax = sj.max + sd.sj.max)) +
+        geom_point()  +
+        geom_line()
+
+        
+```
+
+The distance from the mean to the top and bottom of the errorbars represents a standard deviation, nice! However the plot is "overplotted" alot of data on top of each other. 
+
+We can do alot to remedy the situation. Let's start by moving the data just a little bit. We can control the position of geoms by adding information to the `position = ` argument inside each geom. In this situation we would use the `position_dodge()`function with a with or let's say 0.2. Notice that this argument has to be present in all geoms.
+
+```{r, eval = FALSE}
+cyclingStudy %>%
+        select(subject, group, timepoint, group, sj.max) %>%
+        
+        mutate(timepoint = factor(timepoint, 
+                                  levels = c("pre", "meso1", "meso2", "meso3"),
+                                  labels = c("Prior to\ntrainining\nperiod", "Period 1", "Period 2", "Period 3"))) %>%
+        group_by(timepoint, group) %>%
+        summarise(sd.sj.max = sd(sj.max, na.rm = TRUE),
+                  sj.max = mean(sj.max, na.rm = TRUE)) %>%
+         ggplot(aes(timepoint, sj.max, color = group, group = group))  + 
+        geom_errorbar(aes(ymin = sj.max - sd.sj.max, 
+                          ymax = sj.max + sd.sj.max), 
+                      position = position_dodge(width = 0.2)) +
+        geom_point(position = position_dodge(width = 0.2))  +
+        geom_line(position = position_dodge(width = 0.2))
+
+        
+```
+
+Now each group gets "dodged" to the side. With the middle group (INCR) in the middle. This also changed the behavior of the error-bars. We can tweak the width of the error bars by adding a `width =` argument.  
+
+```{r, eval = FALSE}
+cyclingStudy %>%
+        select(subject, group, timepoint, group, sj.max) %>%
+        
+        mutate(timepoint = factor(timepoint, 
+                                  levels = c("pre", "meso1", "meso2", "meso3"),
+                                  labels = c("Prior to\ntrainining\nperiod", "Period 1", "Period 2", "Period 3"))) %>%
+        group_by(timepoint, group) %>%
+        summarise(sd.sj.max = sd(sj.max, na.rm = TRUE),
+                  sj.max = mean(sj.max, na.rm = TRUE)) %>%
+         ggplot(aes(timepoint, sj.max, color = group, group = group))  + 
+        geom_errorbar(aes(ymin = sj.max - sd.sj.max, 
+                          ymax = sj.max + sd.sj.max), 
+                      position = position_dodge(width = 0.2), 
+                      width = 0.1) +
+        geom_point(position = position_dodge(width = 0.2))  +
+        geom_line(position = position_dodge(width = 0.2))
+```
+
+### Changing labels
+
+
+### Modifying theme components
+
+
+### Saving the plot
+
+
+
 
 
 
