@@ -105,7 +105,7 @@ Things to google:
 
 
 
-```{r, message = FALSE, warnings = FALSE, echo = FALSE}
+```{r, message = FALSE, warning = FALSE, echo = FALSE}
 # load packages
 library(tidyverse)
 library(readxl)
