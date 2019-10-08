@@ -459,7 +459,7 @@ cyclingStudy %&gt;%
         
         ggplot(aes(x = timepoint, y = sj.max)) + geom_point()</code></pre>
 <p>In the above the mutate function is used, we modify <code>timepoint</code> to be a factor using the <code>factor()</code> function. The factor function first takes the variable we want to convert to a factor (or change), then we specify levels of the factor. Levels are the order of the factor, this will transfer to the graph wehere the first level will be plotted first. Second we use the <code>labels =</code> argument which puts labels on each factor.</p>
-<p>Often the labels are a bit akward to work with but nice to plot. This is because we might want to have spaces and special signs in there, something that makes it difficult to handle in e.g. filtering functions. So, if we need to change a factor befor plotting, do it last in the pipe prior to the ggplot call.</p>
+<p>Often the labels are a bit akward to work with but nice to plot. This is because we might want to have spaces and special signs in there, something that makes it difficult to handle in e.g. filtering functions. So, if we need to change a factor before plotting, do it last in the pipe prior to the ggplot call.</p>
 <p>We can look at the factor prior to plotting to see what we have done so far.</p>
 <pre class="r"><code>cyclingStudy %&gt;%
         select(subject, timepoint, group, sj.max) %&gt;%
@@ -468,7 +468,7 @@ cyclingStudy %&gt;%
                                   levels = c(&quot;pre&quot;, &quot;meso1&quot;, &quot;meso2&quot;, &quot;meso3&quot;),
                                   labels = c(&quot;Pre-training&quot;, &quot;Period 1&quot;, &quot;Period 2&quot;, &quot;Period 3&quot;))) %&gt;%
        print()</code></pre>
-<p>The labels can be row-breaks. This is handy when you want to describe alot in the label in the graph. Let’s say that the first level should read “Prior to trainining period”. This is a long label and it will probably over plot other aspects of the graph. We can use “\n” as a row break indicator.</p>
+<p>The labels can be row-breaks. This is handy when you want to describe a lot in the label in the graph. Let’s say that the first level should read “Prior to training period”. This is a long label and it will probably over plot other aspects of the graph. We can use “\n” as a row break indicator.</p>
 <pre class="r"><code>cyclingStudy %&gt;%
         select(subject, timepoint, group, sj.max) %&gt;%
         
@@ -480,7 +480,7 @@ cyclingStudy %&gt;%
 </div>
 <div id="plotting-summaries-instead-of-all-data" class="section level3">
 <h3>Plotting summaries instead of all data</h3>
-<p>Sometimes we want to plot summaries of the data instead of all data points. There some geoms that does statistical summaries of the data. <code>geom_boxplot</code> and <code>geom_violin</code> for example. Thes geoms do not need summary statistics, instead they convert the underlying data to a summary and plot it.</p>
+<p>Sometimes we want to plot summaries of the data instead of all data points. There some geoms that does statistical summaries of the data. <code>geom_boxplot</code> and <code>geom_violin</code> for example. These geoms do not need summary statistics, instead they convert the underlying data to a summary and plot it.</p>
 <pre class="r"><code>cyclingStudy %&gt;%
         select(subject, timepoint, group, sj.max) %&gt;%
         
@@ -490,7 +490,7 @@ cyclingStudy %&gt;%
         
         ggplot(aes(timepoint, sj.max))  + geom_boxplot()</code></pre>
 <p>Look in the reference under <a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html">Computed variables</a> to see what statistics are calculated and plotted.</p>
-<p>Another “borderline summary” plotting method is the <code>geom_violin</code>. It adds a dimention to the plot where the width of the geom corresponds to the number of points.</p>
+<p>Another “borderline summary” plotting method is the <code>geom_violin</code>. It adds a dimension to the plot where the width of the geom corresponds to the number of points.</p>
 <pre class="r"><code>cyclingStudy %&gt;%
         select(subject, timepoint, group, sj.max) %&gt;%
         
@@ -522,7 +522,7 @@ cyclingStudy %&gt;%
         summarise(sj.max = mean(sj.max, na.rm = TRUE)) %&gt;%
         print()</code></pre>
 <p>The factor variable <code>timepoint</code> and the <code>group</code> variable exists in a new data frame, <code>sj.max</code> represents the mean.</p>
-<p>Since have not mapped the <code>group</code> variable to data, it is impossible to see in the graph what group corresponds to what point. We need to add aesthetics to make this happend. Let’s add different colors to different groups.</p>
+<p>Since have not mapped the <code>group</code> variable to data, it is impossible to see in the graph what group corresponds to what point. We need to add aesthetics to make this happen. Let’s add different colors to different groups.</p>
 <pre class="r"><code>cyclingStudy %&gt;%
         select(subject, group, timepoint, group, sj.max) %&gt;%
         
@@ -533,7 +533,7 @@ cyclingStudy %&gt;%
         summarise(sj.max = mean(sj.max, na.rm = TRUE)) %&gt;%
         ggplot(aes(timepoint, sj.max, color = group))  + geom_point()</code></pre>
 <p>The above code maps group to color. We get a legend in the graph telling us about the grouping of the data. Another nice thing to do is to connect the dots to be able to look at development over time. We can do this by adding <code>geom_line()</code>.</p>
-<p>However, we will need som extra information in the <code>aes()</code> call. Let’s try</p>
+<p>However, we will need some extra information in the <code>aes()</code> call. Let’s try</p>
 <pre class="r"><code>cyclingStudy %&gt;%
         select(subject, group, timepoint, group, sj.max) %&gt;%
         
@@ -543,7 +543,7 @@ cyclingStudy %&gt;%
         group_by(timepoint, group) %&gt;%
         summarise(sj.max = mean(sj.max, na.rm = TRUE)) %&gt;%
         ggplot(aes(timepoint, sj.max, color = group))  + geom_point()  + geom_line()</code></pre>
-<p>The warning message should say that “each group consists of only one observation”, this is because we have not told ggplot the kind of grouping we want. Right now ggplot draws a line per timepoint per group resulting in no line. We can add <code>group = group</code> in <code>aes()</code>.</p>
+<p>The warning message should say that “each group consists of only one observation”, this is because we have not told ggplot the kind of grouping we want. Right now ggplot draws a line per time point per group resulting in no line. We can add <code>group = group</code> in <code>aes()</code>.</p>
 <pre class="r"><code>cyclingStudy %&gt;%
         select(subject, group, timepoint, group, sj.max) %&gt;%
         
@@ -564,7 +564,7 @@ cyclingStudy %&gt;%
         summarise(sd.sj.max = sd(sj.max, na.rm = TRUE),
                   sj.max = mean(sj.max, na.rm = TRUE)) %&gt;%
         print()</code></pre>
-<p>Notice that I add the <code>sd()</code> function first as I call the mean the same thing as the variable we calcculate the sd from. Placining the in the reveresed order would mean that we calculate SD from on the mean (only one number would result in a NA).</p>
+<p>Notice that I add the <code>sd()</code> function first as I call the mean the same thing as the variable we calculate the SD from. Placing them in the in the reveresed order would mean that we calculate SD from on the mean (only one number would result in a NA).</p>
 <p>The SD can now be mapped to the graph. Let’s try something crazy, by using size in <code>aes()</code></p>
 <pre class="r"><code>cyclingStudy %&gt;%
         select(subject, group, timepoint, group, sj.max) %&gt;%
@@ -576,7 +576,7 @@ cyclingStudy %&gt;%
         summarise(sd.sj.max = sd(sj.max, na.rm = TRUE),
                   sj.max = mean(sj.max, na.rm = TRUE)) %&gt;%
          ggplot(aes(timepoint, sj.max, color = group, group = group, size = sd.sj.max))  + geom_point()  + geom_line()</code></pre>
-<p>The standard deviation is now mapped to size wich control the size of both the points and lines. This is <strong>not a common procedure</strong>. To remove an aesthetic from a geom we can specify aes inside that specific geom. Let’s say we want to keep size on the points but remove it on the lines. The we would set <code>size = NULL</code> in the <code>geom_line()</code> like this:</p>
+<p>The standard deviation is now mapped to size which control the size of both the points and lines. This is <strong>not a common procedure</strong>. To remove an aesthetic from a geom we can specify aes inside that specific geom. Let’s say we want to keep size on the points but remove it on the lines. The we would set <code>size = NULL</code> in the <code>geom_line()</code> like this:</p>
 <pre class="r"><code>cyclingStudy %&gt;%
         select(subject, group, timepoint, group, sj.max) %&gt;%
         
@@ -605,8 +605,8 @@ cyclingStudy %&gt;%
                           ymax = sj.max + sd.sj.max)) +
         geom_point()  +
         geom_line()</code></pre>
-<p>The distance from the mean to the top and bottom of the errorbars represents a standard deviation, nice! However the plot is “overplotted” alot of data on top of each other.</p>
-<p>We can do alot to remedy the situation. Let’s start by moving the data just a little bit. We can control the position of geoms by adding information to the <code>position =</code> argument inside each geom. In this situation we would use the <code>position_dodge()</code>function with a with or let’s say 0.2. Notice that this argument has to be present in all geoms.</p>
+<p>The distance from the mean to the top and bottom of the error bars represents a standard deviation, nice! However the plot is “over plotted” a lot of data on top of each other.</p>
+<p>We can do a lot to remedy the situation. Let’s start by moving the data just a little bit. We can control the position of geoms by adding information to the <code>position =</code> argument inside each geom. In this situation we would use the <code>position_dodge()</code>function with a with or let’s say 0.2. Notice that this argument has to be present in all geoms.</p>
 <pre class="r"><code>cyclingStudy %&gt;%
         select(subject, group, timepoint, group, sj.max) %&gt;%
         
@@ -642,12 +642,214 @@ cyclingStudy %&gt;%
 </div>
 <div id="changing-labels" class="section level3">
 <h3>Changing labels</h3>
+<p>Labels describes axes and plots. See the help file <code>?labs</code> for the <code>labs()</code> function. Using this function we can add labels on all aesthetics, this means that the x- and y-axis labels can be modified together with e.g. size and color.</p>
+<p>Let’s modify the axis labels in the previous plot. We do this by adding <code>labs()</code> to the plot.</p>
+<pre class="r"><code>cyclingStudy %&gt;%
+        select(subject, group, timepoint, group, sj.max) %&gt;%
+        
+        mutate(timepoint = factor(timepoint, 
+                                  levels = c(&quot;pre&quot;, &quot;meso1&quot;, &quot;meso2&quot;, &quot;meso3&quot;),
+                                  labels = c(&quot;Prior to\ntrainining\nperiod&quot;, &quot;Period 1&quot;, &quot;Period 2&quot;, &quot;Period 3&quot;))) %&gt;%
+        group_by(timepoint, group) %&gt;%
+        summarise(sd.sj.max = sd(sj.max, na.rm = TRUE),
+                  sj.max = mean(sj.max, na.rm = TRUE)) %&gt;%
+         ggplot(aes(timepoint, sj.max, color = group, group = group))  + 
+        geom_errorbar(aes(ymin = sj.max - sd.sj.max, 
+                          ymax = sj.max + sd.sj.max), 
+                      position = position_dodge(width = 0.2), 
+                      width = 0.1) +
+        geom_point(position = position_dodge(width = 0.2))  +
+        geom_line(position = position_dodge(width = 0.2)) +
+        labs(x = &quot;Time-point&quot;, y = &quot;Squat jump (cm)&quot;)</code></pre>
+<p>The aesthetic color can also be modified, the name in the above plot is “group” as the name of the variable we mapped onto color was <code>group</code>. We can change the name of the legend by using <code>labs()</code></p>
+<pre class="r"><code>cyclingStudy %&gt;%
+        select(subject, group, timepoint, group, sj.max) %&gt;%
+        
+        mutate(timepoint = factor(timepoint, 
+                                  levels = c(&quot;pre&quot;, &quot;meso1&quot;, &quot;meso2&quot;, &quot;meso3&quot;),
+                                  labels = c(&quot;Prior to\ntrainining\nperiod&quot;, &quot;Period 1&quot;, &quot;Period 2&quot;, &quot;Period 3&quot;))) %&gt;%
+        group_by(timepoint, group) %&gt;%
+        summarise(sd.sj.max = sd(sj.max, na.rm = TRUE),
+                  sj.max = mean(sj.max, na.rm = TRUE)) %&gt;%
+         ggplot(aes(timepoint, sj.max, color = group, group = group))  + 
+        geom_errorbar(aes(ymin = sj.max - sd.sj.max, 
+                          ymax = sj.max + sd.sj.max), 
+                      position = position_dodge(width = 0.2), 
+                      width = 0.1) +
+        geom_point(position = position_dodge(width = 0.2))  +
+        geom_line(position = position_dodge(width = 0.2)) +
+        labs(x = &quot;Time-point&quot;, y = &quot;Squat jump (cm)&quot;, color = &quot;Group&quot;)</code></pre>
+<p>We can also add a title, subtitle and caption to the graph.</p>
+<pre class="r"><code>cyclingStudy %&gt;%
+        select(subject, group, timepoint, group, sj.max) %&gt;%
+        
+        mutate(timepoint = factor(timepoint, 
+                                  levels = c(&quot;pre&quot;, &quot;meso1&quot;, &quot;meso2&quot;, &quot;meso3&quot;),
+                                  labels = c(&quot;Prior to\ntrainining\nperiod&quot;, &quot;Period 1&quot;, &quot;Period 2&quot;, &quot;Period 3&quot;))) %&gt;%
+        group_by(timepoint, group) %&gt;%
+        summarise(sd.sj.max = sd(sj.max, na.rm = TRUE),
+                  sj.max = mean(sj.max, na.rm = TRUE)) %&gt;%
+         ggplot(aes(timepoint, sj.max, color = group, group = group))  + 
+        geom_errorbar(aes(ymin = sj.max - sd.sj.max, 
+                          ymax = sj.max + sd.sj.max), 
+                      position = position_dodge(width = 0.2), 
+                      width = 0.1) +
+        geom_point(position = position_dodge(width = 0.2))  +
+        geom_line(position = position_dodge(width = 0.2)) +
+        labs(x = &quot;Time-point&quot;, y = &quot;Squat jump (cm)&quot;, color = &quot;Group&quot;,
+             title = &quot;Squat jump height per group&quot;, 
+             subtitle = &quot;Different patterns per group&quot;, 
+             caption = &quot;Values are mean and SD&quot; )</code></pre>
 </div>
 <div id="modifying-theme-components" class="section level3">
 <h3>Modifying theme components</h3>
+<p>A ggplot has theme components, these are appearances of the graph that are not used to map data to. For example the background color of the plot or the size of labels. These components can be modified in the <code>theme()</code> function. There are some pre-made themes, these are <a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">listed here</a>. A nice one is <code>theme_bw()</code>. We can add it to the plot.</p>
+<pre class="r"><code>cyclingStudy %&gt;%
+        select(subject, group, timepoint, group, sj.max) %&gt;%
+        
+        mutate(timepoint = factor(timepoint, 
+                                  levels = c(&quot;pre&quot;, &quot;meso1&quot;, &quot;meso2&quot;, &quot;meso3&quot;),
+                                  labels = c(&quot;Prior to\ntrainining\nperiod&quot;, &quot;Period 1&quot;, &quot;Period 2&quot;, &quot;Period 3&quot;))) %&gt;%
+        group_by(timepoint, group) %&gt;%
+        summarise(sd.sj.max = sd(sj.max, na.rm = TRUE),
+                  sj.max = mean(sj.max, na.rm = TRUE)) %&gt;%
+         ggplot(aes(timepoint, sj.max, color = group, group = group))  + 
+        geom_errorbar(aes(ymin = sj.max - sd.sj.max, 
+                          ymax = sj.max + sd.sj.max), 
+                      position = position_dodge(width = 0.2), 
+                      width = 0.1) +
+        geom_point(position = position_dodge(width = 0.2))  +
+        geom_line(position = position_dodge(width = 0.2)) +
+        labs(x = &quot;Time-point&quot;, y = &quot;Squat jump (cm)&quot;, color = &quot;Group&quot;,
+             title = &quot;Squat jump height per group&quot;, 
+             subtitle = &quot;Different patterns per group&quot;, 
+             caption = &quot;Values are mean and SD&quot; ) +
+        theme_bw()</code></pre>
+<p>If we still want to modify components of the theme we need to specify changes in the <code>theme()</code> function. Parameters that are possible to change are <a href="https://ggplot2.tidyverse.org/reference/theme.html">listed here</a>. All components of a theme are changed based on their <code>theme_element</code>. A theme element can be text, as for example labels, these can be modified with <code>element_text()</code>.</p>
+<p>Let’s make the text bigger of the axis labels.</p>
+<pre class="r"><code>cyclingStudy %&gt;%
+        select(subject, group, timepoint, group, sj.max) %&gt;%
+        
+        mutate(timepoint = factor(timepoint, 
+                                  levels = c(&quot;pre&quot;, &quot;meso1&quot;, &quot;meso2&quot;, &quot;meso3&quot;),
+                                  labels = c(&quot;Prior to\ntrainining\nperiod&quot;, &quot;Period 1&quot;, &quot;Period 2&quot;, &quot;Period 3&quot;))) %&gt;%
+        group_by(timepoint, group) %&gt;%
+        summarise(sd.sj.max = sd(sj.max, na.rm = TRUE),
+                  sj.max = mean(sj.max, na.rm = TRUE)) %&gt;%
+         ggplot(aes(timepoint, sj.max, color = group, group = group))  + 
+        geom_errorbar(aes(ymin = sj.max - sd.sj.max, 
+                          ymax = sj.max + sd.sj.max), 
+                      position = position_dodge(width = 0.2), 
+                      width = 0.1) +
+        geom_point(position = position_dodge(width = 0.2))  +
+        geom_line(position = position_dodge(width = 0.2)) +
+        labs(x = &quot;Time-point&quot;, y = &quot;Squat jump (cm)&quot;, color = &quot;Group&quot;,
+             title = &quot;Squat jump height per group&quot;, 
+             subtitle = &quot;Different patterns per group&quot;, 
+             caption = &quot;Values are mean and SD&quot; ) +
+        theme_bw() +
+        theme(axis.title = element_text(size = 14))</code></pre>
+<p>The background of the plot is modified using another theme element as this is not text.</p>
+<pre class="r"><code>cyclingStudy %&gt;%
+        select(subject, group, timepoint, group, sj.max) %&gt;%
+        
+        mutate(timepoint = factor(timepoint, 
+                                  levels = c(&quot;pre&quot;, &quot;meso1&quot;, &quot;meso2&quot;, &quot;meso3&quot;),
+                                  labels = c(&quot;Prior to\ntrainining\nperiod&quot;, &quot;Period 1&quot;, &quot;Period 2&quot;, &quot;Period 3&quot;))) %&gt;%
+        group_by(timepoint, group) %&gt;%
+        summarise(sd.sj.max = sd(sj.max, na.rm = TRUE),
+                  sj.max = mean(sj.max, na.rm = TRUE)) %&gt;%
+         ggplot(aes(timepoint, sj.max, color = group, group = group))  + 
+        geom_errorbar(aes(ymin = sj.max - sd.sj.max, 
+                          ymax = sj.max + sd.sj.max), 
+                      position = position_dodge(width = 0.2), 
+                      width = 0.1) +
+        geom_point(position = position_dodge(width = 0.2))  +
+        geom_line(position = position_dodge(width = 0.2)) +
+        labs(x = &quot;Time-point&quot;, y = &quot;Squat jump (cm)&quot;, color = &quot;Group&quot;,
+             title = &quot;Squat jump height per group&quot;, 
+             subtitle = &quot;Different patterns per group&quot;, 
+             caption = &quot;Values are mean and SD&quot; ) +
+        theme_bw() +
+        theme(plot.background = element_rect(fill = &quot;gray80&quot;))</code></pre>
+<p>Basically all components can be modified with its specific theme component function. See the <a href="https://ggplot2.tidyverse.org/reference/theme.html">reference page</a> for more information.</p>
 </div>
 <div id="saving-the-plot" class="section level3">
 <h3>Saving the plot</h3>
+<p>Saving a plot can be done from R Studio by clicking “export” in the plot tab. We can also use the <code>ggsave()</code> function.</p>
+<p>We first need to make the plot an object and then specify arguments to decide what file type and size we want the saved image to be.</p>
+<pre class="r"><code># Savining the figure as an object &quot;figure1&quot;
+figure1 &lt;- cyclingStudy %&gt;%
+        select(subject, group, timepoint, group, sj.max) %&gt;%
+        
+        mutate(timepoint = factor(timepoint, 
+                                  levels = c(&quot;pre&quot;, &quot;meso1&quot;, &quot;meso2&quot;, &quot;meso3&quot;),
+                                  labels = c(&quot;Prior to\ntrainining\nperiod&quot;, &quot;Period 1&quot;, &quot;Period 2&quot;, &quot;Period 3&quot;))) %&gt;%
+        group_by(timepoint, group) %&gt;%
+        summarise(sd.sj.max = sd(sj.max, na.rm = TRUE),
+                  sj.max = mean(sj.max, na.rm = TRUE)) %&gt;%
+         ggplot(aes(timepoint, sj.max, color = group, group = group))  + 
+        geom_errorbar(aes(ymin = sj.max - sd.sj.max, 
+                          ymax = sj.max + sd.sj.max), 
+                      position = position_dodge(width = 0.2), 
+                      width = 0.1) +
+        geom_point(position = position_dodge(width = 0.2))  +
+        geom_line(position = position_dodge(width = 0.2)) +
+        labs(x = &quot;Time-point&quot;, y = &quot;Squat jump (cm)&quot;, color = &quot;Group&quot;,
+             title = &quot;Squat jump height per group&quot;, 
+             subtitle = &quot;Different patterns per group&quot;, 
+             caption = &quot;Values are mean and SD&quot; ) +
+        theme_bw() +
+        theme(plot.background = element_rect(fill = &quot;gray80&quot;))
+
+# Savining the figure to disk with ggsave
+
+ggsave(&quot;./output/figure1.png&quot;, plot = figure1)</code></pre>
+<p>Saving a .png file as in the example above is not suitable for publication or your master thesis, there you should aim for vector graphics such as a pdf file. <code>ggsave</code> can create a pdf file also.</p>
+<pre class="r"><code>ggsave(&quot;./output/figure1.pdf&quot;, plot = figure1)</code></pre>
+<p>Although this might need some tweeking of your software.</p>
+<p>To create the figure in real life, I would do it in a new R-script and name the script <code>figure1.R</code>. This script would be fully self contained, meaning that all code needed to create the graph is in the script. The script ends with the ggsave function. The script could look like this:</p>
+<pre class="r"><code>## Figure 1
+# This scripts creates and saves Figure 1 in &quot;./output/figure1.pdf&quot;
+
+# Load packages 
+library(tidyverse)
+library(readxl)
+
+
+# load data 
+cyclingStudy &lt;- read_excel(&quot;./data/cyclingStudy.xlsx&quot;, na = &quot;NA&quot;)
+
+
+# Savining the figure as an object &quot;figure1&quot;
+figure1 &lt;- cyclingStudy %&gt;%
+        select(subject, group, timepoint, group, sj.max) %&gt;%
+        
+        mutate(timepoint = factor(timepoint, 
+                                  levels = c(&quot;pre&quot;, &quot;meso1&quot;, &quot;meso2&quot;, &quot;meso3&quot;),
+                                  labels = c(&quot;Prior to\ntrainining\nperiod&quot;, &quot;Period 1&quot;, &quot;Period 2&quot;, &quot;Period 3&quot;))) %&gt;%
+        group_by(timepoint, group) %&gt;%
+        summarise(sd.sj.max = sd(sj.max, na.rm = TRUE),
+                  sj.max = mean(sj.max, na.rm = TRUE)) %&gt;%
+         ggplot(aes(timepoint, sj.max, color = group, group = group))  + 
+        geom_errorbar(aes(ymin = sj.max - sd.sj.max, 
+                          ymax = sj.max + sd.sj.max), 
+                      position = position_dodge(width = 0.2), 
+                      width = 0.1) +
+        geom_point(position = position_dodge(width = 0.2))  +
+        geom_line(position = position_dodge(width = 0.2)) +
+        labs(x = &quot;Time-point&quot;, y = &quot;Squat jump (cm)&quot;, color = &quot;Group&quot;,
+             title = &quot;Squat jump height per group&quot;, 
+             subtitle = &quot;Different patterns per group&quot;, 
+             caption = &quot;Values are mean and SD&quot; ) +
+        theme_bw() +
+        theme(plot.background = element_rect(fill = &quot;gray80&quot;))
+
+# Savining the figure to disk with ggsave
+ggsave(&quot;./output/figure1.png&quot;, plot = figure1)
+
+# End of script</code></pre>
+<p>An alternative is to add the figure to a R Markdown document. If you are creating a pdf from R Markdown you can add a figure caption in the code-chunk. Read more <a href="https://bookdown.org/yihui/rmarkdown/pdf-document.html">about this here</a>.</p>
 </div>
 </div>
 
