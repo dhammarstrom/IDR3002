@@ -1,0 +1,107 @@
+---
+title: "Examples related to assignment Week 1"
+output: html_document
+---
+
+## Two examples calculating percentage change in two variables
+
+In exercise 1 of assignment week 1 you are asked to calculate %-change of two variables. I suggested using `separate()` and `unite()`. This is one solution, another one could be to pivot the data to a suitable form. Below you will find both solutions.
+
+```{r, eval = FALSE, echo = TRUE, warning=FALSE, message=FALSE}
+
+library(tidyverse); library(readxl)
+
+## Solution nr 1, using unite() and separate()
+
+read_excel("data/cyclingStudy.xlsx", na = "NA") %>%
+        select(subject, group, timepoint, sj.max, cmj.max) %>%
+        # Using unite to combine to columns
+        unite(col = "perf", sj.max, cmj.max, sep = "_") %>%
+        # pivot wider on the new column
+        pivot_wider(names_from = timepoint, 
+                    values_from = perf) %>%
+        select(subject, group, pre, meso3) %>%
+        # Separate is used to get the data into two usable columns
+        separate(col = pre, into = c("sj.pre", "cmj.pre"),
+                 sep = "_", convert = TRUE) %>%
+        separate(col = meso3, into = c("sj.post", "cmj.post"),
+                 sep = "_", convert = TRUE) %>%
+        mutate(change.sj = ((sj.post/sj.pre)-1)*100,
+               change.cmj = ((cmj.post/cmj.pre)-1)*100) %>%
+        select(subject, group, change.sj, change.cmj) %>%
+        ggplot(aes(x = change.sj, y = change.cmj)) +
+        geom_point() +
+        geom_smooth(method = "lm", se = FALSE)
+        
+
+### Solution nr 2, without separate and unite
+
+read_excel("./data/cyclingStudy.xlsx", na = "NA") %>%
+        select(subject, group, timepoint, sj.max, cmj.max) %>%
+        pivot_longer(names_to = "test", values_to = "cm", 
+                     cols = sj.max:cmj.max) %>%
+        pivot_wider(names_from = timepoint, values_from = cm) %>%
+        mutate(change = ((meso3 / pre)-1)*100) %>%
+     
+        select(subject, group, test, change) %>%
+        pivot_wider(names_from = test, values_from = change) %>%
+        ggplot(aes(sj.max, cmj.max)) + geom_point() +
+        geom_smooth(method = "lm", se = FALSE)
+
+# Soultion 2 is much more efficient as it uses less code!
+
+```
+
+## Group by and summarise
+
+In exercise 2, you are asked to calculate summary statistics. This is accomplished with `group_by()` followed by `summarise()`. Below is an example where we calculate summary statistics on a variable.
+
+
+
+
+```{r, eval = FALSE, echo = TRUE, warning=FALSE, message=FALSE}
+
+
+# Lets calculate summary statistics on sj.max per time-point, per group
+read_excel("data/cyclingStudy.xlsx", na = "NA") %>%
+        group_by(timepoint, group) %>%
+        # You are creting new variables in the summarise function
+        # naming them is up to you. In the example M is the column nav
+        summarise(M = mean(sj.max, na.rm = TRUE), 
+                  SD = sd(sj.max, na.rm = TRUE)) %>%
+        print()
+
+```
+
+
+## Changing breaks on a axis and un-grouping
+Axes in ggplot can be manipulated using specialized functions. To change a continuous axis, use `scale_x_continous` and `scale_y_continous`. The below code sets the limits, and breaks of an axis and control where the axis "starts" and "ends".
+
+When changing a factor after `group_by()` we need to un-group the data set to be able to change the variable. The `ungroup()` command can be used.
+
+
+```{r, eval = FALSE, echo = TRUE, warning=FALSE, message=FALSE}
+
+
+# Lets calculate summary statistics on sj.max per time-point, per group
+read_excel("data/cyclingStudy.xlsx", na = "NA") %>%
+        group_by(timepoint, group) %>%
+        # You are creting new variables in the summarise function
+        # naming them is up to you. In the example M is the column nav
+        summarise(M = mean(sj.max, na.rm = TRUE), 
+                  SD = sd(sj.max, na.rm = TRUE)) %>%
+        # ungrouping to be able to change the timepoint variable
+        ungroup() %>%
+        mutate(timepoint = factor(timepoint, levels = c("pre", "meso1", "meso2", "meso3"))) %>%
+        ggplot(aes(timepoint, M, group = group, color = group)) + geom_line() +
+        scale_y_continuous(breaks = c(20, 25, 30, 35, 40), # sets the breaks of the axis
+                           limits = c(20, 40), # sets the limits af the axis
+                           expand = c(0, 0)) # exand 0 units from both limits
+         
+
+```
+
+
+
+
+

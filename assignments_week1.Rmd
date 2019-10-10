@@ -1,0 +1,259 @@
+---
+title: "Statistics Assignment Week 1"
+author: "Daniel Hammarström"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message = FALSE)
+```
+
+In this assignment you are asked to reproduce at least 3 of 4 figures. We will be using the cycling data set and ggplot2 together with dplyr and tidyr.  The graphs to reproduce are shown below together with instructions for each graph.
+
+You might find useful tips in [these examples](examples_week1.Rmd).
+
+### Figure 1: Correlation between percentage change in counter movement jump and peak power
+
+Anaerobic performance might be affected by endurance training, to see if changes in performance in a non-specific exercise (counter-movement jump) is related to changes in cycling-specific peak-power we are going to plot the two.
+
+#### Tips
+Relevant variables from the `cyclingStudy` data set are 
+
+|Variable      |Description                                                                                  |
+|--------------|---------------------------------------------------------------------------------------------|
+|`subject`     |ID of participants                                                                           |
+|`timepoint`   |Time-point for testing pre-training (`pre`), and after each training period (`meso1`-`meso3`)|
+|`cmj.max`     |Counter movement jump performance                                                            |
+|`peak.power`  |Peak power from a Wingate test                                                               |
+
+
+To calculate relative change of a variable, one solution would be to make the data into wide format. As we load the cyclingStudy data set, this part of the data is in long and tidy format. Each row is an observation and each column is a variable. If we use `pivot_wider()` we can get each time-point to a single column. An example:
+
+```{r, eval = FALSE, echo = TRUE}
+# Load packages
+library(tidyverse)
+library(readxl)
+
+cyclingStudy <- read_excel("./data/cyclingStudy.xlsx", na = "NA") 
+
+cyclingStudy %>%
+        select(subject, timepoint, cmj.max) %>%
+        pivot_wider(names_from = timepoint, 
+                    values_from = cmj.max) %>%
+        print()
+
+```
+
+The `mutate()` function can be used to calculate the percentage change. We are interested in calculating 
+
+$$\%~Change = 100 * \bigg( \frac{Post}{Pre}-1\bigg)$$ 
+
+In the mutate command, this will be: 
+
+ `mutate(change = (( meso3 / pre) -1) * 100)`
+
+A tricky part of this operation is that you want to do pivoting with two variables. To accomplish this you might want to look into `unite()` and `separate()` function.
+
+### The figure to reproduce
+
+
+```{r figure1}
+
+
+# load packages
+library(tidyverse); library(readxl)
+
+
+dat <- read_excel("./data/cyclingStudy.xlsx", na = "NA") 
+
+
+# Correlation between VO2max change and performance change with color per group
+
+dat %>%
+        select(subject, group, timepoint, cmj.max, peak.power) %>%
+        unite(col = "perf", cmj.max, peak.power, sep = "_") %>%
+        filter(timepoint %in% c("pre", "meso3")) %>%
+        pivot_wider(names_from = timepoint, values_from = perf)  %>%
+        
+                
+        separate(pre, into = c("pre_cmj", "pre_pp"), sep = "_", convert = TRUE) %>%
+        separate(meso3, into = c("post_cmj", "post_pp"), sep = "_", convert = TRUE) %>%
+        mutate(pp = 100 * ((post_pp / pre_pp)-1),
+               cmj = 100 * ((post_cmj / pre_cmj)-1)) %>%
+        ggplot(aes(cmj, pp)) + geom_point(size = 3) + geom_smooth(method = "lm") +
+        labs(x = "Counter-movement jump % change Pre-Meso3", 
+             y = "Peak power wingate % change Pre-Meso3", 
+             title = "Correlation between %-change in Counter movement jump and cycling peak power") +
+        scale_y_continuous(breaks = c(-40,-20, 0, 20, 40, 60, 80),
+                           limits = c(-40, 80),
+                           expand = c(0, 0)) +
+        scale_x_continuous(breaks = c(-20, -10,  0, 10, 20),
+                           limits = c(-20, 20),
+                           expand = c(0, 0))
+        
+
+```
+
+### Figure 2: Group-wise change in VO~2max~ ml^-1^ kg^-1^ min^-1^
+
+In the figure below, we display percentage increase in VO~2max~ (ml^-1^ kg^-1^ min^-1^) per group. Relevant variables from the `cyclingStudy` data set are:
+
+|Variable      |Description                                                                                  |
+|--------------|---------------------------------------------------------------------------------------------|
+|`subject`     |ID of participants                                                                           |
+|`timepoint`   |Time-point for testing pre-training (`pre`), and after each training period (`meso1`-`meso3`)|
+|`group`       |ID of the groups, `INCR`, `DECR` and `MIX`                                                   |
+|`weight.T1`   |Body mass                                                                                    |
+|`VO2.max`     |VO~2max~ in ml^-1^ min^-1^                                                                   |
+
+
+#### Tips
+In the figure below the following tips may be useful.
+
+- To calculate the confidence interval of a mean you need the standard deviation (calculate with `sd()`), and the number of observations. In the case where we do not have any `NA`, we could use the `n()` function. However, here we want to count the number of observations with data. An alternative is to do `n = sum(!is.na(variable))` where `variable` is the variable you are interested in calculating the number on non-NA in. `is.na()` returns "TRUE" if a row is NA and "FALSE" if the row is not NA. When we use the `!` sign, we reverse this. The sum function calculates the number of "TRUE". The confidence interval can be calculated from a t-distribution using the `qt()` function using the following code:
+
+`error = qt(0.975, df = n - 1) * sd/sqrt(n)` 
+
+- Where `n`is the number of non-NA observation, `sd` is the standard deviation. This code would go into the `summarise()` function after a group by:
+
+```{r, eval = FALSE, echo=TRUE}
+
+... %>%
+        group_by(group) %>%
+        summarise(m = mean(change, na.rm = TRUE), 
+                  s = sd(change, na.rm = TRUE), 
+                  n  = sum(!(is.na(change))), 
+                  error = qt(0.975, df = n-1) * s/sqrt(n)) %>%
+
+
+
+```
+
+- In the above code, `...` stands for operations that I have done but not shown. The new variable error is the distance from the mean that represents one side of the confidence interval.
+
+- `geom_point()` can take different `shape` arguments. Different shapes can be found [here](http://www.sthda.com/english/wiki/r-plot-pch-symbols-the-different-point-shapes-available-in-r). We want a shape that can be filled. The size settings might need changing?
+
+- Google: "how to plot plus minus sign Unicode ggplot2" to see information about the $\pm$ sign in the y-axis label.
+
+- `geom_hline()` will produce a horizontal line given the right arguments, line types can be found [here](https://www.datanovia.com/en/blog/line-types-in-r-the-ultimate-guide-for-r-base-plot-and-ggplot/)
+
+- Themes are an easy way to change the overall appearance of a graph. Try `theme_bw()`, `theme_classic()` or `theme_light`, which one suits best?
+
+- See the help files for `scale_y_continuous` to see how to change the y-axis.
+
+
+
+#### The figure to reproduce
+```{r figure2}
+
+read_excel("./data/cyclingStudy.xlsx", na = "NA") %>%
+        
+        mutate(vo2max = VO2.max / weight.T1) %>%
+        select(subject, group, timepoint, vo2max) %>%
+        pivot_wider(names_from = timepoint, values_from = vo2max) %>%
+        mutate(change = ((meso3 / pre)-1)*100) %>%
+        group_by(group) %>%
+        summarise(m = mean(change, na.rm = TRUE), 
+                  s = sd(change, na.rm = TRUE), 
+                  n  = sum(!(is.na(change))), 
+                  error = qt(0.975, df = n-1) * s/sqrt(n)) %>%
+        ggplot(aes(group, m, fill = group)) + 
+        geom_errorbar(aes(ymin = m - error, ymax = m + error), width = 0.2) +
+        geom_point(shape = 21, size = 3) +
+        labs(x = "Group", 
+             y =  "Mean percentage change \U00B1 95% CI", 
+             fill = "Group",
+             title = expression("Relative change in VO"["2max"]~"(ml"^"-1"~"kg"^"-1"~"min"^"-1"*")")) +
+        scale_y_continuous(breaks = c(-5, 0, 5, 10, 15, 20), 
+                           limits= c(-5, 20), expand = c(0,0)) +
+        geom_hline(yintercept = 0, lty=2) +
+        theme_bw() 
+
+
+```
+
+### Figure 3: Faceting the correlation between VO~2max~ and sub maximal VO~2~.
+
+To display data in different panels can be useful when doing exploration graphics. Here we will plot maximal VO~2~ against sub maximal VO~2~ per test and watt.
+
+Tips for the figure below:
+
+- Read about `geom_smooth` in the help files (´?geom_smooth`), this function is used to add regression lines to the graph.
+- Maybe the code: `mutate(timepoint = factor(timepoint, levels = c("pre", "meso1", "meso2", "meso3")))` is helpful.
+- To get all sub maximal values (`VO2.125:VO2.225`) into one variable, `pivot_longer()` is needed. As you will see, all other variables will duplicate when using the `pivot_longer()` function. (TIP: Work with a smaller data set, use `select()`)
+- Google: "subscript in ggplot2 labels"
+
+#### The figure to reproduce
+
+```{r figure3}
+
+read_excel("./data/cyclingStudy.xlsx", na = "NA") %>%
+        select(subject, timepoint, VO2.125:VO2.225, VO2.max) %>%
+        pivot_longer(cols = VO2.125:VO2.225, 
+                     names_to = "watt", 
+                     names_prefix = "VO2.", 
+                     values_to = "VO2") %>%
+        mutate(timepoint = factor(timepoint, levels = c("pre", "meso1", "meso2", "meso3"))) %>%
+        ggplot(aes(VO2, VO2.max)) + geom_point() + 
+        facet_grid(watt ~ timepoint) + 
+        labs(x = expression("VO"["2"]), 
+             y = expression("VO"["2max"])) +
+        geom_smooth(method = "lm", se = FALSE)
+        
+        
+```
+
+
+### Figure 4: Mean and standard deviation of multiple variables
+
+We will now use sub maximal heart rate values (`HF.125` to `HF.250`) and plot these against watt. We are interested in the mean and standard deviation per time point.
+
+#### Tips for the figure below
+
+- To get summary statistics I have grouped by watt and time-point after a pivot to get `HF.125` to `HF.250` in long format.
+- The labels (text) are the values (this not something you would usually do!). The labels are created using this code (where m is the mean calculated in the summary and sd is the standard deviation calculated in the summary):
+- You have to change the order of the `timepoint` using `factor()`.
+- The `width = ` in `geom_errorbar()` is set to 0.1.
+
+```{r, eval = FALSE, echo=TRUE}
+
+        geom_label(aes(label = round(m, 0)), nudge_y = -3, nudge_x = 0.3) +
+        geom_label(aes(y = m + sd, label = round(sd, 0)),  nudge_x = -0.5) 
+
+```
+
+
+```{r figure4}
+
+read_excel("./data/cyclingStudy.xlsx", na = "NA") %>%
+
+        select(subject, timepoint, HF.125:HF.250) %>%
+        
+        
+        pivot_longer(cols = HF.125:HF.250, 
+                     names_to = "watt", 
+                     names_prefix = "HF.", 
+                     values_to = "HF") %>%
+        group_by(watt, timepoint) %>%
+        summarise(m = mean(HF, na.rm = TRUE), 
+                  sd = sd(HF, na.rm = TRUE)) %>%
+        mutate(timepoint = factor(timepoint, levels = c("pre", "meso1", "meso2", "meso3"))) %>%
+        ggplot(aes(watt, m, color = timepoint, group = timepoint)) + 
+        
+        geom_errorbar(aes(ymin = m, ymax = m + sd), width = 0.1) +
+        geom_label(aes(label = round(m, 0)), nudge_y = -3, nudge_x = 0.3) +
+        geom_label(aes(y = m + sd, label = round(sd, 0)),  nudge_x = -0.5) +
+        geom_point() + 
+        geom_line() +
+        facet_grid(.~ timepoint)
+```
+
+
+
+## What to hand in
+
+You re required to hand in a .R file or .Rmd file that produces the above figures. You are also required to study and give comments on a friends assignment. This will all be done on canvas. Hand in your assignment in Oppgaver on Canvas no later than Sunday. 
+
+Good luck!
+
+

@@ -57,6 +57,10 @@ navbar:
           href: ex1_summarise.html
         - text: "Making figures"
           href: ex1_figures.html
+    - text: "Assignments"
+      menu:
+        - text: "Week 1"
+          href: assignments_week1.html
   right:
     - icon: fa-question fa-lg
       href: faq.html

@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+
+<title>Examples related to assignment Week 1</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-inverse  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">IDR3002 Course notes</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+    Home
+  </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Software
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="installation.html">Installing and starting up R and RStudio</a>
+    </li>
+    <li>
+      <a href="markdown.html">Creating a report using rmarkdown</a>
+    </li>
+    <li>
+      <a href="structure.html">Structuring an analysis</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Lessons
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="introduction_1.html">Introduction to R</a>
+    </li>
+    <li>
+      <a href="import_data.html">Import data</a>
+    </li>
+    <li>
+      <a href="make_summaries.html">Make summaries</a>
+    </li>
+    <li>
+      <a href="plot_ggplot2.html">Create plots with ggplot2</a>
+    </li>
+    <li>
+      <a href="descriptive_statistics.html">Assignment: Descriptive statistics</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="inference.html">Statistical inference</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="regression_models.html">Regression models</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="designs.html">Analyzing trials</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="mixed_models_introduction.html">Repeated measures designs using mixed models</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="statistical_power.html">Sample-size calculations</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="design.html">Experimental design</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Exercises
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="ex1_intro.html">Introduction to R and RStudio</a>
+    </li>
+    <li>
+      <a href="ex1_import.html">Import data</a>
+    </li>
+    <li>
+      <a href="ex1_summarise.html">Summarise data</a>
+    </li>
+    <li>
+      <a href="ex1_figures.html">Making figures</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Assignments
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="assignments_week1.html">Week 1</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="faq.html">
+    <span class="fa fa-question fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Examples related to assignment Week 1</h1>
+
+</div>
+
+
+<div id="two-examples-calculating-percentage-change-in-two-variables" class="section level2">
+<h2>Two examples calculating percentage change in two variables</h2>
+<p>In exercise 1 of assignment week 1 you are asked to calculate %-change of two variables. I suggested using <code>separate()</code> and <code>unite()</code>. This is one solution, another one could be to pivot the data to a suitable form. Below you will find both solutions.</p>
+<pre class="r"><code>library(tidyverse); library(readxl)
+
+## Solution nr 1, using unite() and separate()
+
+read_excel(&quot;data/cyclingStudy.xlsx&quot;, na = &quot;NA&quot;) %&gt;%
+        select(subject, group, timepoint, sj.max, cmj.max) %&gt;%
+        # Using unite to combine to columns
+        unite(col = &quot;perf&quot;, sj.max, cmj.max, sep = &quot;_&quot;) %&gt;%
+        # pivot wider on the new column
+        pivot_wider(names_from = timepoint, 
+                    values_from = perf) %&gt;%
+        select(subject, group, pre, meso3) %&gt;%
+        # Separate is used to get the data into two usable columns
+        separate(col = pre, into = c(&quot;sj.pre&quot;, &quot;cmj.pre&quot;),
+                 sep = &quot;_&quot;, convert = TRUE) %&gt;%
+        separate(col = meso3, into = c(&quot;sj.post&quot;, &quot;cmj.post&quot;),
+                 sep = &quot;_&quot;, convert = TRUE) %&gt;%
+        mutate(change.sj = ((sj.post/sj.pre)-1)*100,
+               change.cmj = ((cmj.post/cmj.pre)-1)*100) %&gt;%
+        select(subject, group, change.sj, change.cmj) %&gt;%
+        ggplot(aes(x = change.sj, y = change.cmj)) +
+        geom_point() +
+        geom_smooth(method = &quot;lm&quot;, se = FALSE)
+        
+
+### Solution nr 2, without separate and unite
+
+read_excel(&quot;./data/cyclingStudy.xlsx&quot;, na = &quot;NA&quot;) %&gt;%
+        select(subject, group, timepoint, sj.max, cmj.max) %&gt;%
+        pivot_longer(names_to = &quot;test&quot;, values_to = &quot;cm&quot;, 
+                     cols = sj.max:cmj.max) %&gt;%
+        pivot_wider(names_from = timepoint, values_from = cm) %&gt;%
+        mutate(change = ((meso3 / pre)-1)*100) %&gt;%
+     
+        select(subject, group, test, change) %&gt;%
+        pivot_wider(names_from = test, values_from = change) %&gt;%
+        ggplot(aes(sj.max, cmj.max)) + geom_point() +
+        geom_smooth(method = &quot;lm&quot;, se = FALSE)
+
+# Soultion 2 is much more efficient as it uses less code!</code></pre>
+</div>
+<div id="group-by-and-summarise" class="section level2">
+<h2>Group by and summarise</h2>
+<p>In exercise 2, you are asked to calculate summary statistics. This is accomplished with <code>group_by()</code> followed by <code>summarise()</code>. Below is an example where we calculate summary statistics on a variable.</p>
+<pre class="r"><code># Lets calculate summary statistics on sj.max per time-point, per group
+read_excel(&quot;data/cyclingStudy.xlsx&quot;, na = &quot;NA&quot;) %&gt;%
+        group_by(timepoint, group) %&gt;%
+        # You are creting new variables in the summarise function
+        # naming them is up to you. In the example M is the column nav
+        summarise(M = mean(sj.max, na.rm = TRUE), 
+                  SD = sd(sj.max, na.rm = TRUE)) %&gt;%
+        print()</code></pre>
+</div>
+<div id="changing-breaks-on-a-axis-and-un-grouping" class="section level2">
+<h2>Changing breaks on a axis and un-grouping</h2>
+<p>Axes in ggplot can be manipulated using specialized functions. To change a continuous axis, use <code>scale_x_continous</code> and <code>scale_y_continous</code>. The below code sets the limits, and breaks of an axis and control where the axis “starts” and “ends”.</p>
+<p>When changing a factor after <code>group_by()</code> we need to un-group the data set to be able to change the variable. The <code>ungroup()</code> command can be used.</p>
+<pre class="r"><code># Lets calculate summary statistics on sj.max per time-point, per group
+read_excel(&quot;data/cyclingStudy.xlsx&quot;, na = &quot;NA&quot;) %&gt;%
+        group_by(timepoint, group) %&gt;%
+        # You are creting new variables in the summarise function
+        # naming them is up to you. In the example M is the column nav
+        summarise(M = mean(sj.max, na.rm = TRUE), 
+                  SD = sd(sj.max, na.rm = TRUE)) %&gt;%
+        # ungrouping to be able to change the timepoint variable
+        ungroup() %&gt;%
+        mutate(timepoint = factor(timepoint, levels = c(&quot;pre&quot;, &quot;meso1&quot;, &quot;meso2&quot;, &quot;meso3&quot;))) %&gt;%
+        ggplot(aes(timepoint, M, group = group, color = group)) + geom_line() +
+        scale_y_continuous(breaks = c(20, 25, 30, 35, 40), # sets the breaks of the axis
+                           limits = c(20, 40), # sets the limits af the axis
+                           expand = c(0, 0)) # exand 0 units from both limits</code></pre>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

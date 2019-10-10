@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Daniel Hammarström" />
+
+
+<title>Statistics Assignment Week 1</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-inverse  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">IDR3002 Course notes</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+    Home
+  </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Software
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="installation.html">Installing and starting up R and RStudio</a>
+    </li>
+    <li>
+      <a href="markdown.html">Creating a report using rmarkdown</a>
+    </li>
+    <li>
+      <a href="structure.html">Structuring an analysis</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Lessons
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="introduction_1.html">Introduction to R</a>
+    </li>
+    <li>
+      <a href="import_data.html">Import data</a>
+    </li>
+    <li>
+      <a href="make_summaries.html">Make summaries</a>
+    </li>
+    <li>
+      <a href="plot_ggplot2.html">Create plots with ggplot2</a>
+    </li>
+    <li>
+      <a href="descriptive_statistics.html">Assignment: Descriptive statistics</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="inference.html">Statistical inference</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="regression_models.html">Regression models</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="designs.html">Analyzing trials</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="mixed_models_introduction.html">Repeated measures designs using mixed models</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="statistical_power.html">Sample-size calculations</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="design.html">Experimental design</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Exercises
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="ex1_intro.html">Introduction to R and RStudio</a>
+    </li>
+    <li>
+      <a href="ex1_import.html">Import data</a>
+    </li>
+    <li>
+      <a href="ex1_summarise.html">Summarise data</a>
+    </li>
+    <li>
+      <a href="ex1_figures.html">Making figures</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Assignments
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="assignments_week1.html">Week 1</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="faq.html">
+    <span class="fa fa-question fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Statistics Assignment Week 1</h1>
+<h4 class="author">Daniel Hammarström</h4>
+
+</div>
+
+
+<p>In this assignment you are asked to reproduce at least 3 of 4 figures. We will be using the cycling data set and ggplot2 together with dplyr and tidyr. The graphs to reproduce are shown below together with instructions for each graph.</p>
+<p>You might find useful tips in <a href="examples_week1.Rmd">these examples</a>.</p>
+<div id="figure-1-correlation-between-percentage-change-in-counter-movement-jump-and-peak-power" class="section level3">
+<h3>Figure 1: Correlation between percentage change in counter movement jump and peak power</h3>
+<p>Anaerobic performance might be affected by endurance training, to see if changes in performance in a non-specific exercise (counter-movement jump) is related to changes in cycling-specific peak-power we are going to plot the two.</p>
+<div id="tips" class="section level4">
+<h4>Tips</h4>
+<p>Relevant variables from the <code>cyclingStudy</code> data set are</p>
+<table>
+<colgroup>
+<col width="13%" />
+<col width="86%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Variable</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>subject</code></td>
+<td>ID of participants</td>
+</tr>
+<tr class="even">
+<td><code>timepoint</code></td>
+<td>Time-point for testing pre-training (<code>pre</code>), and after each training period (<code>meso1</code>-<code>meso3</code>)</td>
+</tr>
+<tr class="odd">
+<td><code>cmj.max</code></td>
+<td>Counter movement jump performance</td>
+</tr>
+<tr class="even">
+<td><code>peak.power</code></td>
+<td>Peak power from a Wingate test</td>
+</tr>
+</tbody>
+</table>
+<p>To calculate relative change of a variable, one solution would be to make the data into wide format. As we load the cyclingStudy data set, this part of the data is in long and tidy format. Each row is an observation and each column is a variable. If we use <code>pivot_wider()</code> we can get each time-point to a single column. An example:</p>
+<pre class="r"><code># Load packages
+library(tidyverse)
+library(readxl)
+
+cyclingStudy &lt;- read_excel(&quot;./data/cyclingStudy.xlsx&quot;, na = &quot;NA&quot;) 
+
+cyclingStudy %&gt;%
+        select(subject, timepoint, cmj.max) %&gt;%
+        pivot_wider(names_from = timepoint, 
+                    values_from = cmj.max) %&gt;%
+        print()</code></pre>
+<p>The <code>mutate()</code> function can be used to calculate the percentage change. We are interested in calculating</p>
+<p><span class="math display">\[\%~Change = 100 * \bigg( \frac{Post}{Pre}-1\bigg)\]</span></p>
+<p>In the mutate command, this will be:</p>
+<p><code>mutate(change = (( meso3 / pre) -1) * 100)</code></p>
+<p>A tricky part of this operation is that you want to do pivoting with two variables. To accomplish this you might want to look into <code>unite()</code> and <code>separate()</code> function.</p>
+</div>
+</div>
+<div id="the-figure-to-reproduce" class="section level3">
+<h3>The figure to reproduce</h3>
+<p><img src="assignments_week1_files/figure-html/figure1-1.png" width="672" /></p>
+</div>
+<div id="figure-2-group-wise-change-in-vo2max-ml-1-kg-1-min-1" class="section level3">
+<h3>Figure 2: Group-wise change in VO<sub>2max</sub> ml<sup>-1</sup> kg<sup>-1</sup> min<sup>-1</sup></h3>
+<p>In the figure below, we display percentage increase in VO<sub>2max</sub> (ml<sup>-1</sup> kg<sup>-1</sup> min<sup>-1</sup>) per group. Relevant variables from the <code>cyclingStudy</code> data set are:</p>
+<table>
+<colgroup>
+<col width="13%" />
+<col width="86%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Variable</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>subject</code></td>
+<td>ID of participants</td>
+</tr>
+<tr class="even">
+<td><code>timepoint</code></td>
+<td>Time-point for testing pre-training (<code>pre</code>), and after each training period (<code>meso1</code>-<code>meso3</code>)</td>
+</tr>
+<tr class="odd">
+<td><code>group</code></td>
+<td>ID of the groups, <code>INCR</code>, <code>DECR</code> and <code>MIX</code></td>
+</tr>
+<tr class="even">
+<td><code>weight.T1</code></td>
+<td>Body mass</td>
+</tr>
+<tr class="odd">
+<td><code>VO2.max</code></td>
+<td>VO<sub>2max</sub> in ml<sup>-1</sup> min<sup>-1</sup></td>
+</tr>
+</tbody>
+</table>
+<div id="tips-1" class="section level4">
+<h4>Tips</h4>
+<p>In the figure below the following tips may be useful.</p>
+<ul>
+<li>To calculate the confidence interval of a mean you need the standard deviation (calculate with <code>sd()</code>), and the number of observations. In the case where we do not have any <code>NA</code>, we could use the <code>n()</code> function. However, here we want to count the number of observations with data. An alternative is to do <code>n = sum(!is.na(variable))</code> where <code>variable</code> is the variable you are interested in calculating the number on non-NA in. <code>is.na()</code> returns “TRUE” if a row is NA and “FALSE” if the row is not NA. When we use the <code>!</code> sign, we reverse this. The sum function calculates the number of “TRUE”. The confidence interval can be calculated from a t-distribution using the <code>qt()</code> function using the following code:</li>
+</ul>
+<p><code>error = qt(0.975, df = n - 1) * sd/sqrt(n)</code></p>
+<ul>
+<li>Where <code>n</code>is the number of non-NA observation, <code>sd</code> is the standard deviation. This code would go into the <code>summarise()</code> function after a group by:</li>
+</ul>
+<pre class="r"><code>... %&gt;%
+        group_by(group) %&gt;%
+        summarise(m = mean(change, na.rm = TRUE), 
+                  s = sd(change, na.rm = TRUE), 
+                  n  = sum(!(is.na(change))), 
+                  error = qt(0.975, df = n-1) * s/sqrt(n)) %&gt;%</code></pre>
+<ul>
+<li><p>In the above code, <code>...</code> stands for operations that I have done but not shown. The new variable error is the distance from the mean that represents one side of the confidence interval.</p></li>
+<li><p><code>geom_point()</code> can take different <code>shape</code> arguments. Different shapes can be found <a href="http://www.sthda.com/english/wiki/r-plot-pch-symbols-the-different-point-shapes-available-in-r">here</a>. We want a shape that can be filled. The size settings might need changing?</p></li>
+<li><p>Google: “how to plot plus minus sign Unicode ggplot2” to see information about the <span class="math inline">\(\pm\)</span> sign in the y-axis label.</p></li>
+<li><p><code>geom_hline()</code> will produce a horizontal line given the right arguments, line types can be found <a href="https://www.datanovia.com/en/blog/line-types-in-r-the-ultimate-guide-for-r-base-plot-and-ggplot/">here</a></p></li>
+<li><p>Themes are an easy way to change the overall appearance of a graph. Try <code>theme_bw()</code>, <code>theme_classic()</code> or <code>theme_light</code>, which one suits best?</p></li>
+<li><p>See the help files for <code>scale_y_continuous</code> to see how to change the y-axis.</p></li>
+</ul>
+</div>
+<div id="the-figure-to-reproduce-1" class="section level4">
+<h4>The figure to reproduce</h4>
+<p><img src="assignments_week1_files/figure-html/figure2-1.png" width="672" /></p>
+</div>
+</div>
+<div id="figure-3-faceting-the-correlation-between-vo2max-and-sub-maximal-vo2." class="section level3">
+<h3>Figure 3: Faceting the correlation between VO<sub>2max</sub> and sub maximal VO<sub>2</sub>.</h3>
+<p>To display data in different panels can be useful when doing exploration graphics. Here we will plot maximal VO<sub>2</sub> against sub maximal VO<sub>2</sub> per test and watt.</p>
+<p>Tips for the figure below:</p>
+<ul>
+<li>Read about <code>geom_smooth</code> in the help files (´?geom_smooth`), this function is used to add regression lines to the graph.</li>
+<li>Maybe the code: <code>mutate(timepoint = factor(timepoint, levels = c("pre", "meso1", "meso2", "meso3")))</code> is helpful.</li>
+<li>To get all sub maximal values (<code>VO2.125:VO2.225</code>) into one variable, <code>pivot_longer()</code> is needed. As you will see, all other variables will duplicate when using the <code>pivot_longer()</code> function. (TIP: Work with a smaller data set, use <code>select()</code>)</li>
+<li>Google: “subscript in ggplot2 labels”</li>
+</ul>
+<div id="the-figure-to-reproduce-2" class="section level4">
+<h4>The figure to reproduce</h4>
+<p><img src="assignments_week1_files/figure-html/figure3-1.png" width="672" /></p>
+</div>
+</div>
+<div id="figure-4-mean-and-standard-deviation-of-multiple-variables" class="section level3">
+<h3>Figure 4: Mean and standard deviation of multiple variables</h3>
+<p>We will now use sub maximal heart rate values (<code>HF.125</code> to <code>HF.250</code>) and plot these against watt. We are interested in the mean and standard deviation per time point.</p>
+<div id="tips-for-the-figure-below" class="section level4">
+<h4>Tips for the figure below</h4>
+<ul>
+<li>To get summary statistics I have grouped by watt and time-point after a pivot to get <code>HF.125</code> to <code>HF.250</code> in long format.</li>
+<li>The labels (text) are the values (this not something you would usually do!). The labels are created using this code (where m is the mean calculated in the summary and sd is the standard deviation calculated in the summary):</li>
+<li>You have to change the order of the <code>timepoint</code> using <code>factor()</code>.</li>
+<li>The <code>width =</code> in <code>geom_errorbar()</code> is set to 0.1.</li>
+</ul>
+<pre class="r"><code>        geom_label(aes(label = round(m, 0)), nudge_y = -3, nudge_x = 0.3) +
+        geom_label(aes(y = m + sd, label = round(sd, 0)),  nudge_x = -0.5) </code></pre>
+<p><img src="assignments_week1_files/figure-html/figure4-1.png" width="672" /></p>
+</div>
+</div>
+<div id="what-to-hand-in" class="section level2">
+<h2>What to hand in</h2>
+<p>You re required to hand in a .R file or .Rmd file that produces the above figures. You are also required to study and give comments on a friends assignment. This will all be done on canvas. Hand in your assignment in Oppgaver on Canvas no later than Sunday.</p>
+<p>Good luck!</p>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
