@@ -8,6 +8,8 @@ output: html_document
 knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message = FALSE)
 ```
 
+**You can find solutions to these exercises [here](assignments_week1_solutions.html)**
+
 In this assignment you are asked to reproduce at least 3 of 4 figures. We will be using the cycling data set and ggplot2 together with dplyr and tidyr.  The graphs to reproduce are shown below together with instructions for each graph.
 
 You might find useful tips in [these examples](examples_week1.html).
