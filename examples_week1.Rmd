@@ -101,7 +101,24 @@ read_excel("data/cyclingStudy.xlsx", na = "NA") %>%
 
 ```
 
+## Facetting
 
+With `facet_grid()` and `facet_wrap()` we can vreate panels based on a variable.
+
+
+```{r, eval = FALSE, echo = TRUE}
+
+read_excel("./data/cyclingStudy.xlsx", na = "NA") %>%
+        select(subject, group, timepoint, sj.max, cmj.max) %>%
+        ggplot(aes(cmj.max, sj.max)) + geom_point() +
+        # Facet grid puts group in rows and 
+        # timepoint in columns 
+        facet_grid(group ~ timepoint) +
+        geom_smooth(method = "lm", se = FALSE)
+        
+        
+
+```
 
 
 

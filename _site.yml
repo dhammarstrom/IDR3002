@@ -31,7 +31,7 @@ navbar:
           href: descriptive_statistics.html
         - text: "-----------------------------------"
         - text: "Statistical inference"
-          href: inference.html
+          href: ex2_introInference.html
         - text: "-----------------------------------"
         - text: "Regression models"
           href: regression_models.html
@@ -61,6 +61,8 @@ navbar:
       menu:
         - text: "Week 1"
           href: assignments_week1.html
+        - text: "Week 2"
+          href: assignments_week2.html
   right:
     - icon: fa-question fa-lg
       href: faq.html

@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Daniel Hammarström" />
+
+
+<title>Assignment Week 2: Inference, confidence intervals and p-values part 1</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-inverse  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">IDR3002 Course notes</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+    Home
+  </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Software
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="installation.html">Installing and starting up R and RStudio</a>
+    </li>
+    <li>
+      <a href="markdown.html">Creating a report using rmarkdown</a>
+    </li>
+    <li>
+      <a href="structure.html">Structuring an analysis</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Lessons
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="introduction_1.html">Introduction to R</a>
+    </li>
+    <li>
+      <a href="import_data.html">Import data</a>
+    </li>
+    <li>
+      <a href="make_summaries.html">Make summaries</a>
+    </li>
+    <li>
+      <a href="plot_ggplot2.html">Create plots with ggplot2</a>
+    </li>
+    <li>
+      <a href="descriptive_statistics.html">Assignment: Descriptive statistics</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="ex2_introInference.html">Statistical inference</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="regression_models.html">Regression models</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="designs.html">Analyzing trials</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="mixed_models_introduction.html">Repeated measures designs using mixed models</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="statistical_power.html">Sample-size calculations</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="design.html">Experimental design</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Exercises
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="ex1_intro.html">Introduction to R and RStudio</a>
+    </li>
+    <li>
+      <a href="ex1_import.html">Import data</a>
+    </li>
+    <li>
+      <a href="ex1_summarise.html">Summarise data</a>
+    </li>
+    <li>
+      <a href="ex1_figures.html">Making figures</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Assignments
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="assignments_week1.html">Week 1</a>
+    </li>
+    <li>
+      <a href="assignments_week2.html">Week 2</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="faq.html">
+    <span class="fa fa-question fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Assignment Week 2: Inference, confidence intervals and p-values part 1</h1>
+<h4 class="author">Daniel Hammarström</h4>
+<h4 class="date">11 10 2019</h4>
+
+</div>
+
+
+<div id="the-sampling-distribution" class="section level2">
+<h2>The sampling distribution</h2>
+<p>The sampling distribution is in most cases an imaginary distribution containing all the possible values of a sample statistic. The standard deviation of an imaginary sampling distribution can be estimated with the sample standard error. For proportions (<span class="math inline">\(p\)</span>, data bound between 0 and 1), the standard error (<span class="math inline">\(SE_{\hat{p}}\)</span>) can be calculated as</p>
+<p><span class="math display">\[SE_{\hat{p}} = \sqrt{\frac{\hat{p}(1-\hat{p})}{n}}\]</span></p>
+<p>Where <span class="math inline">\(\hat{p}\)</span> is the estimated proportion. Let’s say that you sample with a sample size (<span class="math inline">\(n\)</span>) of 30, how will <span class="math inline">\(\hat{p}\)</span> affect <span class="math inline">\(SE_{\hat{p}}\)</span>? Have a try in R before you click below.</p>
+<script language="javascript"> 
+    function toggle(num) {
+      var ele = document.getElementById("toggleText" + num);
+      var text = document.getElementById("displayText" + num);
+      if(ele.style.display == "block") {
+        ele.style.display = "none";
+        text.innerHTML = "show";
+      }
+      else {
+        ele.style.display = "block";
+        text.innerHTML = "hide";
+      }
+   } 
+  </script>
+<a id="displayText" href="javascript:toggle(1);">Here is a possible solution</a>
+<div id="toggleText1" style="display: none">
+<p>The standard error is affected by both the <span class="math inline">\(n\)</span> and the estimated proportion. This can be plotted:</p>
+<pre class="r"><code>library(tidyvrse)
+
+# Start with creating a data frame
+df &lt;- data.frame(n = rep(30, 19), 
+                 p = seq(0.05, 0.95, by = 0.05))
+
+# calculate the standard error
+
+df$se &lt;- sqrt((df$p * (1-df$p)) / df$n)
+
+df %&gt;%
+        ggplot(aes(p, se)) + geom_point() +
+        annotate(&quot;text&quot;, x = 0.1, y = 0.09, label = &quot;n = 30&quot;) +
+        labs(title = &quot;Standard error of a proportion as a function of the estimated proportion&quot;)</code></pre>
+<p>Why do you think that the proportion affects the standard error?</p>
+</div>
+<p></br></p>
+<p>A confidence interval is calculated based on the standard error of a statistic (such as a proportion or a mean). The standard error of a statistic corresponds to the standard deviation of the sampling distribution. However, to add to the confusion, we never talk about the standard deviation of the sampling distribution, instead we just say standard error. An estimated standard error corresponds to the spread of the sampling distribution.</p>
+<p>Let us do an experiment where we create sample distributions. If we have access to the whole population of numbers, we can do this.</p>
+<p>In this case the population has an N of 1000000. The population consists with a center at about 100 and a standard deviation of 15. We will examine how the sample size affects the uncertainty of the estimate and how this corresponds to the sampling distribution</p>
+<p>First we need to create the population. In R we can easily do this by using the <code>rnorm()</code> function. This function draws number in a semi-random faschion giving us the oportunity to replicate the process. If we tell R to start from the same place, it will return the same numbers. We tell R to start from the same place using the <code>set.seed()</code> function. For reproducability, this function should be set every time you do something involving random processes.</p>
+<pre class="r"><code># load packages
+library(tidyverse)
+
+# set seed for random number generation
+set.seed(123) # this can be any number
+
+pop &lt;- rnorm(n = 1000000, mean = 100, sd = 15)</code></pre>
+<p>Now let’s say that we want to estimate the mean of the population. We can sample at random from the population using the <code>sample()</code> function.</p>
+<pre class="r"><code>sample1 &lt;- sample(x = pop, size = 10, replace = FALSE)</code></pre>
+<p>Setting <code>replace = FALSE</code> makes sure that we do not use the same number twice. We sample from <code>pop</code> and the sample has the <code>size = 10</code>. The mean of the sample is.</p>
+<pre class="r"><code>mean(sample1)</code></pre>
+<pre><code>## [1] 96.0118</code></pre>
+<p>We could continue to sample in this way and record every outcome to build the distribution. A smarter way is to create a for-loop. This is a basic building block in programming, we tell the computer to do a task multiple times and store the results in a nice format. We will sample <code>size = 10</code> and calculate the mean. The results will be stored in a data frame.</p>
+<pre class="r"><code># set the seed
+set.seed(123)
+
+# create the data frame
+results &lt;- data.frame(mean = rep(NA, 1000)) 
+# The rep function creates a vector full of NA 
+# each NA can be replaced with a mean
+
+# Second we build the for loop
+
+for(i in 1:1000){
+  
+  results[i, 1] &lt;- mean(sample(x = pop, size = 10, replace = FALSE))
+  
+}</code></pre>
+<p>The results from this process can be plotted using ggplot2</p>
+<pre class="r"><code>ggplot(data = results, aes(mean)) +
+  geom_histogram(fill = &quot;lightblue&quot;, color = &quot;gray40&quot;, binwidth = 1) + 
+  theme_minimal()</code></pre>
+<p><img src="ex2_introInference_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>The standard deviation of the sampling distribution can be calculated from the results.</p>
+<pre class="r"><code>sd(results$mean)</code></pre>
+<pre><code>## [1] 4.651947</code></pre>
+<p>The dispersion (spread) of the sampling distribution should correspond to the standard error of the mean in each sample. Let us repeat the sampling and include a calculation of the standard error of the mean. The standard error is calculate as</p>
+<p><span class="math display">\[SE = \frac{s}{\sqrt{n}}\]</span></p>
+<pre class="r"><code># set the seed
+set.seed(123)
+
+# create the data frame
+results &lt;- data.frame(mean = rep(NA, 1000), 
+                      sem = rep(NA, 1000)) 
+# The rep function creates a vector full of NA 
+# each NA can be replaced with a mean
+
+# Second we build the for loop
+
+for(i in 1:1000){
+  
+  samp &lt;- sample(x = pop, size = 10, replace = FALSE)
+  
+  results[i, 1] &lt;- mean(samp)
+  results[i, 2] &lt;- sd(samp) / sqrt(10) 
+  
+}
+
+sd(results[, 1])</code></pre>
+<pre><code>## [1] 4.651947</code></pre>
+<p>The first SE is 5.97, the second is 4.27 the mean SE is 4.61 which is fairly close to the standard deviation of the sampling distribution. Re-write the code above so that the sample size corresponds to 25. Calculate:</p>
+<ul>
+<li>The SD of the sampling distribution</li>
+<li>Average sample SE.</li>
+</ul>
+</div>
+<div id="sampling-distribution-of-iq" class="section level2">
+<h2>Sampling distribution of IQ</h2>
+<p><a href="https://en.wikipedia.org/wiki/IQ_classification">IQ values are normally distributed</a> with median 100 (since the distribution is normal, this should be very close the the mean) and standard deviation of 15. Using a sample from the population we can calculate a 95% confidence interval. We will do this with <code>n=10</code> and <code>n=25</code>. You will have to execute the code. A 95% confidence interval based on the normal distribution can be calculated as</p>
+<pre class="r"><code># set the seed
+
+set.seed(1)
+
+
+n10 &lt;- sample(pop, 10, replace = FALSE)
+n25 &lt;- sample(pop, 25, replace = FALSE)
+
+# n = 10
+mean_n10 &lt;- mean(n10)
+s_n10 &lt;- sd(n10)
+
+error_n10 &lt;- qnorm(0.975) * s_n10/sqrt(10)
+
+# n = 25
+mean_n25 &lt;- mean(n25)
+s_n25 &lt;- sd(n25)
+
+error_n25 &lt;- qnorm(0.975) * s_n25/sqrt(25)</code></pre>
+<p>We can collect the pieces and create a plot using this code:</p>
+<pre class="r"><code>df &lt;- data.frame(sample.size = c(10, 25),
+                 mean = c(mean_n10, mean_n25), 
+                 error = c(error_n10, error_n25))
+
+df %&gt;%
+  ggplot(aes(as.factor(sample.size), mean)) +
+  geom_errorbar(aes(ymin = mean-error, ymax = mean + error), width = 0.2) +
+  geom_point(size = 3) + 
+  theme_minimal()</code></pre>
+<p>What can you say about the effect of sample size on the confidence of an estimate?</p>
+<p>Above we used the normal distribution to calculate the confidence interval. It would be more correct to use the t-distribution.</p>
+<p>The corresponding code for calculating the error based on the t-distribution would be</p>
+<p><code>qt(0.975, df = n - 1) * s/sqrt(n)</code></p>
+<p>Adopt the code above and graph the different confidence intervals beside each other.</p>
+<a id="displayText" href="javascript:toggle(2);">Here is a possible solution</a>
+<div id="toggleText2" style="display: none">
+<pre class="r"><code># set the seed
+
+set.seed(1)
+
+
+n10 &lt;- sample(pop, 10, replace = FALSE)
+n25 &lt;- sample(pop, 25, replace = FALSE)
+
+# n = 10
+mean_n10 &lt;- mean(n10)
+s_n10 &lt;- sd(n10)
+
+error_n10 &lt;- qnorm(0.975) * s_n10/sqrt(10)
+errort_n10 &lt;- qt(0.975, df = 10 - 1) * s_n10/sqrt(10)
+
+
+# n = 25
+mean_n25 &lt;- mean(n25)
+s_n25 &lt;- sd(n25)
+
+error_n25 &lt;- qnorm(0.975) * s_n25/sqrt(25)
+errort_n25 &lt;- qt(0.975, df = 25-1) * s_n25/sqrt(25)</code></pre>
+<p>We can collect the pieces and create a plot using this code:</p>
+<pre class="r"><code>df &lt;- data.frame(sample.size = c(10, 25, 10, 25),
+                 mean = c(mean_n10, mean_n25, mean_n10, mean_n25), 
+                 error = c(error_n10, error_n25, errort_n10, errort_n25), 
+                 error.type = c(&quot;z&quot;, &quot;z&quot;, &quot;t&quot;, &quot;t&quot;))
+
+df %&gt;%
+  ggplot(aes(as.factor(sample.size), mean, color = error.type)) +
+  geom_errorbar(aes(ymin = mean-error, ymax = mean + error), 
+                width = 0.2, 
+                position = position_dodge(width = 0.2)) +
+  geom_point(size = 3, position = position_dodge(width = 0.2)) + 
+  theme_minimal()</code></pre>
+<p>What can you say about using the t- vs. the z-distribution?</p>
+</div>
+<p></br></p>
+</div>
+<div id="a-hypothesis-test" class="section level1">
+<h1>A hypothesis test</h1>
+<p>We know that a random sample will have a mean close to the center of the population distribution (100 in the case above). We want to know if chess players (<span class="math inline">\(Chess\)</span>) have higher IQ scores than average people <span class="math inline">\(Average\)</span>. We can create an alternative hypothesis stating that</p>
+<p><span class="math display">\[H_A: Chess \neq Average\]</span></p>
+<p>The nul hypothesis that we are comparing to is</p>
+<p><span class="math display">\[H_0: Chess = Average\]</span></p>
+<p>We collect data from chess players (<span class="math inline">\(n=24\)</span>). Use the data below to test <span class="math inline">\(H_0\)</span>.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Chess player</th>
+<th>IQ</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>129</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>101</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>98</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>89</td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td>103</td>
+</tr>
+<tr class="even">
+<td>6</td>
+<td>107</td>
+</tr>
+<tr class="odd">
+<td>7</td>
+<td>123</td>
+</tr>
+<tr class="even">
+<td>8</td>
+<td>117</td>
+</tr>
+<tr class="odd">
+<td>9</td>
+<td>114</td>
+</tr>
+<tr class="even">
+<td>10</td>
+<td>109</td>
+</tr>
+<tr class="odd">
+<td>11</td>
+<td>110</td>
+</tr>
+<tr class="even">
+<td>12</td>
+<td>99</td>
+</tr>
+<tr class="odd">
+<td>13</td>
+<td>101</td>
+</tr>
+<tr class="even">
+<td>14</td>
+<td>102</td>
+</tr>
+<tr class="odd">
+<td>15</td>
+<td>130</td>
+</tr>
+<tr class="even">
+<td>16</td>
+<td>121</td>
+</tr>
+<tr class="odd">
+<td>17</td>
+<td>129</td>
+</tr>
+<tr class="even">
+<td>18</td>
+<td>115</td>
+</tr>
+<tr class="odd">
+<td>19</td>
+<td>107</td>
+</tr>
+<tr class="even">
+<td>20</td>
+<td>109</td>
+</tr>
+<tr class="odd">
+<td>21</td>
+<td>107</td>
+</tr>
+<tr class="even">
+<td>22</td>
+<td>96</td>
+</tr>
+<tr class="odd">
+<td>23</td>
+<td>98</td>
+</tr>
+<tr class="even">
+<td>24</td>
+<td>102</td>
+</tr>
+</tbody>
+</table>
+<p>Try to calculate the confidence interval and to answer these questions:</p>
+<ul>
+<li>How do you interpret the confidence interval?</li>
+<li>What does the confidence interval say about your hypothesis?</li>
+<li>Is the confidence interval a statement about your sample?</li>
+</ul>
+<a id="displayText" href="javascript:toggle(3);">Here is a possible solution</a>
+<div id="toggleText3" style="display: none">
+<pre class="r"><code>chess.players &lt;- c(129, 101,98 ,89 ,103,107,123,117,114,
+                   109,110,99 ,101,102,130,121,129,115,
+                   107,109,107,96 ,98,102)
+
+
+chess.mean &lt;- mean(chess.players)
+
+chess.error &lt;- qt(0.975, df = 24-1) * sd(chess.players)/sqrt(24)
+
+
+c(chess.mean - chess.error, chess.mean + chess.error)</code></pre>
+<pre><code>## [1] 104.265 113.735</code></pre>
+</div>
+<p></br></p>
+<div id="using-a-confidence-interval-when-planning-a-study" class="section level2">
+<h2>Using a confidence interval when planning a study</h2>
+<p>We can calculate the mean change from pre- to post-training in the cycling study for <span class="math inline">\(\dot{V}O2_{max}\)</span>. Do this for the whole data set together with the sample SD and mean. How do you interpret the confidence interval?</p>
+<a id="displayText" href="javascript:toggle(4);">Here is a possible solution</a>
+<div id="toggleText4" style="display: none">
+<pre class="r"><code>library(readxl); library(tidyverse)
+
+read_excel(&quot;./data/cyclingStudy.xlsx&quot;, na = &quot;NA&quot;) %&gt;%
+        select(subject, group, timepoint, VO2.max) %&gt;%
+        filter(timepoint %in%  c(&quot;pre&quot;, &quot;meso3&quot;)) %&gt;%
+  pivot_wider(names_from = timepoint, values_from = VO2.max) %&gt;%
+  mutate(change = 100 * (meso3-pre)/pre) %&gt;%
+  group_by() %&gt;%
+  summarise(m = mean(change, na.rm = TRUE), 
+            s = sd(change, na.rm = TRUE), 
+            n = sum(!is.na(change)), 
+            error = qt(0.975, df = n -1) * s/sqrt(n)) %&gt;%
+  print()</code></pre>
+</div>
+<p></br></p>
+<p>Let’s say that we are designing a new study. We want to be able to show a difference between pre- to post-training in <span class="math inline">\(\dot{V}O2_{max}\)</span> of 2% as this might be an important difference. Given the standard deviation that you have calculated above, how many participants should be recruit to the study to be able to detect a difference of 2%?</p>
+<p>Here you can try to calculate the lower bound of a 95% confidence limit given a standard deviation equal to what you calculated above and a mean change of interest of 2% using many different alternatives for the sample size.</p>
+<a id="displayText" href="javascript:toggle(5);">Here is a possible solution</a>
+<div id="toggleText5" style="display: none">
+<pre class="r"><code>error &lt;- qt(0.975, df = seq(from = 10, to = 100, by = 2) - 1) * 4.79 / sqrt(seq(from = 10,
+                                                                                to = 100, 
+                                                                                by = 2))
+
+ggplot(data.frame(n = seq(from = 10, to = 100, by = 2), 
+                  lower.bound = 2-error), aes(n, lower.bound)) + geom_point() +
+  geom_hline(yintercept = 0)</code></pre>
+</div>
+<p></br></p>
+<p>How could the above information help you when designing a study? Why is there a relationship between sample size and the lower bound of the confidence interval?</p>
+<p>The relevant percentage change for counter-movement jump (<code>cmj.max</code>) is 10% and for wingate peak power (<code>peak.power</code>) 5%. How big samples would you need to have to show such a difference if it was true using a 95% confidence interval?</p>
+</div>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

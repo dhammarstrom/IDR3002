@@ -207,7 +207,7 @@ hist(d$variable2, main="Histogram of Variable 2", xlab="Variable 2")
 
 Checking assumptions using graphical methods, more information on one plot!
 
-```{r, echo=FALSE, fig.height = 2.5, fig.width = 5}
+```{r, echo=FALSE, fig.height = 2.5, fig.width = 5, warning = FALSE, message = FALSE}
 library(ggplot2)
 p1<-ggplot(d, aes(variable1, variable2, color=time, label=subject, group=subject))+geom_line(color="black")+geom_point(size=5)
 

@@ -7,6 +7,7 @@
 <meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
@@ -85,7 +86,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -246,18 +246,6 @@ $(document).ready(function () {
 }
 </style>
 
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
 <!-- code folding -->
 
 
@@ -334,7 +322,7 @@ $(document).ready(function () {
     </li>
     <li class="divider"></li>
     <li>
-      <a href="inference.html">Statistical inference</a>
+      <a href="ex2_introInference.html">Statistical inference</a>
     </li>
     <li class="divider"></li>
     <li>
@@ -388,6 +376,9 @@ $(document).ready(function () {
   <ul class="dropdown-menu" role="menu">
     <li>
       <a href="assignments_week1.html">Week 1</a>
+    </li>
+    <li>
+      <a href="assignments_week2.html">Week 2</a>
     </li>
   </ul>
 </li>
@@ -488,6 +479,17 @@ read_excel(&quot;data/cyclingStudy.xlsx&quot;, na = &quot;NA&quot;) %&gt;%
                            limits = c(20, 40), # sets the limits af the axis
                            expand = c(0, 0)) # exand 0 units from both limits</code></pre>
 </div>
+<div id="facetting" class="section level2">
+<h2>Facetting</h2>
+<p>With <code>facet_grid()</code> and <code>facet_wrap()</code> we can vreate panels based on a variable.</p>
+<pre class="r"><code>read_excel(&quot;./data/cyclingStudy.xlsx&quot;, na = &quot;NA&quot;) %&gt;%
+        select(subject, group, timepoint, sj.max, cmj.max) %&gt;%
+        ggplot(aes(cmj.max, sj.max)) + geom_point() +
+        # Facet grid puts group in rows and 
+        # timepoint in columns 
+        facet_grid(group ~ timepoint) +
+        geom_smooth(method = &quot;lm&quot;, se = FALSE)</code></pre>
+</div>
 
 
 
@@ -506,6 +508,23 @@ $(document).ready(function () {
 
 
 </script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>

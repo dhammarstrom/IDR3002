@@ -1,0 +1,711 @@
+---
+title: "Statistical inference"
+author: "Daniel Hammarström"
+date: "2019-10-14"
+output: beamer_presentation
+header-includes:
+- \usepackage{booktabs}
+- \usepackage{longtable}
+- \usepackage{array}
+- \usepackage{multirow}
+- \usepackage{wrapfig}
+- \usepackage{float}
+- \usepackage{colortbl}
+- \usepackage{pdflscape}
+- \usepackage{tabu}
+- \usepackage{threeparttable}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(knitr); library(tidyverse)
+```
+
+# Statistical inference
+
+- What are Rønnestad and Vikmoen talking about here?
+
+```{r echo=FALSE, out.width='100%'}
+knitr::include_graphics('./img/ronnestad2019_example.png')
+```
+
+- Specifically, are they talking about the results in their study, or the "real world" it represents?
+
+# Statistical inference
+- A scientific study is often designed to answer questions about the "real world" based on some collected data. 
+- This is because we are unable to measure all possible cases.
+- The data are collected under controlled circumstances so that claims about the "real world" are unbiased
+- Researchers aim to describe e.g. a difference between two training protocols outside the laboratory,  given some set of assumptions and based on a sample of data.
+- Based on our collected data, we want to infer what the *true* real-world value is.
+
+
+# Population and sample
+
+- The population (in statistical terms) are all the **possible values** a **variable** can take.
+- We can therefore talk about a population of values, e.g. height of all men in Norway, or all possible test results of a group of athletes.
+- The sample is a **subset** of values from the population.
+- The problem we face when trying to infer about the *population* based on a *sample* is that we will estimate with some *error*.
+- If we have designed our experiment in a bad way, the error will to a large extent consist of **bias**.
+- If the experiment is well designed, without bias, we are still left with **sampling error**
+
+# A simple example
+
+```{r echo=FALSE, out.width='60%'}
+knitr::include_graphics('./img/container.jpg')
+```
+
+- We ordered blue and red pills from China. We messed up the order and the factory forgot to document how many blue pills there were. 
+- We need to know the proportion of blue pills as blue and red pills has different prices.
+- The total number of pills in our containers is $N = 10000000$, we wont be able to count them all, we can only use a sample. 
+
+# A simple example
+
+```{r}
+set.seed(123)
+
+N <- 10000000
+
+pills <- c(rep("blue", 0.4 * N ), rep("red", 0.6 * N))
+
+small_sample1 <- sample(pills, 10, replace = FALSE)
+small_sample2 <- sample(pills, 10, replace = FALSE)
+
+
+```
+
+- We open a box and count 10 pills, there are `r table(small_sample1)[1]` blue and `r table(small_sample1)[2]` red pills (`r (table(small_sample1)[1]/(table(small_sample1)[1] + table(small_sample1)[2]))*100`\% blue).
+- Another 10 pills are drawn there are `r table(small_sample2)[1]` blue and `r table(small_sample2)[2]` red pills (`r (table(small_sample2)[1]/(table(small_sample2)[1] + table(small_sample2)[2]))*100`\% blue).
+- As long as all containers/boxes are unbiased, the differences in samples are due to sampling error.
+
+- Your boss tells you that you only need to count 50 pills to know the true proportions of pills. 
+- You think it makes sense that if the sample size is bigger we are more confident that the sample represents the actual population.
+- To prove you point, you spend the night counting pills...
+
+
+# A distribution of samples
+- When we draw a sample from a population, it will give us a best guess of the true proportion.
+- The true, unknown population proportion can be called $p$, our best guess can be called $\hat{p}$
+- When we calculate the proportion of blue pills in a sample it might be $\hat{p}=0.45$ (45\%). In another draw, it might be $\hat{p}=0.55$. 
+- If we would have drawn many samples we would have created a **sampling distribution**.
+- To prove to your boss that sample sizes matters, you draw random samples of 25, 50 and 100 and count the number of blue pills. 
+
+# A distribution of samples
+
+```{r, cache = TRUE, fig.height = 2.5, fig.width = 5}
+set.seed(123)
+results <- data.frame(n25 = rep(NA, 1000), 
+                      n50 = rep(NA, 1000), 
+                      n100 = rep(NA, 1000))
+
+for(i in 1:1000){
+  
+  results[i, 1] <- table(sample(pills, 25))[1]/25
+  results[i, 2] <- table(sample(pills, 50))[1]/50
+  results[i, 3] <- table(sample(pills, 100))[1]/100
+  
+  
+}
+
+
+results %>%
+  pivot_longer(names_to = "Sample size", values_to = "p-hat", n25:n100) %>%
+  mutate(`Sample size` = factor(`Sample size`, levels = c("n25", "n50", "n100"), 
+                                labels = c("n = 25", "n = 50", "n = 100"))) %>%
+  ggplot(aes(`p-hat`))  + 
+  geom_histogram(aes(y=..density..), binwidth = 0.05, fill = "lightblue") +
+  
+  
+  facet_grid(.~`Sample size`) +
+  theme_minimal() + 
+  labs(x = "Proportion of blue pills") +
+  theme(legend.position = "none", 
+        axis.title.y = element_blank(), 
+        axis.text.y = element_blank())
+
+```
+
+
+# A sampling distribution can be modeled using the normal distribution
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE, fig.height = 2.5, fig.width = 5}
+
+library(cowplot)
+
+n25 <- results %>%
+  
+  pivot_longer(names_to = "Sample size", values_to = "p-hat", n25:n100) %>%
+  mutate(`Sample size` = factor(`Sample size`, levels = c("n25", "n50", "n100"), 
+                                labels = c("n = 25", "n = 50", "n = 100"))) %>%
+  filter(`Sample size` == "n = 25") %>%
+  ggplot(aes(`p-hat`))  + 
+  geom_histogram(aes(y=..density..), binwidth = 0.05, fill = "lightblue") +
+  
+  stat_function(fun = dnorm, n = 1000, args = list(mean = 0.4, sd = sqrt((0.4 * (1-0.4))/25))) +
+      scale_y_continuous(limits = c(0, 10)) +
+    annotate("text", x = 0.2, y = 9, label = "n = 25") +
+  scale_x_continuous(limits = c(0, 1), breaks = c(0, 0.2, 0.4, 0.6, 0.8, 1)) +
+  theme_minimal() + 
+  labs(x = "") +
+  theme(legend.position = "none", 
+        axis.title.y = element_blank(), 
+        axis.text.y = element_blank())
+
+n50 <- results %>%
+  pivot_longer(names_to = "Sample size", values_to = "p-hat", n25:n100) %>%
+  mutate(`Sample size` = factor(`Sample size`, levels = c("n25", "n50", "n100"), 
+                                labels = c("n = 25", "n = 50", "n = 100"))) %>%
+  filter(`Sample size` == "n = 50") %>%
+  ggplot(aes(`p-hat`))  + 
+  geom_histogram(aes(y=..density..), binwidth = 0.05, fill = "lightblue") +
+  
+  stat_function(fun = dnorm, n = 1000, args = list(mean = 0.4, sd = sqrt((0.4 * (1-0.4))/50))) +
+      scale_y_continuous(limits = c(0, 10)) +
+  scale_x_continuous(limits = c(0, 1), breaks = c(0, 0.2, 0.4, 0.6, 0.8, 1)) +
+    annotate("text", x = 0.2, y = 9, label = "n = 50") +
+  theme_minimal() + 
+  labs(x = "Proportion of blue pills") +
+  theme(legend.position = "none", 
+        axis.title.y = element_blank(), 
+        axis.text.y = element_blank())
+
+n100 <- results %>%
+  pivot_longer(names_to = "Sample size", values_to = "p-hat", n25:n100) %>%
+  mutate(`Sample size` = factor(`Sample size`, levels = c("n25", "n50", "n100"), 
+                                labels = c("n = 25", "n = 50", "n = 100"))) %>%
+  filter(`Sample size` == "n = 100") %>%
+  ggplot(aes(`p-hat`))  + 
+  geom_histogram(aes(y=..density..), binwidth = 0.05, fill = "lightblue") +
+  annotate("text", x = 0.2, y = 9, label = "n = 100") +
+  stat_function(fun = dnorm, n = 1000, args = list(mean = 0.4, sd = sqrt((0.4 * (1-0.4))/100))) +
+      scale_y_continuous(limits = c(0, 10)) +
+  scale_x_continuous(limits = c(0, 1), breaks = c(0, 0.2, 0.4, 0.6, 0.8, 1)) +
+  theme_minimal() + 
+  labs(x = "") +
+  theme(legend.position = "none", 
+        axis.title.y = element_blank(), 
+        axis.text.y = element_blank())
+
+
+plot_grid(n25, n50, n100, nrow = 1)
+
+```
+
+# The sampling distribution of proportions
+
+- You have spent all night counting pills and proven to your boss that the sample size matters in the sense that bigger samples more often gives a value close to your best guess. 
+- It turned out that the sampling distribution looked like a normal distribution created with the the $p$ as center and a larger spread with smaller sample sizes.
+- After reading up on some statistics, you find out that the spread or standard deviation of the sampling distribution for proportions could be calculated as 
+
+$$= \sqrt \frac{p(1-p)} {n}$$
+
+- This is called the **standard error**.
+- If we only take one sample, **we can estimate** the mean and spread of the sampling distribution
+
+# The normal distribution
+
+- Given some assumptions, a sample can be used to estimate a sampling distribution.
+- This estimated sampling distribution is then used to draw inference about the real-world.
+- A property of the normal distribution is that $95\%$ of the data fits under $\pm  1.96 \times$ the standard deviation
+- As the standard deviation of the sampling distribution can be estimated using the standard error (taking sample size into account), we can estimate a range a plausible values of the sampling distribution
+
+
+```{r, echo=FALSE, warning= FALSE, message = FALSE, fig.height = 2, fig.width = 5}
+library(tidyverse)
+
+
+se <- sqrt((0.4 * (1-0.4))/25)
+
+ggplot(data = data.frame(x = c(0, 1)), aes(x)) +
+ 
+    stat_function(fun = dnorm, 
+                xlim = c(0.4 - 1.96 * se, 0.4 + 1.96 * se),
+                args = list(mean = 0.4, sd = se),
+                geom = "area", fill = "lightblue") +
+  
+  
+      stat_function(fun = dnorm, 
+                xlim = c(0, 0.4 - 1.96 * se),
+                args = list(mean = 0.4, sd = se),
+                geom = "area", fill = "blue") +
+  
+    stat_function(fun = dnorm, 
+                xlim = c(0.4 + 1.96 * se, 1),
+                args = list(mean = 0.4, sd = se),
+                geom = "area", fill = "blue") +
+  
+
+  annotate("segment", x = 0.4 - 1.96 * se, xend =  0.4 + 1.96 * se, y = 4.2, yend = 4.2) +
+  
+    annotate("segment", x = 0.4 - 1.96 * se, xend =  0.4 - 1.96 * se, y = 4.1, yend = 4.3) +
+  annotate("segment", x = 0.4 + 1.96 * se, xend =  0.4 + 1.96 * se, y = 4.1, yend = 4.3) +
+  annotate("text", x = 0.15, y = 4.2, label = "95%") +
+  annotate("point", x = 0.4, y = 4.2, size = 3, shape = 21, fill = "lightblue") +
+  stat_function(fun = dnorm, n = 1010, args = list(mean = 0.4, sd = se)) +  
+    scale_x_continuous(limits = c(0, 1), breaks = c(0, 0.2, 0.4, 0.6, 0.8, 1)) +
+  ylab("") +
+  scale_y_continuous(breaks = NULL) +
+  theme_minimal() +
+  theme(axis.title.x = element_blank())
+
+
+
+```
+
+
+# The confidence interval
+
+- A confidence interval contains $95\%$ of the data of the estimated sampling distribution. 
+- The confidence interval thus has an interpretation: **upon repeated sampling, the $95\%$ confidence interval will contain the true value $95\%$ of the time**
+- To prove this point, we can make a small simulation: (1) Using the blue and red pills, draw a sample and calculate $\hat{p}$ and a $95\%$ confidence interval. (2) repeat the process to check how many intervals contains the true value ($p=0.4$).
+      
+```{r, warning= FALSE, message = FALSE, fig.height = 2, fig.width = 5.5}
+set.seed(123)
+results.ci <- data.frame(phat = rep(NA, 1000), 
+                         cil = rep(NA, 1000), 
+                         ciu = rep(NA, 1000))
+
+for(i in 1:1000){
+  
+ phat <- table(sample(pills, 100))[1]/100
+  
+  results.ci[i, 1] <- phat
+  results.ci[i, 2] <- phat - (1.96 * sqrt((phat * (1-phat))/100))
+  results.ci[i, 3] <- phat + (1.96 * sqrt((phat * (1-phat))/100))
+  
+}
+
+
+results.ci$contains <- (results.ci$cil <= 0.4 & results.ci$ciu >= 0.4)
+
+
+
+n.contains <- round(sum((results.ci$cil <= 0.4 & results.ci$ciu >= 0.4))/10, 1)
+
+results.ci %>%
+  sample_frac(0.1) %>%
+  ggplot(aes(y = phat, x = row.names(.), color = contains)) + 
+  geom_hline(yintercept = 0.4) +
+  geom_point() +
+  geom_errorbar(aes(ymin = cil, ymax = ciu)) +
+  theme_minimal() +
+  labs(y = expression(hat(p))) +
+  scale_y_continuous(limits = c(0, 0.8), breaks = c(0, 0.2, 0.4, 0.6, 0.8, 1), expand = c(0, 0)) +
+  annotate("text", x = 50, y = 0.75, label = paste(n.contains, "% of intervals contains the true value after 1000 simulation")) +
+  theme(axis.title.x = element_blank(),
+        axis.text.x = element_blank(), 
+        legend.position = "none") 
+
+
+```
+
+# The confidence interval for hypothesis testing
+
+- The confidence interval can be used to perform hypothesis testing as the interval contains plausible values of true parameter.
+- A statistical hypothesis test consists of to competing positions of denoted as $H_0$, the null-hypothesis and $H_A$, the alternative hypothesis. 
+
+- By convention, we test against $H_0$. Why?
+
+# The confidence interval for hypothesis testing
+
+- Let's say that if everything is done at random, our Chinese factory will produce equally many blue and red pills. 
+- This can be our $H_0$: There is no difference in the number of blue and red pills ($p=0.5$).
+- An alternative hypothesis could be that $H_A$: Manufacturing is biased in some direction, $p \neq 0.5$.
+- We can use the confidence interval to test these hypotheses. As we would test against the $H_0$ we would create confidence intervals a check if they contained the $H_0$ or not.
+
+
+
+```{r, results = "asis", warning = FALSE, message = FALSE, echo = FALSE}
+library(knitr); library(kableExtra)
+set.seed(123)
+
+phat25 <- table(sample(pills, 25, replace = FALSE))[1]/25
+phat50 <- table(sample(pills, 50, replace = FALSE))[1]/50
+phat100 <- table(sample(pills, 100, replace = FALSE))[1]/100
+phat1000 <- table(sample(pills, 1000, replace = FALSE))[1]/1000
+
+
+res <- data.frame(sample.size = c(25, 50, 100, 1000), 
+           phat = c(phat25, phat50, phat100, phat1000), 
+           cil = c(phat25 - 1.96 * sqrt((phat25 * (1-phat25))/25),
+                   phat50 - 1.96 * sqrt((phat50 * (1-phat25))/50),
+                   phat100 - 1.96 * sqrt((phat100 * (1-phat25))/100),
+                   phat100 - 1.96 * sqrt((phat1000 * (1-phat25))/1000)),
+           ciu = c(phat25 + 1.96 * sqrt((phat25 * (1-phat25))/25),
+                   phat50 + 1.96 * sqrt((phat50 * (1-phat25))/50),
+                   phat100 + 1.96 * sqrt((phat100 * (1-phat25))/100),
+                    phat1000 + 1.96 * sqrt((phat1000 * (1-phat25))/1000)))
+res %>%
+  knitr::kable(format = "latex", 
+               booktabs = TRUE, 
+               col.names = c("Sample size", "$\\hat{p}$", "CI lower bound", "CI upper bound"),
+               digits = c(0, 3, 3, 3),
+               escape = FALSE)
+
+```
+
+
+# Numerical data Population and sample
+
+- Up to now, we have used proportions as examples. 
+- The same principles are relevnt for other types of data such as categorical and numerical data.
+- When we use data on the interval or ratio scale, the sample mean is used to estimate the population parameter (the population mean).
+
+The population mean:
+
+$$\mu=\frac{\sum{X_i}}{N}$$
+
+The sample mean:
+
+$$\bar{x}=\frac{\sum{x_i}}{n}$$
+
+The mean is a measure of central tendency, *example*:
+$$X_1 = 90, X_2 = 95, X_3 = 100, X_4 = 105, X_5 = 110$$
+$$\bar{x}=\frac{\sum{x_i}}{n} = \frac{90+95+100+105+110}{5}= 100$$
+
+# Measures of central tendency
+
+* The mean
+* The median
+* The mode
+
+
+```{r, include = FALSE}
+library(tidyverse)
+set.seed(1)
+population <- data.frame(pop = rnorm(1000000, 100, 10))
+
+```
+
+# Measures of dispersion
+
+* Central tendency captures e.g. the "center of gravity" in the data, however, we might also want to know something about its variation.
+
+* The population variance:
+
+$$\sigma^2 =  \sum_{i=1}^{N}{(X_i-\mu)^2} / N$$
+
+* As the population parameters are unknown, we estimate them with our sample:
+
+$$s^2 =  \sum_{i=1}^{n}{(x_i-\bar{x})^2} / n$$
+
+# Variance
+
+```{r, results = "asis", message=FALSE, warning=FALSE, echo = FALSE}
+library(knitr)
+set.seed(2)
+samp.table <- population %>%
+        sample_n(10, replace = FALSE) %>%
+        mutate(Xbar = mean(pop), 
+               X_xbar = Xbar - pop,
+               X_xbar_squared = X_xbar^2)
+
+samp.table %>%       
+ kable(digits = 1, 
+              col.names = c("$x_i$", 
+                                "$\\bar{x}$", 
+                                 "$x_i-\\bar{x}$", 
+                                  "$(x_i-\\bar{x})^2$"), 
+              escape = FALSE, format = "latex")
+
+summary <- samp.table %>%
+        mutate(Xbar = sum(pop)/n(), 
+               X_xbar = Xbar - pop,
+               X_xbar_squared = X_xbar^2) %>%
+                summarise(sum_of_deviates = round(sum(X_xbar),0),
+                          sum_of_squares = round(sum(X_xbar_squared), 0), 
+                          s2 = round(sum_of_squares/(n()-1),1))
+
+```
+
+Sum of deviations $=\sum{x_i-\bar{x}} = 0$.  
+Sum of the square deviations $=\sum{(x_i-\bar{x})^2} = 828$  
+Average square deviations = $\frac{\sum{(x_i-\bar{x})^2}}{n-1} = 92 = variance$  
+
+# Variance and the standard deviation
+
+* The variance is the average squared deviation from the mean
+* The standard deviation is the square root of the variance, thus on the same scale as the mean
+
+$$\sqrt{\frac{\sum{(x_i-\bar{x})^2}}{n-1}} = SD$$
+
+
+# Sampling distributions
+
+* Any *statistic* can be calculated from a sample and used as an estimation of the population parameter. 
+* As an example, the sample mean ($\bar{x}$) is an unbiased estimator of the population mean, we know this because the average of repeated samples from a population will be close to the population mean ($\mu$).
+
+```{r, message=FALSE, warning=FALSE, echo = FALSE, fig.height=2, fig.width=4}
+
+
+df <- data.frame(mean.5 = rep(NA, 2),
+                 mean.30  = rep(NA, 2), 
+                 sem.5 = rep(NA, 2), 
+                 sem.30 = rep(NA, 2))
+
+set.seed(3)
+for(i in 1:1000) {
+        
+        
+        samp.5 <- sample(population$pop, 5, replace = FALSE)
+        samp.30 <- sample(population$pop, 30, replace = FALSE)
+        
+     df[i,1] <- mean(samp.5)
+     df[i,2] <- mean(samp.30)  
+     df[i,3] <- sd(samp.5)/sqrt(5)
+     df[i,4] <- sd(samp.30)/sqrt(30)
+        
+}
+
+
+ avg.sem.5 <- paste0("Average SEM = ", 
+                    round(mean(df[,3]), 1),  
+                    " (SD = ", round(sd(df[,1]),1),
+                    ")")
+ avg.sem.30 <- paste0("Average SEM = ", round(mean(df[,4]), 1), " (SD = ", round(sd(df[,2]), 1), ")")
+
+population %>%
+        ggplot(aes(x = pop)) + geom_density() + 
+        geom_density(data = df, aes(mean.5), color = "red") +
+        geom_density(data = df, aes(mean.30), color = "blue") +
+        xlab("Value") + ylab("Density") +
+        annotate("text", x = 70, y = 0.1, label = "Samples n = 5", color = "red") +
+         annotate("text", x = 70, y = 0.12, label = "Samples n = 30", color = "blue") +
+         annotate("text", x = 70, y = 0.14, label = "Population distribution", color = "black") +
+          theme_minimal() +
+  theme(axis.text.y = element_blank(), 
+        axis.title.y = element_blank()) 
+
+
+```
+
+# The Normal Distribution
+
+```{r, message = FALSE, warning=FALSE, echo=FALSE, fig.width=4, fig.height=3}
+xvalues <- data.frame(x = c(-3, 3))
+
+dnorm_three_sd <- function(x){
+        norm_three_sd <- dnorm(x)
+        # Have NA values outside interval x in [-3, 3]:
+        norm_three_sd[x <= -3 | x >= 3] <- NA
+        return(norm_three_sd)
+}
+
+area_three_sd <- round(pnorm(3) - pnorm(-3), 4)
+
+dnorm_two_sd <- function(x){
+        norm_two_sd <- dnorm(x)
+        # Have NA values outside interval x in [-2, 2]:
+        norm_two_sd[x <= -1.96 | x >= 1.96] <- NA
+        return(norm_two_sd)
+}
+
+area_two_sd <- round(pnorm(1.96) - pnorm(-1.96), 4)
+
+dnorm_one_sd <- function(x){
+        norm_one_sd <- dnorm(x)
+        # Have NA values outside interval x in [-1, 1]:
+        norm_one_sd[x <= -1 | x >= 1] <- NA
+        return(norm_one_sd)
+}
+
+area_one_sd <- round(pnorm(1) - pnorm(-1), 4)
+
+
+ ggplot(xvalues, aes(x = x)) + 
+         stat_function(fun = dnorm) + 
+         stat_function(fun = dnorm_three_sd, geom = "area", fill = "lightblue", alpha = 0.3) +
+         stat_function(fun = dnorm_two_sd, geom = "area", fill = "blue", alpha = 0.3) +
+         stat_function(fun = dnorm_one_sd, geom = "area", fill = "orange", alpha = 0.3) +
+         geom_vline(xintercept = 0, colour = "black", linetype = "dashed") +
+         geom_text(x = 0.5, y = 0.2, size = 3.5,
+                   label = paste0(round((area_one_sd * 100)/2,2), "%")) +
+         geom_text(x = -0.5, y = 0.2, size = 3.5, 
+                   label = paste0(round((area_one_sd * 100)/2,2), "%")) +
+         geom_text(x = 1.5, y = 0.05, size = 3.5, 
+                   label = paste0(round((pnorm(2) - pnorm(1)) * 100,2), "%")) +
+         geom_text(x = -1.5, y = 0.05, size = 3.5, 
+                   label = paste0(round((pnorm(-1) - pnorm(-2)) * 100,2), "%")) +
+         geom_text(x = 2.3, y = 0.01, size = 3.5,
+                   label = paste0(round((pnorm(3) - pnorm(2)) * 100,2), "%")) +
+         geom_text(x = -2.3, y = 0.01, size = 3.5, 
+                   label = paste0(round((pnorm(-2) - pnorm(-3)) * 100,2), "%")) +
+         scale_x_continuous(breaks = c(-3:3)) + 
+         labs(x = "\n z", y = "f(z) \n", title = "Standard Normal Distribution \n") +
+
+        theme_minimal() +
+            theme(plot.title = element_text(hjust = 0.5), 
+               axis.title.x = element_text(size = 12),
+               axis.title.y = element_blank(), 
+               axis.text.y = element_blank()) 
+ 
+
+```
+
+# The Normal distribution
+
+```{r, message = FALSE, warning=FALSE, echo=FALSE,  fig.width=4, fig.height=3}
+
+
+ ggplot(xvalues, aes(x = x)) + 
+        stat_function(fun = dnorm) + 
+         stat_function(fun = dnorm_three_sd, geom = "area", fill = "lightblue", alpha = 0.3) +
+         stat_function(fun = dnorm_two_sd, geom = "area", fill = "blue", alpha = 0.3) +
+         stat_function(fun = dnorm_one_sd, geom = "area", fill = "orange", alpha = 0.3) +
+        geom_segment(data = data.frame(x = c(-1, -1.96, -3), 
+                                       xend = c(1, 1.96, 3, -1, -1.96, -3),
+                                       y = c(0.2, 0.052, 0), 
+                                       yend = c(0.2, 0.052, 0, 0.2, 0.052, 0)), 
+                     aes(x = x, xend = xend, y = y, yend = yend), 
+                     arrow = arrow(length = unit(0.1, "cm"))) +
+         
+         geom_text(x = 0, y = 0.22, size = 4, 
+                  label = paste0(area_one_sd * 100, "%")) +
+        geom_text(x = 0, y = 0.072, size = 4, 
+                  label = paste0(area_two_sd * 100, "%")) +
+        geom_text(x = 0, y = 0.025, size = 4, 
+                  label = paste0(area_three_sd * 100,"%")) +
+        scale_x_continuous(breaks = c(-3:3)) + 
+        labs(x = "\n z", y = "f(z) \n", title = "Standard Normal Distribution \n") +
+        theme_minimal() +
+            theme(plot.title = element_text(hjust = 0.5), 
+               axis.title.x = element_text(size = 12),
+               axis.title.y = element_blank(), 
+               axis.text.y = element_blank()) 
+
+```
+
+
+# Sampling distributions
+
+* The variation of a distribution of averages is affected by the sample size, the normal distribution does not account for sample sizes
+* This variation can be estimated from samples, this is known as the standard error.
+* As with proportions, the **sample standard error** is an estimator of the **standard deviation of the sampling distribution**!
+
+# Sampling distributions
+
+```{r,  warning=FALSE, echo = FALSE, fig.height=3, fig.width = 5}
+
+
+population %>%
+        ggplot(aes(x = pop)) + geom_density() + 
+        geom_density(data = df, aes(mean.5), color = "red") +
+        geom_density(data = df, aes(mean.30), color = "blue") +
+        xlab("Value") + ylab("Density") +
+        annotate("text", x = 80, y = 0.1, label = "Samples n = 5", color = "red") +
+         annotate("text", x = 80, y = 0.12, label = "Samples n = 30", color = "blue") +
+         annotate("text", x = 80, y = 0.14, label = "Population distribution", color = "black") +
+        annotate("text", x = 126, y = 0.1, label = avg.sem.5, color = "red") +
+         annotate("text", x = 126, y = 0.12, label = avg.sem.30, color = "blue") +
+        theme_minimal() +
+  theme(axis.title = element_blank(), 
+        axis.text.y = element_blank())
+
+
+```
+
+# Hypothesis testing 
+
+* As with a proportion, based on the estimate of the sampling distribution we can device a test, to test if a value exists within specified range. 
+* 95% of all values lies within $\pm 1.96\times \sigma$ from the mean in a normal distribution, this leaves us with an uncertainty of 5%.
+* However, due to problems with *proving a theory or hypothesis*, we instead test against a null-hypothesis. Thus we try to *disprove the hypothesis*.
+
+
+* The null hypothesis $H_0$ is constructed to contain scenarios not covered by the alternative hypothesis $H_A$
+
+# Hypothesis tests - a two sample scenario
+
+* The null hypothesis is that the mean of group 1 is similar to group 2
+
+$$H_0: \mu_1 - \mu_2 = 0$$
+
+* To reject this hypothesis, we need to show that
+
+$$\mu_1 - \mu_2 \neq 0$$
+
+* We want to do this with some specified uncertainty, usually 5%
+
+* We can calculate a 95% confidence interval of the difference 
+
+# A 95% confidence interval for small samples
+
+Upper bound: $$\bar{x} + t_{1-\alpha/2} \times SE$$
+Lower bound: $$\bar{x} - t_{1-\alpha/2} \times SE$$
+
+* $\bar{x}$ is the difference in means between groups.
+* The standard error ($SE$) estimates the standard deviation of the sampling distribution
+* $t_{1-\alpha/2}$ represents the area under probability distribution curve containing 95% of all values.
+* The $t$-distribution is used instead of the normal distribution since it can take sample-size into account. 
+
+# The t-distribution
+
+```{r, message = FALSE, warning=FALSE, echo=FALSE}
+
+# The code was grabbed from https://www.statmethods.net/advgraphs/probability.html
+
+x <- seq(-4, 4, length=100)
+hx <- dnorm(x)
+
+degf <- c(1, 3, 8, 30)
+colors <- c("red", "blue", "darkgreen", "gold", "black")
+labels <- c("df=1", "df=3", "df=8", "df=30", "normal")
+
+plot(x, hx, type="l", lty=2, xlab="x value",
+  ylab="Density", main="Comparison of t Distributions")
+
+for (i in 1:4){
+  lines(x, dt(x,degf[i]), lwd=2, col=colors[i])
+}
+
+legend("topright", inset=.05, title="Distributions",
+  labels, lwd=2, lty=c(1, 1, 1, 1, 2), col=colors)
+
+
+
+
+```
+
+# A two sample case
+
+```{r, message = FALSE, warning=FALSE, echo=FALSE, fig.height=3, fig.width=3}
+set.seed(1)
+df <- data.frame(G1 = rnorm(30, 12, 1.2), G2 = rnorm(30, 12.9, 1.3))
+df %>%
+        gather(group, value, G1:G2) %>%
+        ggplot(aes(group, value)) + geom_boxplot() + theme_minimal() +
+        xlab("Group") + ylab("Value")
+
+
+# Pooled standard deviation
+
+# mean difference
+
+m <- mean(df$G2) - mean(df$G1)
+
+se <- sqrt(((sd(df$G1)^2)/30) + (((sd(df$G2)^2)/30)))
+
+ciu <- m + se * qt(0.975, 30 + 30 -2)
+cil <- m - se * qt(0.975, 30 + 30 -2)
+```
+
+# A 95% confidence of the difference in means
+
+* Two groups are compared, the $H_0$ is that there is no difference between the groups:
+
+$$H_0: \mu_1 = \mu_2$$
+
+* The difference between the groups are estimated to $\mu_2 - \mu_1 =$ `r round(m, 2)`
+* The 95% confidence interval is 
+$$m_2 - m_1 \pm t_{\alpha/2} \times SE(m_2 - m_1)$$ 
+where the $$SE(m_2 - m_1)$$ is the standard error of the difference. 
+
+$$0.97 \pm 2 \times 0.28$$
+
+
+# Key points so far
+
+* We can *estimate* population *parameters* using a **random** sample from the population
+* The calculated sample standard error is an estimate of the standard deviation of a sampling distribution
+* Using a *probability density function* like the $t$- or $z$-distribution, we can estimate a range a plausible values of a population parameter (e.g. mean).
+* We can test if a estimated interval contains the null hypothesis, if not we can reject $H_0$.
+
+
