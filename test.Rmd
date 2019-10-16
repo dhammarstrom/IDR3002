@@ -1,0 +1,34 @@
+---
+title: "Untitled"
+author: "Daniel Hammarström"
+date: "16 10 2019"
+output: html_document
+---
+
+
+```{r}
+
+set.seed(1)
+
+results <- data.frame(value = rep(NA, 100))
+
+for(i in 1:100){
+        
+     results[i, 1] <- sample(c("a", "b", "c", "d"), size = 1) 
+        
+}
+
+results
+
+x <- sample(c("a", "b", "c", "d"), size = 1)
+
+z <- sample(c("a", "b", "c", "d"), size = 1)
+
+c <- sample(c("a", "b", "c", "d"), size = 1)
+
+
+
+
+
+```
+

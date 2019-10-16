@@ -10,9 +10,10 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
+<meta name="author" content="Daniel Hammarström" />
 
 
-<title>Exercises Week 1</title>
+<title>Untitled</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -383,85 +384,130 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">Exercises Week 1</h1>
+<h1 class="title toc-ignore">Untitled</h1>
+<h4 class="author">Daniel Hammarström</h4>
+<h4 class="date">16 10 2019</h4>
 
 </div>
 
 
-<p><a href="ex1_intro.html">Go to basic R</a></p>
-<p><a href="ex1_summarise.html">Go to summarising data</a></p>
-<p><a href="ex1_figures.html">Go to making figures</a></p>
-<div id="importing-data" class="section level2">
-<h2>Importing data</h2>
-<script language="javascript"> 
-    function toggle(num) {
-      var ele = document.getElementById("toggleText" + num);
-      var text = document.getElementById("displayText" + num);
-      if(ele.style.display == "block") {
-        ele.style.display = "none";
-        text.innerHTML = "show";
-      }
-      else {
-        ele.style.display = "block";
-        text.innerHTML = "hide";
-      }
-   } 
-  </script>
-<p><strong>Exercise 1.</strong> Data import in R is straight forward. We can import tabular files like .csv and .xlsx or specialized files from other statistical softwares (e.g. STATA-, SAS- and SPSS files).</p>
-<p>Using <code>read_excel()</code>, how would you import the file <code>cyclingStudy.xlsx</code> into your R session?</p>
-<a id="displayText" href="javascript:toggle(1);">Solution Ex. 1</a>
-<div id="toggleText1" style="display: none">
-<pre class="r"><code># Install packages, you only need to do this once
-# install.packages(&quot;readxl&quot;)
+<pre class="r"><code>set.seed(1)
 
-# Load packages
-library(readxl)
+results &lt;- data.frame(value = rep(NA, 100))
 
-# Store the data set as an object in the environment
-cyclingStudy &lt;- read_excel(&quot;./data/cyclingStudy.xlsx&quot;)
+for(i in 1:100){
+        
+     results[i, 1] &lt;- sample(c(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;), size = 1) 
+        
+}
 
+results</code></pre>
+<pre><code>##     value
+## 1       b
+## 2       b
+## 3       c
+## 4       d
+## 5       a
+## 6       d
+## 7       d
+## 8       c
+## 9       c
+## 10      a
+## 11      a
+## 12      a
+## 13      c
+## 14      b
+## 15      d
+## 16      b
+## 17      c
+## 18      d
+## 19      b
+## 20      d
+## 21      d
+## 22      a
+## 23      c
+## 24      a
+## 25      b
+## 26      b
+## 27      a
+## 28      b
+## 29      d
+## 30      b
+## 31      b
+## 32      c
+## 33      b
+## 34      a
+## 35      d
+## 36      c
+## 37      d
+## 38      a
+## 39      c
+## 40      b
+## 41      d
+## 42      c
+## 43      d
+## 44      c
+## 45      c
+## 46      d
+## 47      a
+## 48      b
+## 49      c
+## 50      c
+## 51      b
+## 52      d
+## 53      b
+## 54      a
+## 55      a
+## 56      a
+## 57      b
+## 58      c
+## 59      c
+## 60      b
+## 61      d
+## 62      b
+## 63      b
+## 64      b
+## 65      c
+## 66      b
+## 67      b
+## 68      d
+## 69      a
+## 70      d
+## 71      b
+## 72      d
+## 73      b
+## 74      b
+## 75      b
+## 76      d
+## 77      d
+## 78      b
+## 79      d
+## 80      d
+## 81      b
+## 82      c
+## 83      b
+## 84      b
+## 85      d
+## 86      a
+## 87      c
+## 88      a
+## 89      a
+## 90      a
+## 91      a
+## 92      a
+## 93      c
+## 94      d
+## 95      d
+## 96      d
+## 97      b
+## 98      b
+## 99      d
+## 100     c</code></pre>
+<pre class="r"><code>x &lt;- sample(c(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;), size = 1)
 
-# look at the data
-cyclingStudy</code></pre>
-</div>
-<p></br></p>
-<p><strong>Exercise 3.</strong> Notice that when looking at the cycling data set, the tibble (data frame) says that many variables containing numbers are character variables. Why do you think this is the case here?</p>
-<p>Try to change the import to make sure that the values are numeric. Read the help file and think about how you can change it (<code>?read_excel</code>).</p>
-<p><br></p>
-<a id="displayText" href="javascript:toggle(2);">Solution Ex. 2</a>
-<div id="toggleText2" style="display: none">
-<p>The import function does not treat “NA” as missing values. The <code>read_excel()</code> function has a argument for missing values, setting <code>na = "NA"</code> tells R that all values that are “NA” should be treated as missing values.</p>
-<pre class="r"><code># Install packages, you only need to do this once
-# install.packages(&quot;readxl&quot;)
+z &lt;- sample(c(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;), size = 1)
 
-# Load packages
-library(readxl)
-
-# Store the data set as an object in the environment
-cyclingStudy &lt;- read_excel(&quot;./data/cyclingStudy.xlsx&quot;, na = &quot;NA&quot;)
-
-
-# look at the data
-cyclingStudy</code></pre>
-</div>
-<p></br></p>
-<p><strong>Exercise 3.</strong> Download and save the data set that we will call <code>hypertrophy</code></p>
-<p><br></p>
-<a id="displayText" href="javascript:toggle(3);">Solution Ex. 3</a>
-<div id="toggleText3" style="display: none">
-<pre class="r"><code># Download and save the file
-download.file(url = &quot;https://ndownloader.figshare.com/files/14702420&quot;, destfile = &quot;./data/hypertrophy.csv&quot;)
-
-# load package to read csv files
-library(readr)
-
-hypertrophy &lt;- read_csv(&quot;./data/hypertrophy.csv&quot;)
-
-# look at the data 
-hypertrophy</code></pre>
-</div>
-<p></br></p>
-</div>
+c &lt;- sample(c(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;), size = 1)</code></pre>
 
 
 

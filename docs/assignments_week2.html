@@ -12,7 +12,7 @@
 
 
 
-<title>Exercises Week 1</title>
+<title>Assignments week 2</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -383,84 +383,25 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">Exercises Week 1</h1>
+<h1 class="title toc-ignore">Assignments week 2</h1>
 
 </div>
 
 
-<p><a href="ex1_intro.html">Go to basic R</a></p>
-<p><a href="ex1_summarise.html">Go to summarising data</a></p>
-<p><a href="ex1_figures.html">Go to making figures</a></p>
-<div id="importing-data" class="section level2">
-<h2>Importing data</h2>
-<script language="javascript"> 
-    function toggle(num) {
-      var ele = document.getElementById("toggleText" + num);
-      var text = document.getElementById("displayText" + num);
-      if(ele.style.display == "block") {
-        ele.style.display = "none";
-        text.innerHTML = "show";
-      }
-      else {
-        ele.style.display = "block";
-        text.innerHTML = "hide";
-      }
-   } 
-  </script>
-<p><strong>Exercise 1.</strong> Data import in R is straight forward. We can import tabular files like .csv and .xlsx or specialized files from other statistical softwares (e.g. STATA-, SAS- and SPSS files).</p>
-<p>Using <code>read_excel()</code>, how would you import the file <code>cyclingStudy.xlsx</code> into your R session?</p>
-<a id="displayText" href="javascript:toggle(1);">Solution Ex. 1</a>
-<div id="toggleText1" style="display: none">
-<pre class="r"><code># Install packages, you only need to do this once
-# install.packages(&quot;readxl&quot;)
-
-# Load packages
-library(readxl)
-
-# Store the data set as an object in the environment
-cyclingStudy &lt;- read_excel(&quot;./data/cyclingStudy.xlsx&quot;)
-
-
-# look at the data
-cyclingStudy</code></pre>
+<div id="to-draw-inference" class="section level2">
+<h2>To draw inference</h2>
+<p>This week you are expected to draw conclusions about the “real world” based on some data we have collected. Everything should be reported in a R Markdown html-document. Upload this together with the source-file on canvas no later than Sunday.</p>
+<p>The html document should not display code chunks, messages or warnings. This means that you should report your results in ordinary text and include results there with inline code. Read more about this <a href="https://rmarkdown.rstudio.com/lesson-4.html">here</a>.</p>
+<p>You are expected to answer all three problems below.</p>
+<div id="problems" class="section level3">
+<h3>Problems</h3>
+<ol style="list-style-type: decimal">
+<li><p>Using the cyclingStudy data set, what can you say about the effect of training on VO<sub>2max</sub> per kg body mass. Here you should test against the <span class="math inline">\(H_0\)</span> that says that VO<sub>2max</sub> is no different between <code>pre</code>and <code>meso1</code>. Interpret the results of your test. What test do you use? Where do you set the level of required evidence to reject the null, and why?</p></li>
+<li><p>Create a new variable where you calculate the difference in <code>sj.max</code> in percentage between <code>pre</code> and <code>meso1</code>. Do a test against the null-hypothesis that this difference is 0. What test do you use. What is your threshold to reject the null?</p></li>
+<li><p>Calculate the percentage change in VO<sub>2max</sub> in group <code>INCR</code> and <code>DECR</code>between <code>pre</code> and <code>meso3</code>. Compare the two groups, what statement can you make about the population on the basis of your test? What test do you choose, why?</p></li>
+</ol>
+<p>Intepretations of the results should contain point estimates, confidence intervals and <em>p</em>-values.</p>
 </div>
-<p></br></p>
-<p><strong>Exercise 3.</strong> Notice that when looking at the cycling data set, the tibble (data frame) says that many variables containing numbers are character variables. Why do you think this is the case here?</p>
-<p>Try to change the import to make sure that the values are numeric. Read the help file and think about how you can change it (<code>?read_excel</code>).</p>
-<p><br></p>
-<a id="displayText" href="javascript:toggle(2);">Solution Ex. 2</a>
-<div id="toggleText2" style="display: none">
-<p>The import function does not treat “NA” as missing values. The <code>read_excel()</code> function has a argument for missing values, setting <code>na = "NA"</code> tells R that all values that are “NA” should be treated as missing values.</p>
-<pre class="r"><code># Install packages, you only need to do this once
-# install.packages(&quot;readxl&quot;)
-
-# Load packages
-library(readxl)
-
-# Store the data set as an object in the environment
-cyclingStudy &lt;- read_excel(&quot;./data/cyclingStudy.xlsx&quot;, na = &quot;NA&quot;)
-
-
-# look at the data
-cyclingStudy</code></pre>
-</div>
-<p></br></p>
-<p><strong>Exercise 3.</strong> Download and save the data set that we will call <code>hypertrophy</code></p>
-<p><br></p>
-<a id="displayText" href="javascript:toggle(3);">Solution Ex. 3</a>
-<div id="toggleText3" style="display: none">
-<pre class="r"><code># Download and save the file
-download.file(url = &quot;https://ndownloader.figshare.com/files/14702420&quot;, destfile = &quot;./data/hypertrophy.csv&quot;)
-
-# load package to read csv files
-library(readr)
-
-hypertrophy &lt;- read_csv(&quot;./data/hypertrophy.csv&quot;)
-
-# look at the data 
-hypertrophy</code></pre>
-</div>
-<p></br></p>
 </div>
 
 

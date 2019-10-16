@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Inference, confidence intervals and p-values</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-inverse  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">IDR3002 Course notes</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+    Home
+  </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Software
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="installation.html">Installing and starting up R and RStudio</a>
+    </li>
+    <li>
+      <a href="markdown.html">Creating a report using rmarkdown</a>
+    </li>
+    <li>
+      <a href="structure.html">Structuring an analysis</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Lessons
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="introduction_1.html">Introduction to R</a>
+    </li>
+    <li>
+      <a href="import_data.html">Import data</a>
+    </li>
+    <li>
+      <a href="make_summaries.html">Make summaries</a>
+    </li>
+    <li>
+      <a href="plot_ggplot2.html">Create plots with ggplot2</a>
+    </li>
+    <li>
+      <a href="descriptive_statistics.html">Assignment: Descriptive statistics</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="ex2_introInference.html">Statistical inference</a>
+    </li>
+    <li>
+      <a href="ex2_introInference2.html">Statistical inference 2</a>
+    </li>
+    <li class="divider"></li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Exercises
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="ex1_intro.html">Introduction to R and RStudio</a>
+    </li>
+    <li>
+      <a href="ex1_import.html">Import data</a>
+    </li>
+    <li>
+      <a href="ex1_summarise.html">Summarise data</a>
+    </li>
+    <li>
+      <a href="ex1_figures.html">Making figures</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Assignments
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="assignments_week1.html">Week 1</a>
+    </li>
+    <li>
+      <a href="assignments_week2.html">Week 2</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="faq.html">
+    <span class="fa fa-question fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Inference, confidence intervals and p-values</h1>
+
+</div>
+
+
+<div id="what-is-the-p-value" class="section level2">
+<h2>What is the <em>p</em>-value?</h2>
+<p>Consider the sampling distribution. This is an imaginary distribution of e.g. sample means gathered from repeated sampling from a population of numbers. Let’s say that our null-hypothesis (<span class="math inline">\(H_0\)</span>) is that the mean of a population is zero. We draw a sample of <span class="math inline">\(n=10\)</span> and it turns out that it is not zero, it is about 1. We calculate the standard deviation of our sample, it is 0.5.</p>
+<p>Based on these number, we can calculate a sample statistic</p>
+<p><span class="math display">\[t = \frac{m - \mu}{s/\sqrt{n}}\]</span></p>
+<p>where <span class="math inline">\(m\)</span> is our sample mean, <span class="math inline">\(\mu\)</span> is the hypothesized mean, <span class="math inline">\(s\)</span> is our sample standard deviation and <span class="math inline">\(n\)</span> is the sample size. <span class="math inline">\(t\)</span> is the <em>sample statistic</em>. We did this because we do not know the true variation in the distribution, <span class="math inline">\(s\)</span> is our best guess. Using <span class="math inline">\(s\)</span> we can create an imaginary sampling distribution.</p>
+<p>It would look something like this:</p>
+<p><img src="ex2_introInference2_files/figure-html/unnamed-chunk-1-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p>The distribution above is the t-distribution with 10-1 degrees of freedom. Our calculated sample statistic can be inserted in the distribution.</p>
+<p><img src="ex2_introInference2_files/figure-html/unnamed-chunk-2-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p>If the null-hypothesis is true, how often would we observe a value such as ours, or a more extreme value? We can calculate this from the imaginary distribution as the area under the curve above our value.</p>
+<p><img src="ex2_introInference2_files/figure-html/unnamed-chunk-3-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p>In R, this can be calculated using the <code>pt()</code> function:</p>
+<p><code>t &lt;- (1-0) / (0.5 * sqrt(10))</code></p>
+<p><code>pt(t, df = 10-1, lower.tail = FALSE)</code></p>
+<p>It turns out that 0.27% of the distribution can be found in the blue shaded area. We have now completed a one-sample t-test. However, we have to look again at our null-hypothesis which states <span class="math inline">\(H_0 = 0\)</span>. There are two ways to disprove this hypothesis. We may find out that the value is lower or higher than 0. To account for both possibilities we calculate a “two sided p-value”. In practice we calculate the area under the curve above and below values corresponding to our observed distance from 0.</p>
+<p><code>2 * pt(t, df = 10-1, lower.tail = FALSE)</code></p>
+<p><img src="ex2_introInference2_files/figure-html/unnamed-chunk-4-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p>As the area under the curve in the blue area is 0.54% of the distribution we may make a statement such as. “If the null-hypothesis is true, our observed value, or value even more distant from 0 would appear 0.54% of the times upon repeated sampling”.</p>
+<p>We can not reject the null as our value (or a more extreme value) is so common if the <span class="math inline">\(H_0\)</span> distribution is true.</p>
+<p>You sample a new mean from <span class="math inline">\(n=10\)</span> of 1.2, the standard deviation is 0.55. Calculate the <em>t</em>-statistic and the <em>p</em>-value with the <span class="math inline">\(H_0 = 0\)</span>.</p>
+<script language="javascript"> 
+    function toggle(num) {
+      var ele = document.getElementById("toggleText" + num);
+      var text = document.getElementById("displayText" + num);
+      if(ele.style.display == "block") {
+        ele.style.display = "none";
+        text.innerHTML = "show";
+      }
+      else {
+        ele.style.display = "block";
+        text.innerHTML = "hide";
+      }
+   } 
+  </script>
+<a id="displayText" href="javascript:toggle(1);">Here is a possible solution</a>
+<div id="toggleText1" style="display: none">
+<pre class="r"><code>t &lt;- (1.2 - 0) / (0.55/sqrt(10))
+
+p &lt;- 2 * pt(t, df = 10-1, lower.tail = FALSE)</code></pre>
+</div>
+<p></br></p>
+</div>
+<div id="side-note-printing-numbers-in-r" class="section level2">
+<h2>Side note: Printing numbers in R</h2>
+<p>Sometimes, a ridiculous number appear in your console such as <span class="math inline">\(4.450332e-05\)</span>. This is actually <span class="math inline">\(0.00004450332\)</span> written in scientific notation. <code>e-05</code> ca be read as <span class="math inline">\(10^{-5}\)</span>. Rounding numbers in R is straight forward. Just use <code>round(4.450332e-05, digits = 5)</code> to round the number to 5 decimal points. However, you will still see the number in scientific notation. If you want to print the number with all trailing zeros you can instead use <code>sprintf("%.5f", 4.450332e-05)</code>. This function converts the number into text and print what you want. The “%.5f” sets the number of decimal points to 5. This is confusing, I know!</p>
+</div>
+<div id="back-to-p-values" class="section level2">
+<h2>Back to <em>p</em>-values</h2>
+<p>In a two sample scenario, we can model the null-hypothesis using re-shuffling of the data.</p>
+<p>We sample two groups, one have trained strength the other endurance, we want to know if you get stronger if you do strength training. We measure the groups after an intervention. They were similar prior to training so we think that it is OK to measure the post-training values of 1RM bench press.</p>
+<p>These are:</p>
+<pre class="r"><code>strength.group &lt;- c(75, 82.5, 87.5, 90, 67.5, 55, 87.5, 67.5, 72.5, 95)
+endurance.group &lt;- c(67.5, 75, 52.5, 85, 55, 45, 47.5, 85, 90, 37.5)</code></pre>
+<p>We can calculate the difference between the groups as:</p>
+<pre class="r"><code>mean.difference &lt;- mean(strength.group) - mean(endurance.group)</code></pre>
+<p>What is the mean difference?</p>
+<p>We can simulate <span class="math inline">\(H_0\)</span> removing the grouping. Read the code below and try to figure out what it does before you run it:</p>
+<pre class="r"><code>set.seed(123)
+
+results &lt;- data.frame(m = rep(NA, 1000))
+
+for(i in 1:1000){
+     
+# Here we combine all observations
+        all.observations &lt;- data.frame(obs = c(strength.group, endurance.group)) %&gt;%
+          # based on a random process each iteration of the for-loop assign either endurance or strength to each individual
+          mutate(group = sample(c(rep(&quot;strength&quot;, 10), rep(&quot;endurance&quot;, 10)), size = 20, replace = FALSE))  %&gt;%
+          group_by(group) %&gt;%
+          summarise(m = mean(obs)) 
+        
+
+        # calculate the difference in means and store in the results data frame
+        results[i, 1] &lt;- all.observations[all.observations$group == &quot;strength&quot;, 2] - all.observations[all.observations$group == &quot;endurance&quot;, 2]
+
+        }
+
+results %&gt;%
+  ggplot(aes(m)) +  geom_histogram(fill = &quot;lightblue&quot;, color = &quot;gray50&quot;, binwidth = 1) +
+  geom_vline(xintercept = mean.difference) +
+  labs(x = &quot;Mean difference&quot;, 
+       y = &quot;Count&quot;) + 
+  theme_minimal()</code></pre>
+<p>What does the graph above show? As the reshuffle process was done 1000 times we can count the number of means more extreme than the mean that we did observe.</p>
+<pre class="r"><code>length(results[results$m &gt; mean.difference,]) / 1000</code></pre>
+<p>The above code calculates the proportion of mean differences that occurred when we divided the group by chance.</p>
+<pre class="r"><code># An illustration of the above
+
+results %&gt;%
+  mutate(extreme = if_else(m &gt; mean.difference, &quot;More extreme&quot;, &quot;Less extreme&quot;)) %&gt;%
+  ggplot(aes(m, fill = extreme)) +  geom_histogram(color = &quot;gray50&quot;, binwidth = 1) +
+  scale_fill_manual(values = c(&quot;lightblue&quot;, &quot;purple&quot;)) +
+  geom_vline(xintercept = mean.difference) +
+  labs(x = &quot;Mean difference&quot;, 
+       y = &quot;Count&quot;) + 
+  theme_minimal()</code></pre>
+<p>We have now calculated the proportion of values more extreme than the observed. This would represent a directional hypothesis</p>
+<p><span class="math display">\[H_A: Strength &gt; Endurance\]</span></p>
+<p>We can account for the fact that the endurance group can be larger than strength. We can account for this possibility with the code below. Try to figure out what the code does and what has changed from above.</p>
+<pre class="r"><code>results %&gt;%
+  mutate(extreme = if_else(abs(m) &gt; mean.difference, &quot;More extreme&quot;, &quot;Less extreme&quot;)) %&gt;%
+  ggplot(aes(m, fill = extreme)) +  geom_histogram(color = &quot;gray50&quot;, binwidth = 1) +
+  scale_fill_manual(values = c(&quot;lightblue&quot;, &quot;purple&quot;)) +
+  geom_vline(xintercept = mean.difference) +
+  labs(x = &quot;Mean difference&quot;, 
+       y = &quot;Count&quot;) + 
+  theme_minimal()
+
+
+length(results[abs(results$m) &gt; mean.difference,]) / 1000</code></pre>
+<p>At what level of <em>p</em> are you comfortable rejecting the null-hypothesis? When planning a study we decide on a level of evidence needed to reject the null. If you would have planned a study, how do you motivate a certain level of evidence?</p>
+</div>
+<div id="more-p-values" class="section level2">
+<h2>More <em>p</em>-values</h2>
+<p>In the example above where we used the reshuffling technique (also called permutation test), we are limited by the number of iterations in the for-loop and the size of the groups to produce a valid <em>p</em>-value. As long as the data are approximately normally distributed, we can use a <em>t</em>-test instead. As outlined above, this test uses an imaginary sampling distribution and compare our results to a scenario where the null-hypothesis in true.</p>
+<p>To test against the null hypothesis that the means of the groups described above are equal we would use a two-sample t-test.</p>
+<pre class="r"><code>t.test(strength.group, endurance.group, paired = FALSE, var.equal = FALSE)</code></pre>
+<p>Run the code above and inspect the results. The output of the two-sample t-test contains information on the test statistic <em>t</em>, the degrees of freedom for the test and a <em>p</em>-value. It even has a statement about the alternative hypothesis. We get a confidence interval of the mean difference between groups.</p>
+<p>Does the 95% confidence interval say anything about the level of evidence needed to reject the null? Has somebody already decided for you? See in the help-file for the <em>t</em>-test (<code>?t.test</code>) and see if you can change the confidence interval to correspond to you level of evidence. What is the relationship between p-values and confidence intervals?</p>
+<p>The <em>t</em>-test is quite flexible, we can do one-sample and two-sample <em>t</em>-tests. We can account for paired observation, as when the same participant is measured twice under different conditions.</p>
+<p>In the one-sample case, we test against the null-hypothesis that a mean is equal to <span class="math inline">\(\mu\)</span> where we specify the <code>mu</code> in the function.</p>
+<p>If we have paired observations we set <code>paired = TRUE</code>, each row in such case must correspond to the same individual.</p>
+<p>We can also assume that the groups have equal variance (<code>var.equal = TRUE</code>) this corresponds to the classical two-sample case. A more appropriate setting is to assume that the groups do not have equal variance (spread), this is the Welch two-sample <em>t</em>-test.</p>
+<p>By saving a <em>t</em>-test we can access different results from it. To see what parts we can access we may use the names function which gives the names of the different parts of the results.</p>
+<pre class="r"><code>ttest &lt;- t.test(strength.group, endurance.group, paired = FALSE, var.equal = FALSE)
+
+names(ttest)</code></pre>
+<p>To access the confidence interval, we would use <code>ttest$conf.int</code>.</p>
+</div>
+<div id="t-test-examples" class="section level2">
+<h2><em>t</em>-test examples</h2>
+<p>In the cycling data set we might want to know if the difference between pre- and post-data in squat jump is more or less than 0. Assuming that we use the same participants, this is a paired <em>t</em>-test.</p>
+<pre class="r"><code>library(tidyverse); library(readxl)
+
+# Prepare the data
+sj.max &lt;- read_excel(&quot;./data/cyclingStudy.xlsx&quot;, na = &quot;NA&quot;) %&gt;%
+  select(subject, timepoint, sj.max) %&gt;%
+  filter(timepoint %in% c(&quot;pre&quot;, &quot;meso3&quot;)) %&gt;%
+  pivot_wider(names_from = timepoint, values_from = sj.max) 
+
+# calculate the t-test, paired data
+sj.ttest &lt;- t.test(sj.max$pre, sj.max$meso3, paired = TRUE)
+
+# plot the data to see correspondoing data
+sj.figure &lt;- sj.max %&gt;%
+  pivot_longer(names_to = &quot;timepoint&quot;,
+               values_to = &quot;sj.max&quot;, 
+               cols = pre:meso3) %&gt;%
+  mutate(timepoint = factor(timepoint, levels = c(&quot;pre&quot;, &quot;meso3&quot;))) %&gt;%
+  ggplot(aes(timepoint, sj.max)) + geom_boxplot()
+
+# create a summary statistic
+sj.summary &lt;- sj.max %&gt;%
+  pivot_longer(names_to = &quot;timepoint&quot;,
+               values_to = &quot;sj.max&quot;, 
+               cols = pre:meso3) %&gt;%
+  group_by(timepoint) %&gt;%
+  summarise(m = mean(sj.max, na.rm = TRUE), 
+          s = sd(sj.max, na.rm = TRUE))</code></pre>
+<p>The above can be interpreted as: “Squat jump height was on average higher in the pre- compared to the meso3 timepoint (30.8 (SD: 3.2) vs. 29.9 (3.3)), this did not lead to rejection of the null-hypothesis of no difference (<em>t</em>(18)=1.79, <em>p</em>=0.091, 95% CI: -0.16, 1.94)”.</p>
+<p>You might want to plot the results also, use the figure in the code above to do this.</p>
+<p>Tne interpretation above has “two levels”, first I describe that there actually is a difference in means between the time points, this is a statement about the data. Then we use the <em>t</em>-test to make a statement about the population. Notice that we use the standard deviation when describing the data and the t-statistic and confidence interval when describing the our best guess about the population.</p>
+<p>Try to do the same with VO_2max_. Calculate descriptive statistics and draw inference using a paired <em>t</em>-test.</p>
+<div id="a-note-on-reporting-in-r-markdown." class="section level3">
+<h3>A note on reporting in R Markdown.</h3>
+<p>Above I integrated data inline together with text. To accomplish this I input code in the text from objects created in the code chunk. As an example the above was created using the following text/code:</p>
+<pre class="r"><code>The above can be interpreted as: &quot;Squat jump height was on average higher in the pre- compared to the meso3 timepoint (`r round(sj.summary[2,2], 1)` (SD: `r round(sj.summary[2,3], 1)`) vs. `r round(sj.summary[1,2], 1)` (`r round(sj.summary[1,3], 1)`)), this did not lead to rejection of the null-hypothesis of no difference (*t*(`r sj.ttest$parameter`)=`r round(sj.ttest$statistic, 2)`, *p*=`r round(sj.ttest$p.value, 3)`, 95% CI: `r round(sj.ttest$conf.int[1], 2)`, `r round(sj.ttest$conf.int[2], 2)`)&quot;.</code></pre>
+<p>Code is entered inline using e.g. <code>`r round(sj.summary[2,2], 2)`</code> where the r states that this is R code, <code>round(sj.summary[2,2], 2)</code> rounds the number in the second row, second column from the <code>sj.summary</code> data frame to two decimals.</p>
+<p>Using this approach we can combine statistical results with text in our reports.</p>
+</div>
+</div>
+<div id="error-rates" class="section level2">
+<h2>Error rates</h2>
+<p>Up to now we have not explicitly talked about the level of evidence needed to reject the null. The level of evidence needed is related to the nature of the problem. We can make two types of errors. A type I error is when we reject the null when it is actually true. A type II error is when we fail to reject the null and it is actually false.</p>
+<p>If we do not care that much about making a type I error we might be in a situation where a research project might conclude that a intervention/device/nutritional strategy is beneficial and if not there is no harm done. The side effects are not that serious. Another scenario is when we do not want to make a type I error. For example if a treatment is non-effective, the potential side effects are unacceptable. In the first scenario we might accept higher error rates, in the second example we are not prepared to have a high false positive error rate as we do not want to recommend a treatment with side effects that is actually ineffective.</p>
+<p>A type II error might be serious if a an effect is beneficial but we fail to detect it, we do not reject the null when it is false. As we will discuss later, error rates are connected with sample sizes. In a study where we have a large type II error because of a small sample size we risk not detecting an important effect.</p>
+<p>Type I error might be thought of as the long run false positive rate. If we would have drawn samples from a population with a mean of 0 and test <em>against</em> the <span class="math inline">\(H_0: \mu = 0\)</span>. A pre-specified error rate of 5% will protect us from drawing the wrong conclusion but only to the extent that we specify. We can show this in a simulation by running the code below.</p>
+<pre class="r"><code>set.seed(1)
+population &lt;- rnorm(100000, mean = 0, sd = 1)
+
+results &lt;- data.frame(p.values = rep(NA, 10000))
+
+for(i in 1:10000){
+  
+  results[i, 1] &lt;- t.test(sample(population, 20, replace = FALSE), mu = 0)$p.value
+  
+}
+
+# filter the data frame to only select rows with p &lt; 0.05
+false.positive &lt;- results %&gt;%
+  filter(p.values &lt; 0.05) %&gt;%
+  nrow()
+  
+false.positive / 10000 # should be ~ 5%</code></pre>
+<p>Try to explain what the code above do before running it.</p>
+</div>
+<div id="p-values-and-confidence-intervals" class="section level2">
+<h2>P-values and confidence intervals</h2>
+<p>Transparent reporting of a statistical test include estimates and “the probability of obtaining the results, or a more extreme if the null was true” (the p-value). Estimates may be given together with a confidence interval. The confidence interval gives more information as we can interpret the magnitude of an effect and a range of plausible values of the population effect. Sometimes the confidence interval is large, we may interpret this as having more uncertainty.</p>
+<p>In the cycling study we may test against the null-hypothesis that there is no effect of training on <code>tte</code> (time to exhaustion). Try to answer these questions by preparing and doing the test.</p>
+<ul>
+<li>What kind of <em>t</em>-test is suitable for testing <code>pre</code> vs. <code>meso3</code> data in the <code>tte</code> variable?</li>
+<li>What level of evidence do you think is suitable for the test, what is your level of statistical significance?</li>
+<li>How do you interpret the <em>p</em>-value and confidence interval.</li>
+</ul>
+<a id="displayText" href="javascript:toggle(2);">Here is a possible solution</a>
+<div id="toggleText2" style="display: none">
+<p>Below is example code to set up the test</p>
+<pre class="r"><code># Prepare the data
+tte.data &lt;- read_excel(&quot;./data/cyclingStudy.xlsx&quot;, na = &quot;NA&quot;) %&gt;%
+  select(subject, timepoint, tte) %&gt;%
+  pivot_wider(names_from = timepoint, values_from = tte) %&gt;%
+  print()
+
+tte.ttest &lt;- t.test(tte.data$meso3, tte.data$pre,  paired = TRUE)
+
+
+# The point estimate 
+tte.ttest$estimate
+
+# Get the confidence interval 
+tte.ttest$conf.int
+
+# Get the p-value
+tte.ttest$p.value</code></pre>
+</div>
+<p></br></p>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

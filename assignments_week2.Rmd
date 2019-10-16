@@ -1,0 +1,22 @@
+---
+title: "Assignments week 2"
+output: html_document
+---
+
+## To draw inference 
+This week you are expected to draw conclusions about the "real world" based on some data we have collected. Everything should be reported in a R Markdown html-document. Upload this together with the source-file on canvas no later than Sunday.
+
+The html document should not display code chunks, messages or warnings. This means that you should report your results in ordinary text and include results there with inline code. Read more about this [here](https://rmarkdown.rstudio.com/lesson-4.html). 
+
+You are expected to answer all three problems below.
+
+### Problems
+
+1. Using the cyclingStudy data set, what can you say about the effect of training on VO~2max~ per kg body mass. Here you should test against the $H_0$ that says that VO~2max~ is no different between `pre`and `meso1`. Interpret the results of your test. What test do you use? Where do you set the level of required evidence to reject the null, and why?
+
+2. Create a new variable where you calculate the difference in `sj.max` in percentage between `pre` and `meso1`. Do a test against the null-hypothesis that this difference is 0. What test do you use. What is your threshold to reject the null?
+
+3. Calculate the percentage change in VO~2max~ in group `INCR` and `DECR`between `pre` and `meso3`. Compare the two groups, what statement can you make about the population on the basis of your test? What test do you choose, why?
+
+Intepretations of the results should contain point estimates, confidence intervals and *p*-values.
+

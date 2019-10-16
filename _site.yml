@@ -32,21 +32,9 @@ navbar:
         - text: "-----------------------------------"
         - text: "Statistical inference"
           href: ex2_introInference.html
+        - text: "Statistical inference 2"
+          href: ex2_introInference2.html
         - text: "-----------------------------------"
-        - text: "Regression models"
-          href: regression_models.html
-        - text: "-----------------------------------"
-        - text: "Analyzing trials"
-          href: designs.html
-        - text: "------------------------------"
-        - text: "Repeated measures designs using mixed models"
-          href: mixed_models_introduction.html
-        - text: "-----------------------------------"        
-        - text: "Sample-size calculations"
-          href: statistical_power.html
-        - text: "-----------------------------------"
-        - text: "Experimental design"
-          href: design.html
     - text: "Exercises"
       menu:
         - text: "Introduction to R and RStudio"
