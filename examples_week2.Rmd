@@ -1,0 +1,78 @@
+---
+title: "Examples Week 2"
+output: html_document
+---
+
+## Examples of `t.test` usage. 
+
+```{r eval = FALSE}
+
+### One sample t-test ####
+
+# Compares a sample mean against a set mean
+
+
+sj.change <- read_excel("./data/cyclingStudy.xlsx", na = "NA") %>%
+        select(subject, timepoint, sj.max) %>%
+        filter(timepoint %in% c("pre", "meso3")) %>%
+        pivot_wider(names_from = timepoint, 
+                    values_from = sj.max) %>%
+        mutate(change = meso3 - pre) %>%
+        print()
+
+t.test(sj.change$change, mu = 0)
+
+
+### Paired sample t-test
+
+# E.g. the same participant is meassured twice.
+
+sj <- read_excel("./data/cyclingStudy.xlsx", na = "NA") %>%
+        select(subject, timepoint, sj.max) %>%
+        filter(timepoint %in% c("pre", "meso3")) %>%
+        pivot_wider(names_from = timepoint, 
+                    values_from = sj.max) %>%
+        print()
+
+t.test(sj$meso3, sj$pre, paired = TRUE)
+
+
+# When paired observations are used, the SE and CI are affected
+
+t.test(sj$meso3, sj$pre, paired = FALSE)
+
+
+
+### Two sample t-test
+
+sj.group <- read_excel("./data/cyclingStudy.xlsx", na = "NA") %>%
+        select(subject, group, timepoint, sj.max) %>%
+        filter(timepoint %in% c("pre", "meso3")) %>%
+        pivot_wider(names_from = timepoint, 
+                    values_from = sj.max) %>%
+        mutate(change = meso3 - pre) %>%
+        select(subject, group, change) %>%
+        filter(group != "MIX") %>%
+        print()
+
+
+t.test(change ~ group, data = sj.group)
+
+t.test(sj.group[sj.group$group == "DECR",]$change, 
+       sj.group[sj.group$group == "INCR",]$change)
+
+# The default in R is the Welch two sample t-test. It does not assume equal variance in groups
+
+t.test(change ~ group, data = sj.group) # Welch t-tes
+t.test(change ~ group, data = sj.group, var.equal = TRUE) # Two-sample t-test
+
+### Look in the help file
+?t.test
+
+
+
+
+
+
+
+```

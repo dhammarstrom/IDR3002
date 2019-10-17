@@ -10,6 +10,8 @@ The html document should not display code chunks, messages or warnings. This mea
 
 You are expected to answer all three problems below.
 
+[Here you can find examples of `t.test` function usage](examples_week2.html)
+
 ### Problems
 
 1. Using the cyclingStudy data set, what can you say about the effect of training on VO~2max~ per kg body mass. Here you should test against the $H_0$ that says that VO~2max~ is no different between `pre`and `meso1`. Interpret the results of your test. What test do you use? Where do you set the level of required evidence to reject the null, and why?
