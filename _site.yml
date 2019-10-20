@@ -35,6 +35,8 @@ navbar:
         - text: "Statistical inference 2"
           href: ex2_introInference2.html
         - text: "-----------------------------------"
+        - text: "Regression models"
+          href: ex3_regressionModels.html
     - text: "Exercises"
       menu:
         - text: "Introduction to R and RStudio"
@@ -51,6 +53,8 @@ navbar:
           href: assignments_week1.html
         - text: "Week 2"
           href: assignments_week2.html
+        - text: "Week 3"
+          href: assignments_week3.html
   right:
     - icon: fa-question fa-lg
       href: faq.html

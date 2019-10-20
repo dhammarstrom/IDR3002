@@ -1,0 +1,602 @@
+---
+title: "Corrrelation and Linear regression"
+author: "Daniel Hammarström"
+date: "2019-10-21"
+output: beamer_presentation
+header-includes:
+  - \usepackage{booktabs}
+  - \usepackage{longtable}
+  - \usepackage{array}
+  - \usepackage{multirow}
+  - \usepackage{wrapfig}
+  - \usepackage{float}
+  - \usepackage{colortbl}
+  - \usepackage{pdflscape}
+  - \usepackage{tabu}
+  - \usepackage{threeparttable}
+  - \usepackage{threeparttablex}
+  - \usepackage[normalem]{ulem}
+  - \usepackage{makecell}
+  - \usepackage{xcolor}
+---
+
+# Association between variables
+
+* A measure of association between continuous variables is the correlation (Pearson's correlation coefficient).
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE, fig.align='center', fig.height=4, fig.width=7, fig.align='center'}
+library(tidyverse); library(cowplot)
+set.seed(2)
+
+N <- 100 # number of pairs in simulation
+
+# Create some randomly distributed X values representing some quantrity
+
+X <- runif(N, 100, 5000) / 1000
+
+# generate some y values according to a linear model. Here, they have
+# slope = 1.2, intercept = 1 and Gaussian (normal) random noise added with
+# mean = 0 and standard deviation = 1. 
+
+
+Y1 <- 1*X + 1 + rnorm(N,0,1)
+Y0 <- 0*X + 1 + rnorm(N,0,1)
+Y_1 <- -1*X + 1 + rnorm(N,0,1)
+
+
+
+df <- data.frame(x = X, "Positive"= Y1, "No correlation" = Y0, "Negative" = Y_1) %>%
+        gather(y, value, c(Positive, No.correlation, Negative)) 
+
+sum <- df %>%
+        group_by(y) %>%
+        summarise(corr = cor(x, value)) %>%
+        mutate(x = c(2.5, 2.5, 2.5),
+               value = c(3, 5,-0.5)) %>%
+        mutate(y = factor(y, levels = c("Positive", "No.correlation", "Negative"),
+                          labels = c("Positive\ncorrelation", "No Correlation", "Negative\ncorrelation")))
+
+
+df %>%
+        mutate(y = factor(y, levels = c("Positive", "No.correlation", "Negative"),
+                          labels = c("Positive\ncorrelation", "No Correlation", "Negative\ncorrelation"))) %>%
+        ggplot(aes(x, value)) + geom_point() +
+        facet_grid(.~y)+ theme_minimal() +  
+        theme(panel.border = element_rect(color = "black",                                                                     fill = NA)) + 
+        geom_text(data = sum, aes(x, value, label = paste0("Correlation = ",round(corr, 3)))) + 
+        geom_smooth(method = "lm", se = FALSE) + 
+        xlab("Variable A") + ylab("Variable B")
+
+
+```
+
+# Correlation gives a unitless "strength of association"
+
+* Estimates of association ($r$) is limited to $-1 \leq r \leq 1$.
+* When r approaches $\pm 1$, the association is stronger, estimates close to 0 suggest no association.
+
+```{r,echo = FALSE, warning = FALSE, message = FALSE, fig.height=4, fig.width=7, fig.align='center'}
+set.seed(2)
+
+N <- 100 # number of pairs in simulation
+
+# Create some randomly distributed X values representing some quantrity
+
+X <- runif(N, 100, 5000) / 1000
+
+# generate some y values according to a linear model. Here, they have
+# slope = 1.2, intercept = 1 and Gaussian (normal) random noise added with
+# mean = 0 and standard deviation = 1. 
+
+
+Y1 <- 1*X + 1 + rnorm(N,0,1)
+Y2 <- 1*X + 1 + rnorm(N,0,4)
+Y3 <- 1*X + 1 + rnorm(N,0,10)
+
+
+
+df <- data.frame(x = X, Y1, Y2, Y3) %>%
+        gather(y, value, Y1:Y3) 
+
+sum <- df %>%
+        group_by(y) %>%
+        summarise(corr = cor(x, value)) %>%
+        mutate(x = c(2.5, 2.5, 2.5),
+               value = c(30, 30, 30)) 
+
+df %>%
+        ggplot(aes(x, value)) + geom_point() +
+        facet_grid(.~y)+ theme_minimal() +  
+        theme(panel.border = element_rect(color = "black",                                                                     fill = NA),
+              strip.text.x = element_blank())  +
+        geom_smooth(method = "lm", se = FALSE) +
+        geom_text(data = sum, aes(x = x, y = value, label = paste("r = ", sprintf("%.3f",corr))))
+```
+
+# Assumptions in correlation
+
+* Continuous variables, paired observations
+* Bivariate normal distribution(?) -- Both variables should be bell shaped.
+* Linear relationship between variables
+* Be careful when there are outliers, examine the effect of extreme data points.
+
+
+# Correlation in R
+
+```{r, eval = FALSE}
+Yj <- c(25.2, 26.9, 21.7, 15.8, 
+        26.0, 20.4, 18.5, 15.5, 15.6, 16.0)
+
+Yk <- c(21.9, 25.7, 23.6, 29.6, 
+        24.9, 23.4, 23.5, 25.1, 24.0, 21.5)
+ 
+# The Pearson's product moment 
+# correlation coefficient
+cor(Yk, Yj, method = "pearson")   
+
+# The Pearson's product moment 
+# correlation coefficient with 
+# test statistic
+cor.test(Yk, Yj, method = "pearson")   
+```
+
+# Regression models the relationship between variables 
+
+* The regression model describe more aspects of the relationship between variables than the correlation.
+* The equation for the straight line:
+
+$$y = mx+c ~~~~~~~~ y = {slope} \times x + {intercept}$$
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE, out.width = "60%",out.height = "50%",fig.width = 4, fig.height=4, fig.align="center"}
+
+ggplot(data = data.frame(x = c(0, 5), y = c(0, 5)), aes(x, y)) + geom_point(size = 0.1) +
+        geom_hline(yintercept = 0, color = "gray60", size = 1) + 
+        geom_vline(xintercept = 0, color = "gray60", size = 1) +
+        geom_abline(slope = 1, intercept = 2, size = 1, lty = 2) + 
+        annotate(geom = "text", 
+                 label = "Intercept", 
+                 x = 0.5, y = 2, parse = TRUE, 
+                 angle = 0) +
+         annotate(geom = "text", 
+                 label = "Slope", 
+                 x = 0.5, y = 2.7, parse = TRUE, 
+                 angle = 50) +
+                theme_minimal() + scale_x_continuous(limits = c(-1, 3), expand = c(0,0)) +
+        scale_y_continuous(limits = c(0, 3), expand = c(0,0)) +
+        xlab("y") + ylab("x")
+        
+
+```
+
+# Regression estimates the line that best fits the data
+
+* The basic univariate regression model
+
+$$y = \beta_0 + \beta_1x + \epsilon$$
+
+* $\beta_0$ is the model intercept (or constant)
+* $\beta_1$ is the slope of the straight line
+* $\epsilon$ is the unexplained error
+* Model parameters ($\beta_0, \beta_1$) are estimated using sample data
+
+
+# Interpret slopes and intercepts
+
+```{r,echo = FALSE, warning = FALSE, message = FALSE, fig.width = 6, fig.height=4}
+a <- ggplot(data = data.frame(x = c(0, 5), y = c(0, 5)), aes(x, y)) + geom_point() +
+        geom_abline(slope = 1, intercept = 2, size = 1, lty = 2) + 
+        geom_abline(slope = -1, intercept = 2, size = 1, lty = 3) + 
+        geom_abline(slope = 0, intercept = 2, size = 1, lty = 4) + 
+        annotate(geom = "text", 
+                 label = paste(expression(beta[1]==1)), 
+                 x = 1, y = 3.2, parse = TRUE, 
+                 angle = 60) +
+        annotate(geom = "text", 
+                 label = paste(expression(beta[1]==0)), 
+                 x = 1, y = 1.2, parse = TRUE, 
+                 angle = -60) +
+          annotate(geom = "text", 
+                 label = paste(expression(beta[1]==0)), 
+                 x = 1, y = 2.2, parse = TRUE) +
+        annotate(geom = "text", 
+                 label = paste(expression(beta[0] == 2)), 
+                 x = 0.5, y = 0.6, parse = TRUE) +
+        theme_minimal() + scale_x_continuous(limits = c(0, 4), expand = c(0,0)) +
+        scale_y_continuous(limits = c(0, 4), expand = c(0,0)) +
+        xlab("") + 
+        theme(panel.background = element_rect(color = "black"))
+
+b <- ggplot(data = data.frame(x = c(0, 5), y = c(0, 5)), aes(x, y)) + geom_point() +
+        geom_abline(slope = 1, intercept = 2, size = 1, lty = 2) + 
+        geom_abline(slope = 1, intercept = 1, size = 1, lty = 3) + 
+        geom_abline(slope = 1, intercept = 0, size = 1, lty = 4) + 
+        annotate(geom = "text", 
+                 label = expression(beta[1]==1~~~beta[0]==2), 
+                 x = 1, y = 3.3, parse = TRUE, 
+                 angle = 60) +
+        annotate(geom = "text", 
+                 label = expression(beta[1]==1~~~beta[0]==1), 
+                 x = 1, y = 2.3, parse = TRUE, 
+                 angle = 60) +
+          annotate(geom = "text", 
+                 label = expression(beta[1]==1~~~beta[0]==0), 
+                 x = 1, y = 1.3, parse = TRUE,
+                 angle = 60) +
+        theme_minimal() + scale_x_continuous(limits = c(0, 4), expand = c(0,0)) +
+        scale_y_continuous(limits = c(0, 4), expand = c(0,0)) +
+        theme(axis.title.y = element_blank(),
+              axis.text.y = element_blank()) +
+         xlab("Dependent variable (x)") + 
+        theme(panel.background = element_rect(color = "black"))
+
+c <- ggplot(data = data.frame(x = c(0, 5), y = c(0, 5)), aes(x, y)) + geom_point() +
+        geom_abline(slope = 3, intercept = 1, size = 1, lty = 2) + 
+        geom_abline(slope = -1, intercept = 3, size = 1, lty = 3) + 
+        geom_abline(slope = -4, intercept = 4, size = 1, lty = 4) + 
+        annotate(geom = "text", 
+                 label = "A", 
+                 x = 1.15, y = 0.5, parse = TRUE) +
+        annotate(geom = "text", 
+                 label = "B", 
+                 x = 2, y = 1.5, parse = TRUE) +
+          annotate(geom = "text", 
+                 label = "C",
+                 x = 1.15, y = 3.8, parse = TRUE) +
+
+        theme_minimal() + scale_x_continuous(limits = c(0, 4), expand = c(0,0)) +
+        scale_y_continuous(limits = c(0, 4), expand = c(0,0)) +
+         theme(axis.title.y = element_blank(),
+              axis.text.y = element_blank()) +
+        xlab("") + 
+        theme(panel.background = element_rect(color = "black"))
+
+plot_grid(a, b, c, ncol = 3)
+
+
+```
+
+# Estimating the best fit line
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE, fig.width = 6, fig.height=4, fig.align="center"}
+
+df <- data.frame(x = c(4,6,8,12,15,23,22),
+           Observed = c(5,8,9,9,13,25,34), obs = c("a", "b", "c", "d", "e", "f", "g"))
+
+mod <- lm(Observed ~ x, data = df)
+
+df$Predicted <- predict(mod)
+
+df %>%
+        gather(y.val, y, c(Observed,Predicted)) %>%
+        ggplot(aes(x, y, group = obs, color = y.val)) + 
+         geom_line(color = "green") +
+                geom_abline(intercept = coef(mod)[1], slope = coef(mod)[2])+
+           geom_point() + scale_color_manual(values = c("blue", "red"), name = "") +
+       theme_minimal() + xlab("Independent variable (x)") + ylab("Dependent variable (y)")
+
+```
+
+# Estimating the best fit line
+
+* The best fit line can be estimated by minimizing the vertical distances between **observed** and **predicted** values.
+* The distance between bobserved and predicted values are called **residuals**, these can help us *diagnose* the regression.
+* The **residuals** are also used to *estimate* the standard errors of the parameters in the model. 
+
+# The standard error of the regression parameter is an estimate of the SD of the sampling distribution 
+```{r,  echo = FALSE, warning = FALSE, message = FALSE, fig.align='center', fig.height=3.8, fig.width=5, cache=TRUE}
+
+set.seed(2)
+
+
+N <- 1000000 # number of pairs in simulation
+
+# Create some randomly distributed X values representing some quantrity
+
+X <- runif(N, 100, 5000) / 1000
+
+# generate some y values according to a linear model. Here, they have
+# slope = 1.2, intercept = 1 and Gaussian (normal) random noise added with
+# mean = 0 and standard deviation = 1. 
+
+
+Y <- 1.2*X + 1 + rnorm(N,0,1)
+
+
+## Create a sampling distribution of the intercept and slpe term
+
+n <- 20 # sample size
+
+results <- data.frame(intercept = rep(NA, 10), 
+                      slope = rep(NA, 10), 
+                      intercept.se = rep(NA, 10), 
+                      slope.se = rep(NA, 10))
+
+for(i in 1:10000) {
+        
+      samp <-   sample(1:N, n, replace = FALSE)
+        
+      df <- data.frame(y = Y[samp], x = X[samp])  
+        
+      mod <- lm(y ~ x, data = df)
+      
+      results[i, 1] <- coef(mod)[1]
+      results[i, 2] <- coef(mod)[2]
+      results[i, 3] <- coef(summary(mod))[1, 2]
+      results[i, 4] <- coef(summary(mod))[2, 2]
+     
+}
+
+
+est <- results %>%
+        summarise(intercept.sd = sd(intercept),
+                  slope.sd = sd(slope), 
+                  intercept.se = mean(intercept.se),
+                  slope.se = mean(slope.se))
+
+
+intercepts <- results %>%
+        ggplot(aes(intercept)) + geom_density() + theme_minimal() +
+        ggtitle("Distribution of sample intercepts (n = 20)") + 
+        ylab("Density") + xlab("Intercept") + 
+        annotate(geom = "text",x = 2.2, y = 0.6, label = paste("SD = ", round(est[1, 1], 2))) +
+        annotate(geom = "text",x = 2.2, y = 0.5, label = paste("Mean SE = ", round(est[1, 3], 2)))
+
+slopes <- results %>%
+        ggplot(aes(slope)) + geom_density() + theme_minimal() +
+        ggtitle("Distribution of sample slopes (n = 20)") + 
+        ylab("Density") + xlab("Slope") +
+        annotate(geom = "text",x = 1.6, y = 1.8, label = paste("SD = ", round(est[1, 2], 2))) +
+        annotate(geom = "text",x = 1.6, y = 1.5, label = paste("Mean SE = ", round(est[1, 4], 2)))
+
+
+library(cowplot)
+
+plot_grid(intercepts, slopes, ncol = 1)
+
+```
+
+# Assumptions in linear regression
+
+* There is a linear relationship between $x$ and $y$
+* Residuals are normally distributed (with mean = 0)
+* Residuals have an equal spread along the the fitted range (homoskedasticity)
+* Observations are independent
+
+
+# Why are assumptions important
+
+* We assume taht errors in our model ($\hat{y}-y$) are well behaved
+* The errors are used to calculate standard errors
+* If the assumptions are wrong our standard errors are **biased**
+* *Biased* standard errors will lead to bad **inference**
+
+# Model diagnostics
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE, fig.align='center', fig.height=4, fig.width=6, cache=TRUE}
+
+set.seed(666)
+
+
+N <- 50 # number of pairs in simulation
+
+# Create some randomly distributed X values representing some quantrity
+x <- runif(N, 100, 5000) / 1000
+df <- data.frame(x = x,
+                 y = 25*x + 110 + rnorm(N,0,5), 
+                 y2 = 25*x + 110 + rnorm(N,0,5)*x)
+
+model <- lm(y ~ x, data = df) 
+model2 <- lm(y2 ~ x, data = df)
+
+
+df$resid <- resid(model)
+df$resid2 <- resid(model2)
+df$fitted <-fitted(model)
+df$fitted2 <- fitted(model2)
+
+
+
+
+a <- df %>%
+        ggplot(aes(x, y)) + geom_point() +  geom_smooth(method = "lm")+
+        theme_minimal() + xlab("Dependent variable (x)") + 
+        ylab("Independent variable (y)")
+
+
+b <- df %>%
+        ggplot(aes(fitted, resid)) + geom_point() +
+        theme_minimal() + xlab("Fitted values") + 
+        ylab(expression(paste("Raw residuals (",hat(y)-y,")"))) +
+        geom_hline(yintercept = 0)
+
+c <- df %>%
+        ggplot(aes(x, y2)) + geom_point() +  geom_smooth(method = "lm")+
+        theme_minimal() + xlab("Dependent variable (x)") + 
+        ylab("Independent variable (y)")
+
+
+d <- df %>%
+        ggplot(aes(fitted2, resid2)) + geom_point() +
+        theme_minimal() + xlab("Fitted values") + 
+        ylab(expression(paste("Raw residuals (",hat(y)-y,")"))) +
+        geom_hline(yintercept = 0)
+
+
+plot_grid(a, b, c, d, ncol = 2)
+
+DATASET <- df[,c(1,2)]
+
+```
+
+# What can be done with heteroscedasticity?
+
+* Transformation of the data can reduce increased variation with increased values
+* The most common transformation is the log
+* log-transformed data 
+
+```{r, eval = FALSE}
+df$y <- log(df$y)
+```
+
+# Log-transfomed data
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE, fig.align='center', fig.height=4, fig.width=6, cache=TRUE}
+
+set.seed(134)
+
+
+N <- 50 # number of pairs in simulation
+
+# Create some randomly distributed X values representing some quantrity
+x <- runif(N, 200, 5000)/1000
+df <- data.frame(x = x,
+                 y = 25*x + 110 + rnorm(N,0,5), 
+                 y2 = 25*x + 110 + runif(N,0,20) * x)
+
+model <- lm(y ~ x, data = df) 
+model2 <- lm(y2 ~ x, data = df)
+model3 <- lm(log(y2) ~ x, data = df)
+
+
+df$resid3 <- resid(model3) / sd(resid(model3))
+df$resid2 <- resid(model2) / sd(resid(model2))
+
+df$fitted3 <-fitted(model3)
+df$fitted2 <- fitted(model2)
+
+
+
+
+
+
+c <- df %>%
+        ggplot(aes(x, y2)) + geom_point() +  geom_smooth(method = "lm")+
+        theme_minimal() + xlab("Dependent variable (x)") + 
+        ylab("Independent variable (y)")
+
+
+d <- df %>%
+        ggplot(aes(fitted2, resid2)) + geom_point() +
+        theme_minimal() + xlab("Fitted values") + 
+        ylab("Standardized residuals") +
+        geom_hline(yintercept = 0)
+
+e <- df %>%
+        ggplot(aes(x, log(y2))) + geom_point() +  geom_smooth(method = "lm")+
+        theme_minimal() + xlab("Dependent variable (x)") + 
+        ylab("Independent variable log(y)")
+
+
+f <- df %>%
+        ggplot(aes(fitted3, resid3)) + geom_point() +
+        theme_minimal() + xlab("Fitted values") + 
+        ylab("Standardized residuals") +
+        geom_hline(yintercept = 0)
+
+
+plot_grid(c, d,e, f, ncol = 2)
+
+DATASET <- df[,c(1,2)]
+
+```
+
+# Interpreting log-transfomed data in a regression
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE, fig.align='center', fig.height=4, fig.width=6, cache=TRUE}
+library(tidyverse)
+set.seed(2)
+df <- data.frame(a = rnorm(25, 125, 10),
+                 b = rnorm(25, 180, 40)) %>%
+        
+        pivot_longer(names_to = "group", 
+                     values_to = "value", 
+                     cols = a:b) %>%
+        mutate(value = value + runif(50, 1, 10) * value)
+
+
+m1 <- lm(value~group, data = df)
+m2 <- lm(log(value)~group, data = df)
+
+df$resid_m1 <- resid(m1)/sd(resid(m1))
+df$resid_m2 <- resid(m2)/sd(resid(m2))
+df$fitted_m1 <- fitted(m1)
+df$fitted_m2 <- fitted(m2)
+
+
+
+c <-  df %>%
+        ggplot(aes(group, value, fill = group)) + 
+        geom_point(position = position_jitter(width = 0.1), shape = 21, size = 3) + 
+        labs(x = "Group", 
+             y = "Linear scale value") + theme_minimal() +
+        scale_fill_manual(values = c("lightblue", "coral2")) +
+        theme(legend.position = "none")
+
+
+d <-  df %>%
+        ggplot(aes(group, log(value), fill = group)) + 
+        geom_point(position = position_jitter(width = 0.1), shape = 21, size = 3) + 
+        labs(x = "Group", 
+             y = "Log scale value") + theme_minimal() +
+        scale_fill_manual(values = c("lightblue", "coral2")) +
+        theme(legend.position = "none")
+
+
+
+
+
+a <- df %>%
+        ggplot(aes(fitted_m1, resid_m1, fill = group)) + 
+        geom_point(position = position_jitter(width = 10), shape = 21, size = 3) + 
+        scale_y_continuous(breaks = c(-4, -3, -2, -1, 0, 1, 2, 3, 4), limits = c(-3.5, 3.5)) +
+        labs(x = "Fitted values", 
+             y = "Standardized residuals", 
+             title = "Linear scale") + theme_minimal() +
+        scale_fill_manual(values = c("lightblue", "coral2")) +
+        theme(legend.position = "none")
+b <- df %>%
+        ggplot(aes(fitted_m2, resid_m2, fill = group)) + 
+        geom_point(position = position_jitter(width = 0.01), shape = 21, size = 3) + 
+        scale_y_continuous(breaks = c(-4, -3, -2, -1, 0, 1, 2, 3, 4), limits = c(-3.5, 3.5)) +
+        labs(x = "Fitted values", 
+             y = "Standardized residuals",
+             title = "Log-scale") + theme_minimal() +
+        scale_fill_manual(values = c("lightblue", "coral2")) +
+        theme(legend.position = "none")
+
+
+cowplot::plot_grid(c, d, a, b, ncol = 2)
+
+```
+
+# Interpreting log-transfomed data in a regression
+
+```{r, results = "asis", message=FALSE, warning = FALSE, echo = FALSE}
+library(broom); library(knitr)
+
+tidy(m1) %>%
+        mutate(Model = "Linear scale") %>%
+        rbind(tidy(m2) %>%
+                      mutate(Model = "Log-transformed")) %>%
+        kable(format = "latex", booktabs = TRUE, col.names = c("Paramter", "Estimate", "SE", "t-value", "p-value", "Model"), 
+              digits = c(NA, 2, 3, 2, 3)) 
+```
+
+
+$$ log(a) + log(b) = log(a \times b)$$
+$$ log(a) - log(b) = log(a/b)$$
+$$e^{log(x)} = x$$
+
+
+
+# Categorical data can be used as predictor variables
+
+* We can use categorical data as the independent variable
+* Categories are (automatically in R) converted to "dummy varaibles"
+* If we have two groups (e.g. men and women), in the univariate model, men will be represented by the intercept and women by the slope. 
+
+$$y = \beta_0 + \beta_1 x + \epsilon$$
+
+$$y = MEN + \beta_1 \times WOMEN + \epsilon$$
+
+* If there are more levels, additional dummy variables are added to the model

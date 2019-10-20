@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Regression models</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-inverse  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">IDR3002 Course notes</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+    Home
+  </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Software
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="installation.html">Installing and starting up R and RStudio</a>
+    </li>
+    <li>
+      <a href="markdown.html">Creating a report using rmarkdown</a>
+    </li>
+    <li>
+      <a href="structure.html">Structuring an analysis</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Lessons
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="introduction_1.html">Introduction to R</a>
+    </li>
+    <li>
+      <a href="import_data.html">Import data</a>
+    </li>
+    <li>
+      <a href="make_summaries.html">Make summaries</a>
+    </li>
+    <li>
+      <a href="plot_ggplot2.html">Create plots with ggplot2</a>
+    </li>
+    <li>
+      <a href="descriptive_statistics.html">Assignment: Descriptive statistics</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="ex2_introInference.html">Statistical inference</a>
+    </li>
+    <li>
+      <a href="ex2_introInference2.html">Statistical inference 2</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="ex3_regressionModels.html">Regression models</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Exercises
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="ex1_intro.html">Introduction to R and RStudio</a>
+    </li>
+    <li>
+      <a href="ex1_import.html">Import data</a>
+    </li>
+    <li>
+      <a href="ex1_summarise.html">Summarise data</a>
+    </li>
+    <li>
+      <a href="ex1_figures.html">Making figures</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Assignments
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="assignments_week1.html">Week 1</a>
+    </li>
+    <li>
+      <a href="assignments_week2.html">Week 2</a>
+    </li>
+    <li>
+      <a href="assignments_week3.html">Week 3</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="faq.html">
+    <span class="fa fa-question fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Regression models</h1>
+
+</div>
+
+
+<div id="straight-lines" class="section level2">
+<h2>Straight lines</h2>
+<p>A straight line can be fitted to describe a relationship between two variables. This relationship can also be described with a formula:</p>
+<p><span class="math display">\[y = \beta_0 + \beta_1x\]</span></p>
+<p>Where <span class="math inline">\(y\)</span> is the outcome variable, <span class="math inline">\(\beta_0\)</span> is the intercept, <span class="math inline">\(\beta_1\)</span> is the slope and <span class="math inline">\(x\)</span> is the predictor.</p>
+<p><img src="ex3_regressionModels_files/figure-html/unnamed-chunk-1-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p>In the model shown above, y increases two units for every unit increase in x. If we measure something in nature and find such a fit (every point on the line) we should check our calculations as perfect relationships are seldom found in measured variables. This because of measurement error and other non measured variables that affect the relationship. We quantify these unmeasured sources of variation in an additional term in the formula:</p>
+<p><span class="math display">\[y = \beta_0 + \beta_1x + \epsilon\]</span></p>
+<p><span class="math inline">\(\epsilon\)</span> is the error-term. Here we quantify the distance from the best fit line for every observation. The best fit line is the line that minimizes the squared residuals (<span class="math inline">\(e_i^2\)</span>, in this case <span class="math inline">\(e\)</span> is used to signify the error as it is observed data). A more realistic regression model contains some error.</p>
+<p><img src="ex3_regressionModels_files/figure-html/unnamed-chunk-2-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p>In the above figure, the error or residual is the distance (red lines) from the predicted (blue points) to the observed (black points).</p>
+<p>A two variable relationship can be positive (increase in y as x increases) or negative (y decreases as x increases).</p>
+<p><img src="ex3_regressionModels_files/figure-html/unnamed-chunk-3-1.png" width="384" style="display: block; margin: auto;" /></p>
+</div>
+<div id="fitting-regression-models-in-r" class="section level2">
+<h2>Fitting regression models in R</h2>
+<p>The data above can be fitted in R using the <code>lm()</code> function. We get far by specifying a <code>formula</code> and <code>data</code> where the variables used in the formula are stored. We can store a model as an object and inspect the results by using the <code>summary()</code> function.</p>
+<pre class="r"><code>df &lt;- data.frame(x = c(5.461851, 6.110910, 6.952707, 5.321775, 5.951849),
+                 y = c(9.168992,  8.273749,  5.926797, 10.745583,  7.999151))
+
+fit &lt;- lm(y ~ x, data = df)
+
+summary(fit)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = y ~ x, data = df)
+## 
+## Residuals:
+##       1       2       3       4       5 
+## -0.5561  0.2460  0.1005  0.6542 -0.4445 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)   
+## (Intercept)  24.0085     2.6873   8.934  0.00296 **
+## x            -2.6151     0.4488  -5.827  0.01007 * 
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.5789 on 3 degrees of freedom
+## Multiple R-squared:  0.9188, Adjusted R-squared:  0.8917 
+## F-statistic: 33.95 on 1 and 3 DF,  p-value: 0.01007</code></pre>
+<p>The summary that you get from the model above will show the value of the coefficient (estimates, SE, t-value and a p value), we will get some information about the spread of the residuals and values that tells us the overall fit of the model.</p>
+<p>The estimates from a summary in a two variable situation tells the value of <span class="math inline">\(y\)</span> when x is zero and the increase in <span class="math inline">\(y\)</span> for every unit increase in <span class="math inline">\(x\)</span>. Can you identify these from the output above?</p>
+<p>Two-variable regression (univariate regression) is closely related to the correlation. Try out the code <code>cor.test(df$x, df$y)</code> and see what similarities you find between the outputs.</p>
+<p>In the model we use in the example, the intercept is quite “far away” from the rest of the data (see figure below).</p>
+<p><img src="ex3_regressionModels_files/figure-html/unnamed-chunk-6-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p>Let’s fit some real data. We might wonder if there are some characteristic that is related to VO<sub>2max</sub>. For example, do taller individuals have greater VO<sub>2max</sub>? It is always a good idea to start with a plot before we do the modeling.</p>
+<pre class="r"><code>library(readxl); library(tidyverse)
+
+ read_excel(&quot;./data/cyclingStudy.xlsx&quot;, na = &quot;NA&quot;) %&gt;%
+        filter(timepoint == &quot;pre&quot;) %&gt;%
+        select(subject, group, VO2.max, height.T1) %&gt;%
+         ggplot(aes(height.T1, VO2.max)) + geom_point(size = 3, fill = &quot;lightblue&quot;, shape = 21) +
+         labs(x = &quot;Height (cm)&quot;, 
+              y = expression(&quot;VO&quot;[&quot;2max&quot;]~(ml^-1~min^-1))) +
+         theme_minimal()</code></pre>
+<p>There might be a positive relationship, what do you think? You might get a clearer picture if you use <code>geom_smooth(method = "lm")</code> in your ggplot command, try it out.</p>
+<p>To quantify the relationship between Height (<code>height.T1</code>) and VO<sub>2max</sub> (<code>VO2.max</code>) we can fit a linear model. Below I store the model in an object called <code>m1</code>. Before we look at the results of the regression model, we should think about the data and inspect the fit to see if it matches with our assumptions. Assumptions that generally needs to be filled in order to get a valid regression model are:</p>
+<ul>
+<li><p><strong>Independent observations</strong>. This is an assumption about the design of the study and the data at hand. If we have observations that are related, the ordinary linear model will give us biased conclusions. As an example, if we collect data from the same participants over time we will not have independent observations and this will lead to pseudo-replication, lower standard errors and biased confidence intervals. Another way to see it is that non-independent observations will give non-independence of the residuals which is the mechanism that creates bad inference (as the residuals are used to estimate the sampling distribution of parameters).</p></li>
+<li><p><strong>Linear relationship</strong>. In the basic case, we expect a linear trend that can be described with a straight line. If the relationship is curve-linear, we may adjust the fit using e.g. polynomials.</p></li>
+<li><p><strong>Normal residuals</strong>. This condition might be violated when there is an outlier.</p></li>
+<li><p><strong>Constant variance</strong>. This assumption says that we want to equally wrong all along the explanatory variable. If we predict <span class="math inline">\(y\)</span> with greater error at large <span class="math inline">\(x\)</span> we have heteroscedasticity (unequal variance), if we are “equally wrong” we have homoscedasticity (equal variance).</p></li>
+</ul>
+<div id="code-for-fitting-a-preliminary-model" class="section level4">
+<h4>Code for fitting a preliminary model</h4>
+<pre class="r"><code>library(readxl); library(tidyverse)
+
+cyclingStudy &lt;- read_excel(&quot;./data/cyclingStudy.xlsx&quot;, na = &quot;NA&quot;) %&gt;%
+        filter(timepoint == &quot;pre&quot;) %&gt;%
+        select(subject, group, VO2.max, height.T1) 
+
+m1 &lt;- lm(VO2.max ~ height.T1, data = cyclingStudy)</code></pre>
+</div>
+<div id="linear-relationship" class="section level3">
+<h3>Linear relationship</h3>
+<p>The plot can be used to see if the relationship is generally linear. We do not have that many data points, but a curve-linear relationship is not evident.</p>
+</div>
+<div id="constant-variance" class="section level3">
+<h3>Constant variance</h3>
+<p>This assumption can be checked by creating a residual plot. We will do it here by to see how it works. The model is fitted and stored in the object <code>m1</code>. From this object we can use the <code>residuals()</code> function to get every residual. We can add this data to the data set by creating a new variable called <code>resid</code>.</p>
+<pre class="r"><code>cyclingStudy$resid &lt;- residuals(m1)
+cyclingStudy$fitted &lt;- fitted(m1)</code></pre>
+<p>It is common practice to plot the residuals against the fitted values.</p>
+<pre class="r"><code>library(readxl); library(tidyverse)
+
+cyclingStudy %&gt;%
+        ggplot(aes(fitted, resid)) + 
+        geom_hline(yintercept = 0) +
+        geom_point(size = 3, fill = &quot;lightblue&quot;, shape = 21) +
+        theme_minimal()</code></pre>
+<p>Sometimes you will see standardized residuals. This is the residual divided by the standard deviation of the residual. We can create this standardization like this:</p>
+<pre class="r"><code>cyclingStudy %&gt;%
+        mutate(st.resid = resid/sd(resid)) %&gt;%
+        ggplot(aes(fitted, st.resid)) + 
+        geom_hline(yintercept = 0) +
+        geom_point(size = 3, fill = &quot;lightblue&quot;, shape = 21) +
+        theme_minimal()</code></pre>
+<p>Looking at the plot tells us that observation with the largest error is about 2.5 standard deviation away from its predicted value. We are suffering a bit from having a small amount of data here. But the residual plot does not invalidate the regression.</p>
+</div>
+<div id="normal-residuals" class="section level3">
+<h3>Normal residuals</h3>
+<p>To check if the residuals are normal, we can create a plot that plot every observed residual against its theoretical position in a normal distribution. This is a quantile-quantile plot. The show the concept we may sample data from a normal distribution and plot it against the theoretical qunatile.</p>
+<pre class="r"><code>set.seed(1)
+ggplot(data.frame(y = rnorm(100, 0, 1)), aes(sample = y)) + stat_qq(size = 3, fill = &quot;lightblue&quot;, shape = 21) + stat_qq_line() + theme_minimal()</code></pre>
+<p>The code above samples 100 observations. They are plotted against their “theoretical values”. If the values (points) follows the straight line, we have data that follows a normal distribution. The same can be tested from our fit.</p>
+<pre class="r"><code>cyclingStudy %&gt;%
+        mutate(st.resid = resid/sd(resid)) %&gt;%
+        ggplot(aes(sample = st.resid)) +
+         stat_qq(size = 3, fill = &quot;lightblue&quot;, shape = 21) + 
+                 stat_qq_line() +
+                 theme_minimal()</code></pre>
+<p>The resulting plot looks nice. Except from one or two observation, we have normally distributed values.</p>
+</div>
+<div id="independent-observations" class="section level3">
+<h3>Independent observations</h3>
+<p>This is an assumption about the data and design of the study. We created the model based on values only from the pre-training test. If we would have used all observations (all time-points) we would have violated the assumption.</p>
+</div>
+</div>
+<div id="check-the-results" class="section level2">
+<h2>Check the results</h2>
+<p>To examine the results of the analysis we can use the <code>summary()</code> function.</p>
+<pre class="r"><code>summary(m1)</code></pre>
+<p>The output will show you the following things:</p>
+<ul>
+<li><em>Residuals</em> which contains the minimum, maximum, median and quartiles of the residuals. The tails should be approximately similar above and below the median.</li>
+<li><em>Coefficients</em> contains the estimates and their standard errors. As we have fitted a univariate model, we only see the increase in VO<sub>2max</sub> with every unit increase of <code>height.T1</code> and the intercept.</li>
+<li><em>R-squared</em> shows the general fit of the model, this is a value between 0 and 1 where 1 shows if the data fits perfectly.</li>
+</ul>
+<div id="a-note-about-printing-the-regression-table" class="section level4">
+<h4>A note about printing the regression table</h4>
+<p>We might want to print the regression table in our reports. To do this in a nice way we might want to format the output a bit. This can be done using a package called <code>broom</code>. <code>broom</code> is not part of the tidyverse so you might need to install it. The package has a function called tidy that takes model objects and makes the into nice data frames that are more easy to work with. Together with the <code>knitr</code> package we can create tables for use in the report. In the <code>knitr</code> package contains the function <code>kable</code> that makes nice tables with some arguments to format the table.</p>
+<pre class="r"><code>library(knitr); library(broom)
+
+tidy(m1) %&gt;%
+        print()</code></pre>
+<p>To get a table out of this for the report we need to set a chunk option, <code>results = 'asis'</code>. The <code>kable()</code> function is used to create the table. It can take several arguments that we can use to customize the table. Below I set the following settings <code>col.names = c("", "Estimate", "SE", "t-statistic", "p-value")</code> which names the column of the table, <code>digits = c(NA, 1, 1, 2, 3)</code>which sets the number of decimals of numeric variables.</p>
+<pre class="r"><code>library(knitr); library(broom)
+
+tidy(m1) %&gt;%
+        kable(col.names = c(&quot;&quot;, &quot;Estimate&quot;, &quot;SE&quot;, &quot;t-statistic&quot;, &quot;p-value&quot;), 
+              digits = c(NA, 1, 1, 2, 3))</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th align="right">Estimate</th>
+<th align="right">SE</th>
+<th align="right">t-statistic</th>
+<th align="right">p-value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>(Intercept)</td>
+<td align="right">-2596.3</td>
+<td align="right">2936.5</td>
+<td align="right">-0.88</td>
+<td align="right">0.388</td>
+</tr>
+<tr class="even">
+<td>height.T1</td>
+<td align="right">41.1</td>
+<td align="right">16.4</td>
+<td align="right">2.51</td>
+<td align="right">0.022</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>kable()</code> function is easily extended using another package called <a href="https://cran.r-project.org/web/packages/kableExtra/"><code>kableExtra()</code></a>. See the vignettes for more details.</p>
+</div>
+</div>
+<div id="interpreting-the-results" class="section level2">
+<h2>Interpreting the results</h2>
+<p>From our model we can predict that a participant with a height of 175 cm will have a VO<sub>2max</sub> of 4597 ml min<sup>-1</sup>. We can do this prediction by combining the intercept and slope term multiplied with 175 as x-value. Remember the equation:</p>
+<p><span class="math display">\[Y = \beta_0 + \beta_1X\]</span></p>
+<p>As we have estimated this relationship we get the <span class="math inline">\(\beta\)</span>’s from the regression table and can input 175 instead of X.</p>
+<p>Actual values from the regression table can be accessed from a <code>tidy</code> table created with broom. But we can also use <code>coef()</code> to get the coefficients. Using <code>confint()</code> we will get confidence intervals for all parameters in a linear model.</p>
+<pre class="r"><code># Coefficients
+coef(m1)
+
+# Confidence intervals
+confint(m1)</code></pre>
+<p>The confidence interval can be used for hypothesis testing as can p-values from the summary table. The p-values tests against the null-hypothesis that the intercept and slope are 0. What does that mean in the case of the intercept in our model. The estimated intercept is -2596 meaning that when height is 0 the VO<sub>2max</sub> is -2596. We are very uncertain about this estimate as the confidence interval goes from -8766 to 3573. We cannot reject the null. Think a minute about what information this test may give in this situation.</p>
+<p>The slope estimate has a confidence interval that goes from <code>round(confint(m1)[2], 1)</code> to 75.5 which means that we may reject the null-hypothesis at the 5% level.</p>
+<div id="do-problematic-observations-matter" class="section level3">
+<h3>Do problematic observations matter?</h3>
+<p>In the residual plot we could identify at least one potentially problematic observation. We can label observations in the residual plot to find out what observation is problematic.</p>
+<pre class="r"><code>cyclingStudy %&gt;%
+        mutate(st.resid = resid/sd(resid)) %&gt;% 
+        ggplot(aes(fitted, st.resid, label = subject)) + 
+        geom_hline(yintercept = 0) +
+        geom_point(size = 3, fill = &quot;lightblue&quot;, shape = 21) +
+        geom_label(nudge_x = 20, nudge_y = 0) +
+        theme_minimal()</code></pre>
+<p>The plot shows that participant 5 has the largest residual. If we would do the model without the potentially problematic observation we can see if this changes the conclusion of the analysis.</p>
+<pre class="r"><code>library(readxl); library(tidyverse)
+
+cyclingStudy_reduced &lt;- read_excel(&quot;./data/cyclingStudy.xlsx&quot;, na = &quot;NA&quot;) %&gt;%
+        filter(timepoint == &quot;pre&quot;, 
+               subject != 5) %&gt;%
+        select(subject, group, VO2.max, height.T1) 
+
+m1_reduced &lt;- lm(VO2.max ~ height.T1, data = cyclingStudy_reduced)
+
+
+delta_beta &lt;- 100 * (coef(m1_reduced)[2]/coef(m1)[2] - 1)</code></pre>
+<p>The delta beta above calculates the percentage change in the slope as a consequence of removing the observation with the greatest residual. Another way to look for potential influential data points would be to check the scatter plot.</p>
+<pre class="r"><code> read_excel(&quot;./data/cyclingStudy.xlsx&quot;, na = &quot;NA&quot;) %&gt;%
+        filter(timepoint == &quot;pre&quot;) %&gt;%
+        select(subject, group, VO2.max, height.T1) %&gt;%
+         ggplot(aes(height.T1, VO2.max, label = subject)) + 
+  geom_smooth(method = &quot;lm&quot;, se = FALSE) +
+  geom_point(size = 3, fill = &quot;lightblue&quot;, shape = 21) +
+         labs(x = &quot;Height (cm)&quot;, 
+              y = expression(&quot;VO&quot;[&quot;2max&quot;]~(ml^-1~min^-1))) +
+                geom_label(nudge_x = 1, nudge_y = 0) +
+        
+        
+         theme_minimal()</code></pre>
+<p>The plot will show participant 5 has not got a lot of “weight” in the slope. If an equally big residual would have been present in the far end of the range of the height variable, removing it would have made more difference. Since the observation is in the middle of the x’s, it wont be that influential.</p>
+<p>There are many ways of doing diagnostics for the ordinary linear model in R. The simplest way is to write <code>plot(m1)</code>, this will produce four graphs.</p>
+<ul>
+<li><p><em>Residuals vs. Fitted</em> shows the fitted (or predicted) values against the residuals. If we would have tried to fit a linear trend to curve linear data, we would have catch it here. We want equal spread all along the fitted values. We test the assumption of homoscedasticity and linear trend.</p></li>
+<li><p><em>Normal Q-Q</em> shows residual theoretical quantiles against the observed quantile. The points should to a large degree be on, or close to the line. We test the assumption of normality in the residuals.</p></li>
+<li><p><em>Scale location</em> similarly to the residual plot, we can assess assumptions of heteroscedasticity and if we find the trend in the data. We are looking for a straight, flat line and points equally scattered around it.</p></li>
+<li><p><em>Residual vs. Leverage</em> is good to find influential data points. If a point is outside the dashed line it changes the conclusion of the regression to a large degree. Remember that we identified participant 5 as a potential problematic case. The Residual vs. leverage shows that number 5 has a large residual value but no leverage, meaning that it does not change the slope of the regression line.</p></li>
+</ul>
+<p><img src="ex3_regressionModels_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
+</div>
+<div id="a-more-intepretable-model" class="section level3">
+<h3>A more intepretable model</h3>
+<p>The intercept in model <code>m1</code> is interpreted as the VO<sub>2max</sub> when height is zero. We do not have any participants with height zero nor will we ever have. A nice modification to the model would be if could get the intercept to tell us something usefull. We could get the model to tell us the VO<sub>2max</sub> in the tallest or shortest participant by setting them to zero. Even more interesting would be to get the VO<sub>2max</sub> at the average height.</p>
+<p>We accomplish this by mean centering the height variable. We remove the mean from all observations, this will put the intercept at the mean of heights as the mean will be zero.</p>
+<pre class="r"><code>library(readxl); library(tidyverse)
+
+cyclingStudy &lt;- read_excel(&quot;./data/cyclingStudy.xlsx&quot;, na = &quot;NA&quot;) %&gt;%
+        filter(timepoint == &quot;pre&quot;) %&gt;%
+        select(subject, group, VO2.max, height.T1)  %&gt;%
+        mutate(height.mc = height.T1 - mean(height.T1)) # mean centering the height variable
+
+m2 &lt;- lm(VO2.max ~ height.mc, data = cyclingStudy)</code></pre>
+<p>Examine the fit, what happens to the coefficients?</p>
+</div>
+</div>
+<div id="an-exercise" class="section level2">
+<h2>An exercise</h2>
+<p>We think that body dimensions influence physiological characteristics. To test if if the stature (<code>height.T1</code>) influence maximum ventialtory capacity (<code>VE.max</code>) fit a regression model, check model assumptions and interpret the results.</p>
+<script language="javascript"> 
+    function toggle(num) {
+      var ele = document.getElementById("toggleText" + num);
+      var text = document.getElementById("displayText" + num);
+      if(ele.style.display == "block") {
+        ele.style.display = "none";
+        text.innerHTML = "show";
+      }
+      else {
+        ele.style.display = "block";
+        text.innerHTML = "hide";
+      }
+   } 
+  </script>
+<a id="displayText" href="javascript:toggle(1);">Here is a possible solution</a>
+<div id="toggleText1" style="display: none">
+<pre class="r"><code>## Load data
+
+cyclingStudy &lt;- read_excel(&quot;./data/cyclingStudy.xlsx&quot;, na = &quot;NA&quot;) %&gt;%
+        filter(timepoint == &quot;pre&quot;) %&gt;%
+        select(subject, group, VE.max, height.T1)  %&gt;%
+        mutate(height.mc = height.T1 - mean(height.T1)) # mean centering the height variable
+
+# fitting the model
+m1_ve &lt;- lm(VE.max ~ height.mc, data = cyclingStudy)
+
+# Check assumptions
+plot(m1_ve)
+
+# Check coefficients
+summary(m1_ve)
+
+# Get confidence intervals
+confint(m1_ve)</code></pre>
+</div>
+<p></br></p>
+</div>
+<div id="categorical-predictors-and-multiple-regression" class="section level2">
+<h2>Categorical predictors and multiple regression</h2>
+<p>We have up to now used a single continuous predictor to predict a dependent variable. We will now show that the ordinary regression models can be the same as other statistical tests, they can be extended and modified. This will show that the ordinary regression model is very flexible.</p>
+<div id="linear-models-can-be-used-instead-of-t-tests" class="section level3">
+<h3>Linear models can be used instead of t-tests</h3>
+<p>Last week we performed t-tests. These are tests of differences from zero in a one-sample case or differences between groups with paired or unpaired observations. We calculated the difference between pre- and post-training in squat-jump to test against the null-hypothesis that there was no difference between these two time-points.</p>
+<pre class="r"><code>cycling_data &lt;-  read_excel(&quot;./data/cyclingStudy.xlsx&quot;, na = &quot;NA&quot;) %&gt;%
+        select(subject, timepoint, sj.max) %&gt;%
+        filter(timepoint %in% c(&quot;pre&quot;, &quot;meso3&quot;)) %&gt;%
+        pivot_wider(names_from = timepoint, 
+                    values_from = sj.max) %&gt;%
+        mutate(change = meso3 - pre) </code></pre>
+<p>The data above may be used to perform the paired sample t-test and a one sample t-test</p>
+<pre class="r"><code>paired &lt;- t.test(cycling_data$meso3, cycling_data$pre, paired = TRUE)
+one_sample &lt;- t.test(cycling_data$change, mu = 0)</code></pre>
+<p>These tests are equal. Similarly, we can fit a linear model to the <code>change</code> variable to test against the same hypothesis</p>
+<pre class="r"><code>lin_mod &lt;- lm(change ~ 1, data = cycling_data)
+summary(lin_mod)</code></pre>
+<p>Using the syntax <code>change ~ 1</code> in the formula we specify that we want to estimate the intercept of the model. The intercept is tested against the null-hypothesis that it is 0.</p>
+<p>We also did two sample t-tests with unpaired observations. We can test if there is a difference in <code>VO2.max</code> percentage change between group <code>INCR</code>and <code>DECR</code> using a t-test.</p>
+<pre class="r"><code>cycling_data &lt;-  read_excel(&quot;./data/cyclingStudy.xlsx&quot;, na = &quot;NA&quot;) %&gt;%
+        select(subject,group, timepoint, VO2.max) %&gt;%
+        filter(timepoint %in% c(&quot;pre&quot;, &quot;meso3&quot;), 
+               group != &quot;MIX&quot;) %&gt;%
+        pivot_wider(names_from = timepoint, 
+                    values_from = VO2.max) %&gt;%
+        mutate(change = 100 * (meso3-pre)/pre) %&gt;%
+        print()
+
+unpaired &lt;- t.test(change ~ group, data = cycling_data, var.equal = TRUE)</code></pre>
+<p>Above we use the formula-way to specify the t-test. Similarly we can use a linear model</p>
+<pre class="r"><code>lin_mod &lt;- lm(change ~ group, data = cycling_data)
+summary(lin_mod)</code></pre>
+<p>Compare the two tests. Do they tell you the same?</p>
+<p>Even the Welch two sample t-test can be replicated using a linear model. However, we have to specify it in a slightly different frame work using the <code>gls()</code>function from the <code>nlme</code> package.</p>
+<pre class="r"><code>library(nlme)
+
+welch_twosample &lt;- t.test(change ~ group, data = cycling_data, var.equal = FALSE)
+
+lin_mod_var &lt;- gls(change ~ group, data = cycling_data, weights = varIdent(form = ~1|group), na.action = na.exclude, method = &quot;ML&quot;)
+
+
+welch_twosample
+summary(lin_mod_var)</code></pre>
+<p>You are not required to master <code>gls</code> at this time-point. It is an example that the linear model frame work is very flexible as it in this case also can be adjusted to take care of heteroscedasticity.</p>
+<p>The group variable in the code below introduces a new concept in our linear models, dummy variables.</p>
+<pre class="r"><code>lin_mod &lt;- lm(change ~ group, data = cycling_data)</code></pre>
+<p>When we put a categorical variable in the <code>lm</code> command R will code it as a dummy variable. This variable will be zero if the group corresponds to the first level of the categorical (coded as a factor variable) and it will be 1 if it is the second level.</p>
+<p>In the simplest case (as above) we will get a linear model looking like this:</p>
+<p><span class="math display">\[Y = \beta_0 + \beta_1X\]</span></p>
+<p>Where the <span class="math inline">\(X\)</span> is the grouping variable, remember, 0 if first (reference) group and 1 if the second level group. The coefficient <span class="math inline">\(\beta_1\)</span> only kicks in if the group is 1. Meaning that when group = 0 we have only the intercept. If group = 1 we have the intercept + the slope. The slope represents the difference between the intercept (group = 0) and group = 1.</p>
+<p>If the grouping variable would have more groups more dummy-variables would have been added.</p>
+<p>Using all groups in the data set, fit a model and interpret the results.</p>
+<a id="displayText" href="javascript:toggle(2);">Here is a possible solution</a>
+<div id="toggleText2" style="display: none">
+<pre class="r"><code>cycling_data &lt;-  read_excel(&quot;./data/cyclingStudy.xlsx&quot;, na = &quot;NA&quot;) %&gt;%
+        select(subject,group, timepoint, VO2.max) %&gt;%
+        filter(timepoint %in% c(&quot;pre&quot;, &quot;meso3&quot;)) %&gt;%
+        pivot_wider(names_from = timepoint, 
+                    values_from = VO2.max) %&gt;%
+        mutate(change = 100 * (meso3-pre)/pre) %&gt;%
+        print()
+
+mod &lt;- lm(change ~ group, data = cycling_data)
+
+summary(mod)</code></pre>
+<p>The <code>DECR</code> group is the reference group, the intercept shows the mean of this group. Each parameter shows the difference from the reference.</p>
+</div>
+<p></br></p>
+<p>The same assumptions are made with these kinds of models and they can be checked with the same methods as described above.</p>
+</div>
+</div>
+<div id="multiple-regression" class="section level2">
+<h2>Multiple regression</h2>
+<p>Contrary to the t-tests used above, the linear model can be extended by adding predicting variables (independent variables). In a situation where multiple independent variables are included in the model, we control for their relationship to the dependent variable when we evaluate the other variables. Similarly with univariate regression we can examine each individual parameter from the summary.</p>
+<p>In a previous example we used <code>height.T1</code> to predict <code>VO2.max</code>. We might want to add information to the model. We might wonder if the age (<code>age</code>) of participants have a relationship with VO<sub>2max</sub>. To fit this model, use the code below.</p>
+<pre class="r"><code>cycling_data &lt;-  read_excel(&quot;./data/cyclingStudy.xlsx&quot;, na = &quot;NA&quot;) %&gt;%
+       # select(subject, timepoint, VO2.max, weight.T1, height.T1) %&gt;%
+        filter(timepoint == &quot;pre&quot;) %&gt;%
+        print()  
+          
+
+mod1 &lt;- lm(VO2.max ~  height.T1 + age, data = cycling_data)
+
+summary(mod)</code></pre>
+<p>From the output we can see that there is a negative relationship, when age increases VO<sub>2max</sub> decrease. We can compare this model to the simpler model by looking at the <span class="math inline">\(R^2\)</span> value. We fit the simpler model.</p>
+<pre class="r"><code>mod0 &lt;- lm(VO2.max ~  height.T1, data = cycling_data)
+
+summary(mod0)</code></pre>
+<p>We can interpret <span class="math inline">\(R^2\)</span> as the percentage of the variation explained by the model.</p>
+<p>The same assumptions apply to the multiple regression model.</p>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
