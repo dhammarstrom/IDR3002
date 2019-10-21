@@ -10,9 +10,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
+<meta name="author" content="Daniel Hammarström" />
 
+<meta name="date" content="2019-10-21" />
 
-<title>Assignments week 2</title>
+<title>Week 3 Solutions</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -389,26 +391,90 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">Assignments week 2</h1>
+<h1 class="title toc-ignore">Week 3 Solutions</h1>
+<h4 class="author">Daniel Hammarström</h4>
+<h4 class="date">2019-10-21</h4>
 
 </div>
 
 
-<p><a href="assignments_week2_solutions.html">Here you can find potential solutions</a></p>
-<div id="to-draw-inference" class="section level2">
-<h2>To draw inference</h2>
-<p>This week you are expected to draw conclusions about the “real world” based on some data we have collected. Everything should be reported in a R Markdown html-document. Upload this together with the source-file on canvas no later than Sunday.</p>
-<p>The html document should not display code chunks, messages or warnings. This means that you should report your results in ordinary text and include results there with inline code. Read more about this <a href="https://rmarkdown.rstudio.com/lesson-4.html">here</a>.</p>
-<p>You are expected to answer all three problems below.</p>
-<p><a href="examples_week2.html">Here you can find examples of <code>t.test</code> function usage</a></p>
-<div id="problems" class="section level3">
-<h3>Problems</h3>
-<ol style="list-style-type: decimal">
-<li><p>Using the cyclingStudy data set, what can you say about the effect of training on VO<sub>2max</sub> per kg body mass. Here you should test against the <span class="math inline">\(H_0\)</span> that says that VO<sub>2max</sub> is no different between <code>pre</code>and <code>meso1</code>. Interpret the results of your test. What test do you use? Where do you set the level of required evidence to reject the null, and why?</p></li>
-<li><p>Create a new variable where you calculate the difference in <code>sj.max</code> in percentage between <code>pre</code> and <code>meso1</code>. Do a test against the null-hypothesis that this difference is 0. What test do you use. What is your threshold to reject the null?</p></li>
-<li><p>Calculate the percentage change in VO<sub>2max</sub> in group <code>INCR</code> and <code>DECR</code>between <code>pre</code> and <code>meso3</code>. Compare the two groups, what statement can you make about the population on the basis of your test? What test do you choose, why?</p></li>
-</ol>
-<p>Intepretations of the results should contain point estimates, confidence intervals and <em>p</em>-values.</p>
+<div id="problem-1" class="section level2">
+<h2>Problem 1</h2>
+<p>VO<sub>2max</sub> ml kg<sup>-1</sup> min<sup>-1</sup> increased from pre (mean (SD), 59.9 (6.5)) to meso1 (61.4 (7.1)) with mean difference being 1.5 ml kg<sup>-1</sup> min<sup>-1</sup> (95% CI: -0.12, 3.07, p=0.068). The null-hypothesis of no differences between means could not be rejected at the <span class="math inline">\(\alpha\)</span> = 0.05 level. Instead of a paired-sample t-test, we could calculate difference between time-point for each participant and use these data in a one sample t-test.</p>
+</div>
+<div id="problem-2" class="section level2">
+<h2>Problem 2</h2>
+<p>The mean difference was estimated to -2.77% 95% CI: [-5.55, 0.01]. We would reject the null-hypothesis at the level of <span class="math inline">\(\alpha\)</span> = 0.05.</p>
+</div>
+<div id="problem-3" class="section level2">
+<h2>Problem 3</h2>
+<p>The mean change score in DECR was 4.63% (SD: 4.12) and 7.65 (6.36) in INCR. The mean difference was -3.02%-point (95% CI: [-9.52, 3.49], p-value=0.327). The null hypothesis of no difference between groups was not rejected at <span class="math inline">\(\alpha\)</span> = 0.05.</p>
+</div>
+<div id="code-for-each-problem" class="section level2">
+<h2>Code for each problem</h2>
+<div id="problem-1-1" class="section level3">
+<h3>Problem 1</h3>
+<pre class="r"><code>library(tidyverse); library(readxl)
+
+cdat &lt;- read_excel(&quot;./data/cyclingStudy.xlsx&quot;, na = &quot;NA&quot;) %&gt;%
+        select(subject, timepoint, weight.T1, VO2.max) %&gt;%
+        mutate(vo2max.kg = VO2.max / weight.T1) %&gt;%
+        select(-weight.T1, -VO2.max) %&gt;%
+        filter(timepoint %in% c(&quot;pre&quot;, &quot;meso1&quot;)) %&gt;%
+        pivot_wider(names_from = timepoint, 
+                    values_from = vo2max.kg) 
+
+
+# descriptive statistics
+pre.m &lt;- round(mean(cdat$pre), 1)
+meso1.m &lt;- round(mean(cdat$meso1), 1)
+
+pre.sd &lt;- round(sd(cdat$pre), 1)
+meso1.sd &lt;- round(sd(cdat$meso1), 1)
+
+# Creating the t-test
+ttest_vo2max &lt;- t.test(cdat$meso1, cdat$pre, paired = TRUE)
+
+est &lt;- round(ttest_vo2max$estimate, 1)
+conf &lt;- round(ttest_vo2max$conf.int, 2)
+p.value &lt;- round(ttest_vo2max$p.value,3)</code></pre>
+</div>
+<div id="problem-2-1" class="section level3">
+<h3>Problem 2</h3>
+<pre class="r"><code>cdat &lt;- read_excel(&quot;./data/cyclingStudy.xlsx&quot;, na = &quot;NA&quot;) %&gt;%
+        select(subject, timepoint, sj.max) %&gt;%
+        pivot_wider(names_from = timepoint, 
+                    values_from = sj.max) %&gt;%
+    mutate(change = 100 * (meso1 - pre) / pre) 
+
+
+sj_ttest &lt;- t.test(cdat$change, mu = 0)
+
+est &lt;- round(sj_ttest$estimate, 2)
+conf &lt;- round(sj_ttest$conf.int, 2)</code></pre>
+</div>
+<div id="problem-3-1" class="section level3">
+<h3>Problem 3</h3>
+<pre class="r"><code>cdat &lt;- read_excel(&quot;./data/cyclingStudy.xlsx&quot;, na = &quot;NA&quot;) %&gt;%
+        select(subject, group, timepoint, VO2.max) %&gt;%
+        filter(group != &quot;MIX&quot;) %&gt;%
+        pivot_wider(names_from = timepoint, 
+                    values_from = VO2.max) %&gt;%
+        mutate(change = 100 * (meso3-pre)/pre) 
+
+
+sum_stats &lt;- cdat %&gt;%
+        group_by(group) %&gt;%
+        summarise(m = round(mean(change, na.rm = TRUE), 2),
+                  s = round(sd(change, na.rm = TRUE), 2)) 
+
+
+ttest_group &lt;- t.test(change ~ group,  data = cdat)
+
+
+est &lt;- round(ttest_group$estimate[1] - ttest_group$estimate[2], 2)
+conf &lt;- round(ttest_group$conf.int, 2)
+pval &lt;- round(ttest_group$p.value, 3)</code></pre>
 </div>
 </div>
 

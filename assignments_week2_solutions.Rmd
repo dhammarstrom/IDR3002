@@ -1,0 +1,171 @@
+---
+title: "Week 3 Solutions"
+author: "Daniel Hammarström"
+date: '2019-10-21'
+output:
+  word_document: default
+  html_document: default
+---
+
+## Problem 1
+
+```{r problem1, warning = FALSE, message=FALSE, echo=FALSE}
+library(tidyverse); library(readxl)
+
+cdat <- read_excel("./data/cyclingStudy.xlsx", na = "NA") %>%
+        select(subject, timepoint, weight.T1, VO2.max) %>%
+        mutate(vo2max.kg = VO2.max / weight.T1) %>%
+        select(-weight.T1, -VO2.max) %>%
+        filter(timepoint %in% c("pre", "meso1")) %>%
+        pivot_wider(names_from = timepoint, 
+                    values_from = vo2max.kg) 
+
+
+# descriptive statistics
+pre.m <- round(mean(cdat$pre), 1)
+meso1.m <- round(mean(cdat$meso1), 1)
+
+pre.sd <- round(sd(cdat$pre), 1)
+meso1.sd <- round(sd(cdat$meso1), 1)
+
+# Creating the t-test
+ttest_vo2max <- t.test(cdat$meso1, cdat$pre, paired = TRUE)
+
+est <- round(ttest_vo2max$estimate, 1)
+conf <- round(ttest_vo2max$conf.int, 2)
+p.value <- round(ttest_vo2max$p.value,3)
+
+
+```
+
+VO~2max~ ml kg^-1^ min^-1^ increased from pre (mean (SD), `r pre.m` (`r pre.sd`)) to meso1 (`r meso1.m` (`r meso1.sd`)) with mean difference being `r est` ml kg^-1^ min^-1^ (95% CI: `r conf[1]`, `r conf[2]`, p=`r p.value`). The null-hypothesis of no differences between means could not be rejected at the $\alpha$ = 0.05 level. Instead of a paired-sample t-test, we could calculate difference between time-point for each participant and use these data in a one sample t-test. 
+
+
+## Problem 2
+```{r problem2, echo = FALSE, warning= FALSE, message=FALSE}
+
+
+cdat <- read_excel("./data/cyclingStudy.xlsx", na = "NA") %>%
+        select(subject, timepoint, sj.max) %>%
+        pivot_wider(names_from = timepoint, 
+                    values_from = sj.max) %>%
+    mutate(change = 100 * (meso1 - pre) / pre) 
+
+
+sj_ttest <- t.test(cdat$change, mu = 0)
+
+est <- round(sj_ttest$estimate, 2)
+conf <- round(sj_ttest$conf.int, 2)
+```
+
+The mean difference was estimated to `r est`% 95% CI: [`r conf[1]`, `r conf[2]`]. We would reject the null-hypothesis at the level of $\alpha$ = 0.05. 
+
+## Problem 3
+
+```{r problem3, echo = FALSE, warning=FALSE, message=FALSE}
+
+cdat <- read_excel("./data/cyclingStudy.xlsx", na = "NA") %>%
+        select(subject, group, timepoint, VO2.max) %>%
+        filter(group != "MIX") %>%
+        pivot_wider(names_from = timepoint, 
+                    values_from = VO2.max) %>%
+        mutate(change = 100 * (meso3-pre)/pre) 
+
+
+sum_stats <- cdat %>%
+        group_by(group) %>%
+        summarise(m = round(mean(change, na.rm = TRUE), 2),
+                  s = round(sd(change, na.rm = TRUE), 2)) 
+
+
+ttest_group <- t.test(change ~ group,  data = cdat)
+
+
+est <- round(ttest_group$estimate[1] - ttest_group$estimate[2], 2)
+conf <- round(ttest_group$conf.int, 2)
+pval <- round(ttest_group$p.value, 3)
+
+```
+
+The mean change score in DECR was `r sum_stats[1,2]`% (SD: `r sum_stats[1, 3]`) and `r sum_stats[2,2]` (`r sum_stats[2, 3]`) in INCR. The mean difference was `r est`%-point (95% CI: [`r conf[1]`, `r conf[2]`], p-value=`r pval`). The null hypothesis of no difference between groups was not rejected at $\alpha$ = 0.05.
+
+## Code for each problem
+
+### Problem 1
+
+```{r problem1_code, eval = FALSE, echo = TRUE}
+library(tidyverse); library(readxl)
+
+cdat <- read_excel("./data/cyclingStudy.xlsx", na = "NA") %>%
+        select(subject, timepoint, weight.T1, VO2.max) %>%
+        mutate(vo2max.kg = VO2.max / weight.T1) %>%
+        select(-weight.T1, -VO2.max) %>%
+        filter(timepoint %in% c("pre", "meso1")) %>%
+        pivot_wider(names_from = timepoint, 
+                    values_from = vo2max.kg) 
+
+
+# descriptive statistics
+pre.m <- round(mean(cdat$pre), 1)
+meso1.m <- round(mean(cdat$meso1), 1)
+
+pre.sd <- round(sd(cdat$pre), 1)
+meso1.sd <- round(sd(cdat$meso1), 1)
+
+# Creating the t-test
+ttest_vo2max <- t.test(cdat$meso1, cdat$pre, paired = TRUE)
+
+est <- round(ttest_vo2max$estimate, 1)
+conf <- round(ttest_vo2max$conf.int, 2)
+p.value <- round(ttest_vo2max$p.value,3)
+
+
+```
+
+### Problem 2
+
+```{r problem2_code, echo = TRUE, eval = FALSE}
+
+
+cdat <- read_excel("./data/cyclingStudy.xlsx", na = "NA") %>%
+        select(subject, timepoint, sj.max) %>%
+        pivot_wider(names_from = timepoint, 
+                    values_from = sj.max) %>%
+    mutate(change = 100 * (meso1 - pre) / pre) 
+
+
+sj_ttest <- t.test(cdat$change, mu = 0)
+
+est <- round(sj_ttest$estimate, 2)
+conf <- round(sj_ttest$conf.int, 2)
+```
+
+### Problem 3
+
+```{r problem3_code, echo = TRUE, eval = FALSE}
+
+cdat <- read_excel("./data/cyclingStudy.xlsx", na = "NA") %>%
+        select(subject, group, timepoint, VO2.max) %>%
+        filter(group != "MIX") %>%
+        pivot_wider(names_from = timepoint, 
+                    values_from = VO2.max) %>%
+        mutate(change = 100 * (meso3-pre)/pre) 
+
+
+sum_stats <- cdat %>%
+        group_by(group) %>%
+        summarise(m = round(mean(change, na.rm = TRUE), 2),
+                  s = round(sd(change, na.rm = TRUE), 2)) 
+
+
+ttest_group <- t.test(change ~ group,  data = cdat)
+
+
+est <- round(ttest_group$estimate[1] - ttest_group$estimate[2], 2)
+conf <- round(ttest_group$conf.int, 2)
+pval <- round(ttest_group$p.value, 3)
+
+```
+
+
+

@@ -3,6 +3,8 @@ title: "Assignments week 2"
 output: html_document
 ---
 
+[Here you can find potential solutions](assignments_week2_solutions.html) 
+
 ## To draw inference 
 This week you are expected to draw conclusions about the "real world" based on some data we have collected. Everything should be reported in a R Markdown html-document. Upload this together with the source-file on canvas no later than Sunday.
 
