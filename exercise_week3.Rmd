@@ -1,0 +1,64 @@
+---
+title: "Exercises Regression models"
+output: html_document
+---
+
+## Workflow
+
+- Work together in groups of three or four
+- Create a .Rmd file and make a list of what to do to solve the problem, the list should not contain code. Example:
+
+```{r eval = FALSE}
+
+## Exercise 1
+
+# 1. Load packages
+
+# 2. Load data and select variables, store in new object
+
+# 3. Filter observations ...
+
+# 4. ....
+
+```
+
+- Work together to write the most suitable code.
+
+- Write a short introduction to the problem and show/interpret the results with tables, figures and text.
+
+
+## Exercise 1 
+
+Can `cmj.max` or `sj.max` predict performance in wingate cycling `peak.power`?
+
+- Use time-point `pre`
+- Do exploratory graph of the relationship between jump ability (independent variable) and cycling performance (dependent variable)
+- Look for potential influential data points and heteroscedasticity using plot() for the lm-object.
+- Interpret the results, is there a relationship?
+
+
+## Exercise 2
+
+Can do lactate together with VO2 at 225 watts predict performance in cycling `tte`?
+
+- Use time-point `meso2`
+- Do exploratory graph of the relationship between sub-maximal markers (independent variables) and cycling performance (tte, dependent variable)
+- Look for potential influential data points and heteroscedasticity using plot() for the lm-object.
+- Interpret the results, can the two variables predict performance?
+
+## Exercise 3
+
+Try to find other predictors of `tte`. Select potential variables based on your knowledge. Model the relationship, check assumptions and interpret the results.
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -12,7 +12,7 @@
 
 
 
-<title>FAQ</title>
+<title>Exercises Regression models</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -392,12 +392,55 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">FAQ</h1>
+<h1 class="title toc-ignore">Exercises Regression models</h1>
 
 </div>
 
 
+<div id="workflow" class="section level2">
+<h2>Workflow</h2>
+<ul>
+<li>Work together in groups of three or four</li>
+<li>Create a .Rmd file and make a list of what to do to solve the problem, the list should not contain code. Example:</li>
+</ul>
+<pre class="r"><code>## Exercise 1
 
+# 1. Load packages
+
+# 2. Load data and select variables, store in new object
+
+# 3. Filter observations ...
+
+# 4. ....</code></pre>
+<ul>
+<li><p>Work together to write the most suitable code.</p></li>
+<li><p>Write a short introduction to the problem and show/interpret the results with tables, figures and text.</p></li>
+</ul>
+</div>
+<div id="exercise-1" class="section level2">
+<h2>Exercise 1</h2>
+<p>Can <code>cmj.max</code> or <code>sj.max</code> predict performance in wingate cycling <code>peak.power</code>?</p>
+<ul>
+<li>Use time-point <code>pre</code></li>
+<li>Do exploratory graph of the relationship between jump ability (independent variable) and cycling performance (dependent variable)</li>
+<li>Look for potential influential data points and heteroscedasticity using plot() for the lm-object.</li>
+<li>Interpret the results, is there a relationship?</li>
+</ul>
+</div>
+<div id="exercise-2" class="section level2">
+<h2>Exercise 2</h2>
+<p>Can do lactate together with VO2 at 225 watts predict performance in cycling <code>tte</code>?</p>
+<ul>
+<li>Use time-point <code>meso2</code></li>
+<li>Do exploratory graph of the relationship between sub-maximal markers (independent variables) and cycling performance (tte, dependent variable)</li>
+<li>Look for potential influential data points and heteroscedasticity using plot() for the lm-object.</li>
+<li>Interpret the results, can the two variables predict performance?</li>
+</ul>
+</div>
+<div id="exercise-3" class="section level2">
+<h2>Exercise 3</h2>
+<p>Try to find other predictors of <code>tte</code>. Select potential variables based on your knowledge. Model the relationship, check assumptions and interpret the results.</p>
+</div>
 
 
 

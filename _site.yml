@@ -47,6 +47,8 @@ navbar:
           href: ex1_summarise.html
         - text: "Making figures"
           href: ex1_figures.html
+        - text: "MRegression models"
+          href: exercise_week3.html
     - text: "Assignments"
       menu:
         - text: "Week 1"
