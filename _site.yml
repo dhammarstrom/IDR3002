@@ -37,6 +37,8 @@ navbar:
         - text: "-----------------------------------"
         - text: "Regression models"
           href: ex3_regressionModels.html
+        - text: "Extendning regression models"
+          href: ex4_analyzingTrials.html
     - text: "Exercises"
       menu:
         - text: "Introduction to R and RStudio"
@@ -47,8 +49,9 @@ navbar:
           href: ex1_summarise.html
         - text: "Making figures"
           href: ex1_figures.html
-        - text: "MRegression models"
+        - text: "Regression models"
           href: exercise_week3.html
+          
     - text: "Assignments"
       menu:
         - text: "Week 1"

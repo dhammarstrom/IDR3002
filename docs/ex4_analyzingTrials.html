@@ -331,6 +331,9 @@ $(document).ready(function () {
     <li>
       <a href="ex3_regressionModels.html">Regression models</a>
     </li>
+    <li>
+      <a href="ex4_analyzingTrials.html">Extendning regression models</a>
+    </li>
   </ul>
 </li>
 <li class="dropdown">
@@ -353,7 +356,7 @@ $(document).ready(function () {
       <a href="ex1_figures.html">Making figures</a>
     </li>
     <li>
-      <a href="exercise_week3.html">MRegression models</a>
+      <a href="exercise_week3.html">Regression models</a>
     </li>
   </ul>
 </li>
@@ -397,9 +400,24 @@ $(document).ready(function () {
 </div>
 
 
-<div id="the-10-vs.-30rm-study" class="section level2">
-<h2>The 10 vs. 30RM study</h2>
-<p>In this study, n = 27 participants were renadomized to completed a strength training intervention using loads corresponding to either 30 or 10 repetition maximum. Strength was evaluated as one repetition maximum (1RM) in the benchpress, legpress and bicepscurl. We will analyze strength test data from this trial in the coming week.</p>
+<div id="single-vs.-multiple-sets" class="section level2">
+<h2>Single vs. multiple sets</h2>
+<p>In this study, n = 34 participants were randomized to completed a strength training intervention with multiple-set and single-set randomized to either leg. Strength was evaluated as isokinetic strength at 60, 120 and 240 degrees and isometric strength, all using knee extension. In these exercises we will analyze data were participants have been selected either to belong to the single- or multiple-set group. This means we will only analyze one leg per participant!</p>
+<div id="the-data-set" class="section level3">
+<h3>The data set</h3>
+<p>The data set contains six variables:</p>
+<ul>
+<li><code>subject</code></li>
+<li><code>timepoint</code> (<code>pre</code>=Pre-training, <code>session1</code>=Pre-training second test, <code>post</code>=Post training)</li>
+<li><code>exercise</code> (<code>isok.60</code>=Isokinetic 60 degrees per sec, <code>isok.120</code>, <code>isok.240</code>, <code>isom</code>=Isometric)</li>
+<li><code>load</code> (Peak torque in Nm)</li>
+<li><code>sex</code> (<code>male</code>, <code>female</code>)</li>
+<li><code>group</code> (<code>multiple</code>, <code>single</code>)</li>
+</ul>
+<p>The data can be found in <code>strengthTests.csv</code> on canvas. Use the <code>read_csv()</code> function (loaded in tidyverse) to load the data:</p>
+<pre class="r"><code>strength &lt;- read_csv(&quot;./data/strengthTests.csv&quot;) %&gt;%
+  print()</code></pre>
+</div>
 <div id="explorative-analysis" class="section level3">
 <h3>Explorative analysis</h3>
 <p>Use descriptive methods (summary statistics and figures to describe results from the trial). What are the mean and standard deviations of the <code>load</code> variable for each <code>timepoint</code>, <code>exercise</code> and <code>group</code>. Use tables and figures to show the results.</p>
@@ -420,7 +438,7 @@ $(document).ready(function () {
 <a id="displayText" href="javascript:toggle(1);">Here is a possible solution for a table</a>
 <div id="toggleText1" style="display: none">
 <p>We want to summarise data per group, exercise and time-point and we want the means, standad deviations and the number of observations.</p>
-<pre class="r"><code>ten_vs_thirty_summary &lt;- read_excel(&quot;./data/ten_vs_thirty.xlsx&quot;, na = &quot;NA&quot;) %&gt;%
+<pre class="r"><code>strength_summary &lt;- read_csv(&quot;./data/strengthTests.csv&quot;) %&gt;% 
         group_by(exercise, timepoint, group) %&gt;%
         summarise(Mean = mean(load, na.rm = TRUE), 
                   SD = sd(load, na.rm = TRUE), 
@@ -431,7 +449,7 @@ $(document).ready(function () {
 
 library(knitr)
 
-ten_vs_thirty_summary %&gt;%
+strength_summary %&gt;%
 kable(digits = c(NA, NA, NA, 1, 1, 0), 
       col.names = c(&quot;Exercise&quot;, &quot;Time-point&quot;, &quot;Group&quot;, &quot;Mean&quot;, &quot;SD&quot;, &quot;n&quot;))</code></pre>
 </div>
@@ -443,9 +461,9 @@ kable(digits = c(NA, NA, NA, 1, 1, 0),
 pos &lt;- position_dodge(width = 0.2)
 
 
-ten_vs_thirty_summary %&gt;%
+strength_summary %&gt;%
         ungroup() %&gt;% # Needed to mutate the timepoint variable
-        mutate(timepoint = factor(timepoint, levels = c(&quot;pre&quot;, &quot;mid&quot;, &quot;post&quot;))) %&gt;%
+        mutate(timepoint = factor(timepoint, levels = c(&quot;pre&quot;, &quot;session1&quot;, &quot;post&quot;))) %&gt;%
         ggplot(aes(timepoint, Mean, color = group, group = group)) + 
         geom_errorbar(aes(ymin = Mean - SD, ymax = Mean + SD), position = pos) +
         geom_line(position = pos) +
@@ -453,38 +471,40 @@ ten_vs_thirty_summary %&gt;%
                 facet_wrap(~exercise, scales = &quot;free&quot;)</code></pre>
 </div>
 <p></br></p>
-<p>What can you say about the effect of training with 10RM vs. 30RM on muscle strength based on these observations?</p>
+<p>What can you say about the effect of single- vs. multiple-sets training on muscle strength using these observations?</p>
 </div>
 <div id="change-from-baseline" class="section level3">
 <h3>Change from baseline</h3>
-<p>We will now focuse on the change from baseline (<code>pre</code>) to the <code>mid</code> time-point. To only use this data, use the filter function:</p>
-<pre class="r"><code>ten_vs_thirty &lt;- read_excel(&quot;./data/ten_vs_thirty.xlsx&quot;, na = &quot;NA&quot;) %&gt;%
-        filter(timepoint != &quot;post&quot;) %&gt;%
+<p>We will now focuse on the change from baseline (<code>pre</code>) to the <code>post</code> time-point. To only use this data, use the filter function:</p>
+<pre class="r"><code>strength &lt;- read_csv(&quot;./data/strengthTests.csv&quot;) %&gt;% 
+        filter(timepoint != &quot;session1&quot;) %&gt;%
         print()</code></pre>
-<p>Calculate the average percentage change from baseline in each group and create a graph of the results. Make a plan of your code before you start writing it!</p>
+<p>Calculate the average percentage change from baseline (<code>pre</code>) in each group and create a graph of the results. Focus on the isokinetic test performed at 120 degrees per second (<code>isok.120</code>). Make a plan of your code before you start writing it!</p>
 <a id="displayText" href="javascript:toggle(3);">Here is a possible solution for a figure</a>
 <div id="toggleText3" style="display: none">
 <p>Here we want to perform the following steps:</p>
 <ol style="list-style-type: decimal">
-<li>Filter the data to only contain pre and mid time-points</li>
-<li>Make the data set wider and calculate percentage change as <span class="math inline">\(\frac{mid-pre}{pre} \times 100\)</span></li>
+<li>Filter the data to only contain <code>pre</code> and <code>post</code> time-points and <code>exercise == "isok.120"</code></li>
+<li>Make the data set wider and calculate percentage change as <span class="math inline">\(\frac{post-pre}{pre} \times 100\)</span></li>
 <li>Group the data set by group and exercise</li>
 <li>Summarise the data and create a figure with groups on the x-axis and %-change on the y-axis.</li>
 </ol>
 <a id="displayText" href="javascript:toggle(4);">Example code</a>
 <div id="toggleText4" style="display: none">
-<pre class="r"><code>read_excel(&quot;./data/ten_vs_thirty.xlsx&quot;, na = &quot;NA&quot;) %&gt;%
-        filter(timepoint != &quot;post&quot;) %&gt;%
+<pre class="r"><code>read_csv(&quot;./data/strengthTests.csv&quot;) %&gt;% 
+        filter(timepoint != &quot;session1&quot;, 
+               exercise == &quot;isok.120&quot;) %&gt;%
         pivot_wider(names_from = timepoint, 
                     values_from = load) %&gt;%
-        mutate(change = (mid-pre) / pre * 100) %&gt;%
+        mutate(change = (post-pre) / pre * 100) %&gt;%
         group_by(group, exercise) %&gt;%
         summarise(m = mean(change, na.rm = TRUE), 
                   s = sd(change, na.rm = TRUE)) %&gt;%
         ggplot(aes(group, m)) + 
         geom_errorbar(aes(ymin = m - s, ymax = m + s)) +
-        geom_point() + 
-        facet_wrap(~ exercise)</code></pre>
+        geom_point()
+
+## How would you add a more attractive theme to the plot?</code></pre>
 </div>
 <p></br></p>
 </div>
@@ -492,21 +512,20 @@ ten_vs_thirty_summary %&gt;%
 </div>
 <div id="model-the-change" class="section level3">
 <h3>Model the change</h3>
-<p>Focus on the benchpress data. State a hypothesis that compares the two groups and create a test that test against the corresponding null-hypothesis. Remember that we did this using both <code>t.test()</code> and <code>lm()</code>. Using <code>var.equal = TRUE</code> do the corresponding test also in <code>lm</code>. Write a short summary of your results!</p>
+<p>The present data set is an example of a simple randomized trial. Participants have been randoized to either treatment before the trial and we are interested in the difference in treatments. There are several options for analyzing these data. A simple alternative would be to analyse the difference in post-training values with a t-test. This is not very efficient in terms of statistical power, i.e. we would need alot of participants to show a difference if it existed due to differences between participants. In the case of the present data set, we have also collected more data than just follow-up scores. These baseline scores can be used to calculate a change-score which in turn can be used to compare treatments. This is a more direct comparison related to our actual question. We want to know what treatment is more effective in <em>imporving</em> strength.</p>
+<p>An example. We focus on the <code>isok.120</code> data. State a hypothesis that compares the two groups and run a test that test against the corresponding null-hypothesis. Remember that we did this using both <code>t.test()</code> and <code>lm()</code>. Using <code>var.equal = TRUE</code> do the corresponding test also in <code>lm</code>. Write a short summary of your results!</p>
 <a id="displayText" href="javascript:toggle(5);">Example code</a>
 <div id="toggleText5" style="display: none">
-<pre class="r"><code>tt_data &lt;- read_excel(&quot;./data/ten_vs_thirty.xlsx&quot;, na = &quot;NA&quot;) %&gt;%
-        filter(timepoint != &quot;post&quot;) %&gt;%
+<pre class="r"><code>tt_data &lt;- read_csv(&quot;./data/strengthTests.csv&quot;) %&gt;% 
+        filter(timepoint != &quot;session1&quot;) %&gt;%
         pivot_wider(names_from = timepoint, 
                     values_from = load) %&gt;%
-        mutate(change = (mid-pre) / pre * 100) %&gt;%
-        filter(exercise == &quot;benchpress&quot;) %&gt;%
-        print()
+        mutate(change = (post-pre) / pre * 100) %&gt;%
+        filter(exercise == &quot;isok.120&quot;)
 
 ## The t.test
 
 t.test(change ~ group, data = tt_data, var.equal = TRUE)
-
 
 ## The linear model
 
@@ -514,14 +533,191 @@ summary(lm(change ~ group, data = tt_data))</code></pre>
 </div>
 <p></br></p>
 </div>
-<div id="accounting-for-the-baseline-regression-towards-the-mean" class="section level3">
-<h3>Accounting for the baseline – Regression towards the mean</h3>
+<div id="accounting-for-the-baseline-regression-to-the-mean-and-extending-the-linear-model" class="section level3">
+<h3>Accounting for the baseline – Regression to the mean and extending the linear model</h3>
+<p>Above we created a linear model from where you got exactly the same results as from the t-test. In this section we will see that the linear model is easily extended to create more robust statistics of change scores.</p>
+<p>When we have calculated a change score (e.g. percentage change), this score might be related to the baseline. This can be expected due to a phenomena known as regression towards the mean. When we do repeated testing on the same participants, test scores that were close to the upper or lower limit of a participant potential scores will be replaced with a score closer to the mean. This in turn will create a negative association between initial values and change.</p>
+<p>Using the strength test data-set, calculate the change score using <span class="math inline">\(\frac{post-pre}{pre} *100\)</span> and evaluate the association between change (y-axis) and baseline (x-axis) with a graph. Use <code>+ facte_wrap(~exercise, scales = "free")</code> to get get a panel for each exercise.</p>
+<p>How do you interpret the graphs?</p>
+<a id="displayText" href="javascript:toggle(6);">Example code</a>
+<div id="toggleText6" style="display: none">
+<pre class="r"><code>read_csv(&quot;./data/strengthTests.csv&quot;) %&gt;% 
+        pivot_wider(names_from = timepoint, 
+                    values_from = load) %&gt;%
+        mutate(change = (post-pre) / pre * 100) %&gt;%
+  ggplot(aes(pre, change)) + geom_point() + geom_smooth(method = &quot;lm&quot;) + facet_wrap(~exercise, scales = &quot;free&quot;)</code></pre>
+</div>
+<p></br></p>
+<p>An association between baseline and change scores means possible problems when we want to compare groups in the ordinary linear model. We can think of it in two ways. In the ordinary linear model (or the t-test of change scores) there is som unexplained variation that goes into the standard errors making it harder to see differences between groups. Taking the relationship into account creates a more powerful model. Secondly, there might be slight differences between groups in the baseline, when accounted for, we get an estimate of the difference between groups taking the baseline into account.</p>
+<p>This extended model is called ANCOVA (ANalysis of CO-VAriance). The ordinary linear model we use above can be written as:</p>
+<p><span class="math display">\[Change = \beta_0 + \beta_1 \times Group\]</span></p>
+<p>The extended, ANCOVA model can be written as</p>
+<p><span class="math display">\[Change =  \beta_0 + \beta_1 \times Baseline + \beta_2 \times Group\]</span></p>
+<p>In the following example we will use <code>isom</code> to infer on the effect of single- vs. multiple-set training. We will use the pre- to post training scores for change score calculations. In the data set we have men and women, to get an unbiased association to the baseline, we will mean center the pre-values per sex.</p>
+<pre class="r"><code>change.data &lt;- read_csv(&quot;./data/strengthTests.csv&quot;) %&gt;% 
+        pivot_wider(names_from = timepoint, 
+                    values_from = load) %&gt;%
+          mutate(change = (post-pre) / pre * 100) %&gt;%
+  group_by(sex) %&gt;%
+  mutate(pre = pre - mean(pre)) %&gt;%
+  filter(exercise == &quot;isom&quot;) 
+
+
+# An ordinary lm
+m1 &lt;- lm(change ~ group, data = change.data)
+
+# An ancova
+m2 &lt;- lm(change ~ pre + group, data = change.data)</code></pre>
+<p><strong>Side note:</strong> To get nice summaries of the model we will use <code>kable()</code> from the <code>knitr</code> package and <code>tidy()</code> from the <code>broom</code> package.</p>
+<pre class="r"><code>library(knitr); library(broom)
+
+tidy(m1) %&gt;%
+  kable(col.names = c(&quot;Parameter&quot;, &quot;Estimate&quot;, &quot;SE&quot;, &quot;t-statistic&quot;, &quot;P-value&quot;), 
+        caption = &quot;The ordinary linear model&quot;, digits = c(NA, 2, 2, 2, 3)) </code></pre>
+<table>
+<caption>The ordinary linear model</caption>
+<thead>
+<tr class="header">
+<th align="left">Parameter</th>
+<th align="right">Estimate</th>
+<th align="right">SE</th>
+<th align="right">t-statistic</th>
+<th align="right">P-value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">(Intercept)</td>
+<td align="right">29.71</td>
+<td align="right">4.46</td>
+<td align="right">6.66</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="even">
+<td align="left">groupsingle</td>
+<td align="right">-11.51</td>
+<td align="right">6.22</td>
+<td align="right">-1.85</td>
+<td align="right">0.074</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>tidy(m2) %&gt;%
+  kable(col.names = c(&quot;Parameter&quot;, &quot;Estimate&quot;, &quot;SE&quot;, &quot;t-statistic&quot;, &quot;P-value&quot;), 
+        caption = &quot;The ANCOVA model&quot;, digits = c(NA, 2, 2, 2, 3))</code></pre>
+<table>
+<caption>The ANCOVA model</caption>
+<thead>
+<tr class="header">
+<th align="left">Parameter</th>
+<th align="right">Estimate</th>
+<th align="right">SE</th>
+<th align="right">t-statistic</th>
+<th align="right">P-value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">(Intercept)</td>
+<td align="right">40.39</td>
+<td align="right">4.91</td>
+<td align="right">8.23</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="even">
+<td align="left">pre</td>
+<td align="right">-0.19</td>
+<td align="right">0.06</td>
+<td align="right">-3.48</td>
+<td align="right">0.002</td>
+</tr>
+<tr class="odd">
+<td align="left">groupsingle</td>
+<td align="right">-10.95</td>
+<td align="right">5.34</td>
+<td align="right">-2.05</td>
+<td align="right">0.049</td>
+</tr>
+</tbody>
+</table>
+<p>In this case, modelling change-scores (percentage-change) together with the baseline makes a difference. We can be more confident on the results as some of the unexplained variation is catched in the assciation with the baseline.</p>
+<p>We can use confidence intervals to see the estimates for the group effect:</p>
+<pre class="r"><code>data.frame(model = c(&quot;Linear-model&quot;, &quot;ANCOVA&quot;), 
+           lower.CI = c(confint(m1)[2], confint(m2)[3]), 
+           upper.CI = c(confint(m1)[4], confint(m2)[6])) %&gt;%
+  kable(col.names = c(&quot;Model&quot;, &quot;Lower CI&quot;, &quot;Upper CI&quot;))</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Model</th>
+<th align="right">Lower CI</th>
+<th align="right">Upper CI</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Linear-model</td>
+<td align="right">-24.19385</td>
+<td align="right">1.1663784</td>
+</tr>
+<tr class="even">
+<td align="left">ANCOVA</td>
+<td align="right">-21.85448</td>
+<td align="right">-0.0548598</td>
+</tr>
+</tbody>
+</table>
+<p>These result will not repeat for all tests, but generally, the ANCOVA has more power and represents a good way of controlling for baseline measurements in change score analysis <span class="citation">(Vickers and Altman 2001; Senn 2006)</span>.</p>
+<div id="exercises" class="section level4">
+<h4>Exercises</h4>
+<p>Perform an analysis of <code>isok.120</code> data, infer on the effect of single- vs. multiple-sets on change in strength using the confidence intervals from an ANCOVA model. Remember to mean center the baseline per sex.</p>
+<a id="displayText" href="javascript:toggle(6);">Example code</a>
+<div id="toggleText6" style="display: none">
+<pre class="r"><code># Store the data set 
+
+# Load data
+change.data &lt;- read_csv(&quot;./data/strengthTests.csv&quot;) %&gt;% 
+  # Pivot to a wide format for change calculation
+        pivot_wider(names_from = timepoint, 
+                    values_from = load) %&gt;% 
+  # Calculate the change
+          mutate(change = (post-pre) / pre * 100) %&gt;%
+  # Mean center pre-variable with grouping on sex
+  group_by(sex) %&gt;%
+  mutate(pre = pre - mean(pre)) %&gt;%
+  # Only use the isok.120 data
+  filter(exercise == &quot;isok.120&quot;) 
+
+
+
+# Create the model
+m1 &lt;- lm(change ~ pre + group, data = change.data)
+
+# Get confidence intervals
+confint(m1)[c(3, 6)]
+
+# Interpretation of the model 
+summary(m1)
+
+# The average %-change of the single-set group was ~5.6%-point lower than the multiple-set group. This effect was not significant on the 5% level. </code></pre>
+</div>
+<p></br></p>
+</div>
 </div>
 <div id="accounting-for-the-baseline-differences-between-group-and-mixed-models" class="section level3">
 <h3>Accounting for the baseline – Differences between group and mixed models</h3>
 </div>
-<div id="multiple-time-point-mixed-models" class="section level3">
+<div id="multiple-time-point-mixed-models" class="section level3 unnumbered">
 <h3>Multiple time-point – Mixed models</h3>
+<div id="refs" class="references">
+<div id="ref-senn2006">
+<p>Senn, S. 2006. “Change from Baseline and Analysis of Covariance Revisited.” Journal Article. <em>Stat Med</em> 25 (24): 4334–44. <a href="https://doi.org/10.1002/sim.2682">https://doi.org/10.1002/sim.2682</a>.</p>
+</div>
+<div id="ref-vickers2001">
+<p>Vickers, Andrew J., and Douglas G. Altman. 2001. “Analysing Controlled Trials with Baseline and Follow up Measurements.” Journal Article. <em>BMJ : British Medical Journal</em> 323 (7321): 1123–4. <a href="http://www.ncbi.nlm.nih.gov/pmc/articles/PMC1121605/%0Ahttps://www.ncbi.nlm.nih.gov/pmc/articles/PMC1121605/pdf/1123.pdf">http://www.ncbi.nlm.nih.gov/pmc/articles/PMC1121605/
+https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1121605/pdf/1123.pdf</a>.</p>
+</div>
+</div>
 </div>
 </div>
 

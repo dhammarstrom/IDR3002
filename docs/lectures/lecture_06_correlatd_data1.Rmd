@@ -1,0 +1,233 @@
+---
+title: "Analysis of parallel groups designs"
+author: "Daniel Hammarström"
+date: "17 oktober 2018"
+bibliography: lecture07_bib.bib
+output: beamer_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+```
+
+```{r}
+library(tidyverse); library(readxl)
+#set.seed(1)
+#
+#df <- data.frame(group = rep(c("A", "B", "C"), each = 10),  outcome = c(rnorm(10, 5, 2), #rnorm(10, 7.8, 2), rnorm(10, 10, 2))) 
+#
+#avg <- df %>%
+#        group_by(group) %>%
+#        summarise(m = mean(outcome))
+#
+#avg.all <- df %>%
+#        group_by() %>%
+#        summarise(m = mean(outcome))
+#
+#
+#
+#df %>%
+#        ggplot(aes(group, outcome)) + geom_jitter(width = 0.2) + 
+#        geom_point(data = avg, aes(group, m))+
+#        geom_segment(data = avg, aes(c(0.75, 1.75, 2.75),
+#                                     m, 
+#                                     yend = m,
+#                                     xend = c(1.25, 2.25, 3.25))) +
+#        geom_hline(yintercept = avg.all$m, color = "blue")
+#
+#
+#
+#contrasts(df$group) <- "contr.helmert"
+#
+#
+#a <- aov(outcome ~ group, data = df)
+#l <- lm(outcome ~ group, data = df)
+#?aov
+#summary(a)
+#summary(l)
+
+```
+
+# Background
+
+- In sport science (and e.g. medical-, nutritional-, psychological-sciences), intervention-studies are common. We are interested in the effect of e.g. a training method, nutritional supplement or drug. 
+
+- The outcome in these studies could be physical performance, degree of symptoms, muscle size or some other measure that we are interested in studying.
+
+- These studies are often called *Randomized Controlled Trials* (RCT)
+
+ 
+# Different study design
+
+- The choice of study design relates to the research-question and dictates what statistical methods can be applied.
+
+- The study design affects the ability of the study to detect an effect (the power)
+
+- A common case of a RCT is the parallel-groups design
+
+- Participants are **allocated** to two or more "treatment groups", **at random**, one group gets a treatment, the other group acts as the control. 
+
+- Usually, a measurement is made prior to the intervention (Baseline) and after the intervention.
+
+- This is a common design **when wash-out is not possible** and thus, the two treatment can not be compared within the same individual. 
+
+# A pre-post parallel-groups design
+
+
+```{r, fig.align='center', fig.dim = c(4,2.5)}
+
+data.frame(Time = c("Pre", "Post", "Pre", "Post"), outcome = c(0,1, 0,1)) %>%
+        mutate(Time = factor(Time, levels = c("Pre", "Post"))) %>%
+        ggplot(aes(Time, outcome)) + 
+        theme_classic() + 
+        ylab("Outcome") +
+        theme(axis.text.y = element_blank()) +
+        geom_segment(aes(x = Time, xend = 2, 
+                         y = c(0.5,0.5, 0.5,1.5), 
+                         yend = c(0.5,0.5, 1.5,1.5))) + 
+        scale_y_continuous(limits = c(0,2)) + 
+        annotate(geom = "text", x = 2.25, y = 1.5, label = "Treatment") +
+        annotate(geom = "text", x = 2.25, y = 0.5, label = "Control") 
+
+```
+
+# A pre-post parallel-groups design
+
+
+```{r, fig.align='center', fig.dim = c(4,2.5)}
+
+data.frame(Time = c("Pre", "Post", "Pre", "Post"), outcome = c(0,1, 0,1)) %>%
+        mutate(Time = factor(Time, levels = c("Pre", "Post"))) %>%
+        ggplot(aes(Time, outcome)) + 
+        theme_classic() + 
+        ylab("Outcome") +
+        theme(axis.text.y = element_blank()) +
+        geom_segment(aes(x = Time, xend = 2, 
+                         y = c(0.5,0.5, 0.5,1.5), 
+                         yend = c(1.1,0.5, 1.5,1.5))) + 
+        scale_y_continuous(limits = c(0,2)) + 
+        annotate(geom = "text", x = 2.25, y = 1.5, label = "A") +
+        annotate(geom = "text", x = 2.25, y = 1.1, label = "B") 
+
+```
+
+
+# What is the question
+
+- Here we are interested in the **treatment effect** (or the difference in effect of two different treatments)
+
+- This means that we want to establish if
+
+$$ \Delta Y_A-\Delta Y_B \neq 0 $$
+
+... meaning that the **null hypothesis** is that the **change** ($\Delta$) in group A is not different to the **change** in group B
+
+# Different statistical solutions (1)
+
+- We could do a *t-test* on the change score between groups. This is equivalent to a regression model where we model change as a function of groups
+
+$$outcome = \beta_0 + \beta_1 Group_B$$
+\small
+```{r, eval = FALSE, echo = TRUE}
+# t.test example
+with(data, t.test(outcome_A, outcome_B, paired = FALSE)
+
+# The same in regression
+lm(change ~ group, data = data)
+```
+\normalsize
+
+# Problems with the simple solution
+
+- Baseline values can affect the interpretation of a pre- to post-intervention study through **regression to the mean** 
+
+- If we analyse change scores ($post-pre$), regression to the mean will give an overestimation of the effect, if there is, by chance, a difference in baseline values between groups (lower values in treatment group) [@RN2118].
+
+- If we analyse follow up scores, the pattern will be reversed.
+
+# A solution to this problem
+
+- Instead of only analyzing change-scores, we can also control for the relationship between baseline values and the change scores.
+
+- This technique is called Analysis of Co-Variance (ANCOVA), where the baseline is considered the adding the covariance.
+
+- This is an extension of the simple linear regression
+
+\small
+```{r, eval = FALSE, echo = TRUE}
+# Extending the linear regression equation
+lm(change ~ baseline + group, data = data)
+```
+\normalsize
+
+# Why ANCOVA
+
+- The ANCOVA model has better power [@RN2116]
+- The ANCOVA model gives **unbiased** estimates of differences between groups [@RN2118]
+
+# When can we use the ANCOVA model?
+
+- When the allocation of participants have been done at random (e.g. RCTs), differences at baseline should be due to random variation
+
+
+# Presentation of 10 vs 30RM-study
+
+- 31 participants were assigned to one of two groups training with either 10RM or 30RM, 27 participants completed the trials (24 participants completed to full time).
+
+- The main interest in the study was development of strength and muscle hypertrophy (we are interested in strength)
+
+- The variables in the file are:
+a. `subject`: ID of participant
+b. `timepoint`: prior to *pre* or after the intervention *post*
+c. `group`: The intervention group
+d. `exercise`: The exercise that was tested, *legpress*, *benchpress* or *bicepscurl*
+e. `load`: The load lifted in 1RM test (kg)
+
+# Reading the data set and exploratory analysis
+\footnotesize
+```{r, eval = FALSE, echo = TRUE}
+library(tidyverse); library()
+read_excel("./data/ten_vs_thirty.xlsx", na = "NA") %>%
+        mutate(timepoint = factor(timepoint, 
+                                  levels = c("pre", "post"))) %>%
+        ggplot(aes(timepoint, load, fill = group)) + 
+        geom_boxplot() +
+        facet_wrap(~ exercise, scales = "free")
+
+```
+\normalsize
+
+# Exploratory analysis
+```{r, fig.align='center', fig.dim = c(4,2.5)}
+library(tidyverse); library()
+read_excel("./data/ten_vs_thirty.xlsx", na = "NA") %>%
+        mutate(timepoint = factor(timepoint, levels = c("pre", "post"))) %>%
+        ggplot(aes(timepoint, load, fill = group)) + geom_boxplot() +
+        facet_wrap(~ exercise, scales = "free") + 
+        theme_classic() +
+        theme(legend.position="top")
+```
+
+# The main purpose of your analysis:
+
+**What training method would you, based on your analysis recommend for improvning maximal strength?**
+
+# How to answer the question
+
+- Choose the most appropriate 1RM test or use all
+- Choose the most appropriate statistical model/test, compare different models (`lm` on the change-score, `lm` with baseline as covariate, `lm` on post-values with baseline as a covariate)
+- Write a full report (Background, methods (with emphasis on statistics), results and discussion)
+
+# References
+
+
+
+
+
+
+
+
+
+
+
+

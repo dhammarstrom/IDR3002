@@ -1,0 +1,370 @@
+---
+title: "Pre- to post-treatment analysis"
+output: html_document
+bibliography: bib.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Single vs. multiple sets
+
+```{r, echo = FALSE, warning=FALSE, message=FALSE}
+library(readxl); library(tidyverse)
+
+n <- read_csv("./data/strengthTests.csv") %>%
+  summarise(n = n_distinct(subject)) %>%
+  as.numeric()
+
+```
+
+In this study, n = `r n` participants were randomized to completed a strength training intervention with multiple-set and single-set randomized to either leg. Strength was evaluated as isokinetic strength at 60, 120 and 240 degrees and isometric strength, all using knee extension. In these exercises we will analyze data were participants have been selected either to belong to the single- or multiple-set group. This means we will only analyze one leg per participant! 
+
+### The data set
+The data set contains six variables:
+
+- `subject`
+- `timepoint` (`pre`=Pre-training, `session1`=Pre-training second test, `post`=Post training)
+- `exercise` (`isok.60`=Isokinetic 60 degrees per sec, `isok.120`, `isok.240`, `isom`=Isometric)
+- `load` (Peak torque in Nm)
+- `sex` (`male`, `female`)
+- `group` (`multiple`, `single`)
+
+The data can be found in `strengthTests.csv` on canvas. Use the `read_csv()` function (loaded in tidyverse) to load the data:
+
+```{r, echo = TRUE, eval = FALSE}
+strength <- read_csv("./data/strengthTests.csv") %>%
+  print()
+```
+
+
+
+### Explorative analysis
+
+Use descriptive methods (summary statistics and figures to describe results from the trial). What are the mean and standard deviations of the `load` variable for each `timepoint`, `exercise` and `group`. Use tables and figures to show the results.
+
+
+ <script language="javascript"> 
+    function toggle(num) {
+      var ele = document.getElementById("toggleText" + num);
+      var text = document.getElementById("displayText" + num);
+      if(ele.style.display == "block") {
+        ele.style.display = "none";
+        text.innerHTML = "show";
+      }
+      else {
+        ele.style.display = "block";
+        text.innerHTML = "hide";
+      }
+   } 
+  </script>
+
+
+ <a id="displayText" href="javascript:toggle(1);">Here is a possible solution for a table</a>
+  <div id="toggleText1" style="display: none">
+
+We want to summarise data per group, exercise and time-point and we want the means, standad deviations and the number of observations. 
+
+```{r, eval = FALSE}
+
+
+strength_summary <- read_csv("./data/strengthTests.csv") %>% 
+        group_by(exercise, timepoint, group) %>%
+        summarise(Mean = mean(load, na.rm = TRUE), 
+                  SD = sd(load, na.rm = TRUE), 
+                  n = n()) 
+
+
+# To create a table we need the kable function from the knitr package
+
+library(knitr)
+
+strength_summary %>%
+kable(digits = c(NA, NA, NA, 1, 1, 0), 
+      col.names = c("Exercise", "Time-point", "Group", "Mean", "SD", "n"))
+
+
+```
+
+
+  </div>
+  </br>  
+
+
+
+ <a id="displayText" href="javascript:toggle(2);">Here is a possible solution for a figure</a>
+  <div id="toggleText2" style="display: none">
+
+Using the same summary statistics, we can create a figure. We might want to sort variables so that time-points are in the right order. In the figure we can use geom_errorbar to display SD
+
+
+```{r, eval = FALSE}
+
+# create a position for all variables and store in object
+pos <- position_dodge(width = 0.2)
+
+
+strength_summary %>%
+        ungroup() %>% # Needed to mutate the timepoint variable
+        mutate(timepoint = factor(timepoint, levels = c("pre", "session1", "post"))) %>%
+        ggplot(aes(timepoint, Mean, color = group, group = group)) + 
+        geom_errorbar(aes(ymin = Mean - SD, ymax = Mean + SD), position = pos) +
+        geom_line(position = pos) +
+        geom_point(shape = 21, position = pos) + 
+                facet_wrap(~exercise, scales = "free")
+        
+```
+
+
+
+  </div>
+  </br>  
+
+What can you say about the effect of single- vs. multiple-sets training on muscle strength using these observations?
+
+
+### Change from baseline
+
+We will now focuse on the change from baseline (`pre`) to the `post` time-point. To only use this data, use the filter function:
+
+```{r, eval = FALSE}
+
+strength <- read_csv("./data/strengthTests.csv") %>% 
+        filter(timepoint != "session1") %>%
+        print()
+
+```
+
+Calculate the average percentage change from baseline (`pre`) in each group and create a graph of the results. Focus on the isokinetic test performed at 120 degrees per second (`isok.120`). Make a plan of your code before you start writing it!
+
+
+ <a id="displayText" href="javascript:toggle(3);">Here is a possible solution for a figure</a>
+  <div id="toggleText3" style="display: none">
+
+Here we want to perform the following steps: 
+
+1. Filter the data to only contain `pre` and `post` time-points and `exercise == "isok.120"`
+2. Make the data set wider and calculate percentage change as $\frac{post-pre}{pre} \times 100$
+3. Group the data set by group and exercise
+4. Summarise the data and create a figure with groups on the x-axis and %-change on the y-axis.
+
+ <a id="displayText" href="javascript:toggle(4);">Example code</a>
+  <div id="toggleText4" style="display: none">
+
+```{r, eval = FALSE}
+
+read_csv("./data/strengthTests.csv") %>% 
+        filter(timepoint != "session1", 
+               exercise == "isok.120") %>%
+        pivot_wider(names_from = timepoint, 
+                    values_from = load) %>%
+        mutate(change = (post-pre) / pre * 100) %>%
+        group_by(group, exercise) %>%
+        summarise(m = mean(change, na.rm = TRUE), 
+                  s = sd(change, na.rm = TRUE)) %>%
+        ggplot(aes(group, m)) + 
+        geom_errorbar(aes(ymin = m - s, ymax = m + s)) +
+        geom_point()
+
+## How would you add a more attractive theme to the plot?
+
+```
+
+
+
+  </div>
+  </br>  
+
+  </div>
+  </br>  
+
+### Model the change
+
+The present data set is an example of a simple randomized trial. Participants have been randoized to either treatment before the trial and we are interested in the difference in treatments. There are several options for analyzing these data. A simple alternative would be to analyse the difference in post-training values with a t-test. This is not very efficient in terms of statistical power, i.e. we would need alot of participants to show a difference if it existed due to differences between participants. In the case of the present data set, we have also collected more data than just follow-up scores. These baseline scores can be used to calculate a change-score which in turn can be used to compare treatments. This is a more direct comparison related to our actual question. We want to know what treatment is more effective in *imporving* strength. 
+
+An example. We focus on the `isok.120` data. State a hypothesis that compares the two groups and run a test that test against the corresponding null-hypothesis. Remember that we did this using both `t.test()` and `lm()`. Using `var.equal = TRUE` do the corresponding test also in `lm`. Write a short summary of your results!
+
+
+ <a id="displayText" href="javascript:toggle(5);">Example code</a>
+  <div id="toggleText5" style="display: none">
+
+```{r, eval = FALSE}
+
+tt_data <- read_csv("./data/strengthTests.csv") %>% 
+        filter(timepoint != "session1") %>%
+        pivot_wider(names_from = timepoint, 
+                    values_from = load) %>%
+        mutate(change = (post-pre) / pre * 100) %>%
+        filter(exercise == "isok.120")
+
+## The t.test
+
+t.test(change ~ group, data = tt_data, var.equal = TRUE)
+
+## The linear model
+
+summary(lm(change ~ group, data = tt_data))
+
+```
+
+
+  </div>
+  </br>  
+
+
+### Accounting for the baseline -- Regression to the mean and extending the linear model
+
+Above we created a linear model from where you got exactly the same results as from the t-test. In this section we will see that the linear model is easily extended to create more robust statistics of change scores.
+
+When we have calculated a change score (e.g. percentage change), this score might be related to the baseline. This can be expected due to a phenomena known as regression towards the mean. When we do repeated testing on the same participants, test scores that were close to the upper or lower limit of a participant potential scores will be replaced with a score closer to the mean. This in turn will create a negative association between initial values and change.
+
+Using the strength test data-set, calculate the change score using $\frac{post-pre}{pre} *100$ and evaluate the association between change (y-axis) and baseline (x-axis) with a graph. Use `+ facte_wrap(~exercise, scales = "free")` to get get a panel for each exercise. 
+
+How do you interpret the graphs?
+
+ <a id="displayText" href="javascript:toggle(6);">Example code</a>
+  <div id="toggleText6" style="display: none">
+
+
+```{r, eval = FALSE, echo = TRUE}
+
+read_csv("./data/strengthTests.csv") %>% 
+        pivot_wider(names_from = timepoint, 
+                    values_from = load) %>%
+        mutate(change = (post-pre) / pre * 100) %>%
+  ggplot(aes(pre, change)) + geom_point() + geom_smooth(method = "lm") + facet_wrap(~exercise, scales = "free")
+
+```
+
+
+  </div>
+  </br>  
+
+An association between baseline and change scores means possible problems when we want to compare groups in the ordinary linear model. We can think of it in two ways. In the ordinary linear model (or the t-test of change scores) there is som unexplained variation that goes into the standard errors making it harder to see differences between groups. Taking the relationship into account creates a more powerful model. Secondly, there might be slight differences between groups in the baseline, when accounted for, we get an estimate of the difference between groups taking the baseline into account.
+
+This extended model is called ANCOVA (ANalysis of CO-VAriance). The ordinary linear model we use above can be written as:
+
+$$Change = \beta_0 + \beta_1 \times Group$$
+
+The extended, ANCOVA model can be written as
+
+$$Change =  \beta_0 + \beta_1 \times Baseline + \beta_2 \times Group$$
+
+In the following example we will use `isom` to infer on the effect of single- vs. multiple-set training. We will use the pre- to post training scores for change score calculations. In the data set we have men and women, to get an unbiased association to the baseline, we will mean center the pre-values per sex. 
+
+```{r, eval = TRUE, echo = TRUE, message = FALSE, warning=FALSE}
+
+change.data <- read_csv("./data/strengthTests.csv") %>% 
+        pivot_wider(names_from = timepoint, 
+                    values_from = load) %>%
+          mutate(change = (post-pre) / pre * 100) %>%
+  group_by(sex) %>%
+  mutate(pre = pre - mean(pre)) %>%
+  filter(exercise == "isom") 
+
+
+# An ordinary lm
+m1 <- lm(change ~ group, data = change.data)
+
+# An ancova
+m2 <- lm(change ~ pre + group, data = change.data)
+
+```
+
+**Side note:** To get nice summaries of the model we will use `kable()` from the `knitr` package and `tidy()` from the `broom` package. 
+
+```{r, eval = TRUE, echo = TRUE, results="asis", warning = FALSE, message=FALSE}
+library(knitr); library(broom)
+
+tidy(m1) %>%
+  kable(col.names = c("Parameter", "Estimate", "SE", "t-statistic", "P-value"), 
+        caption = "The ordinary linear model", digits = c(NA, 2, 2, 2, 3)) 
+
+
+
+tidy(m2) %>%
+  kable(col.names = c("Parameter", "Estimate", "SE", "t-statistic", "P-value"), 
+        caption = "The ANCOVA model", digits = c(NA, 2, 2, 2, 3))
+
+```
+
+In this case, modelling change-scores (percentage-change) together with the baseline makes a difference. We can be more confident on the results as some of the unexplained variation is catched in the assciation with the baseline.
+
+We can use confidence intervals to see the estimates for the group effect:
+
+
+```{r, eval = TRUE, echo = TRUE, results="asis"}
+
+data.frame(model = c("Linear-model", "ANCOVA"), 
+           lower.CI = c(confint(m1)[2], confint(m2)[3]), 
+           upper.CI = c(confint(m1)[4], confint(m2)[6])) %>%
+  kable(col.names = c("Model", "Lower CI", "Upper CI"))
+
+```
+
+These result will not repeat for all tests, but generally, the ANCOVA has more power and represents a good way of controlling for baseline measurements in change score analysis [@vickers2001; @senn2006].
+
+
+#### Exercises 
+
+Perform an analysis of `isok.120` data, infer on the effect of single- vs. multiple-sets on change in strength using the confidence intervals from an ANCOVA model. Remember to mean center the baseline per sex.
+
+
+
+ <a id="displayText" href="javascript:toggle(6);">Example code</a>
+  <div id="toggleText6" style="display: none">
+
+```{r, eval = FALSE, echo = TRUE}
+
+# Store the data set 
+
+# Load data
+change.data <- read_csv("./data/strengthTests.csv") %>% 
+  # Pivot to a wide format for change calculation
+        pivot_wider(names_from = timepoint, 
+                    values_from = load) %>% 
+  # Calculate the change
+          mutate(change = (post-pre) / pre * 100) %>%
+  # Mean center pre-variable with grouping on sex
+  group_by(sex) %>%
+  mutate(pre = pre - mean(pre)) %>%
+  # Only use the isok.120 data
+  filter(exercise == "isok.120") 
+
+
+
+# Create the model
+m1 <- lm(change ~ pre + group, data = change.data)
+
+# Get confidence intervals
+confint(m1)[c(3, 6)]
+
+# Interpretation of the model 
+summary(m1)
+
+# The average %-change of the single-set group was ~5.6%-point lower than the multiple-set group. This effect was not significant on the 5% level. 
+```
+
+
+
+  </div>
+  </br>  
+
+
+### Accounting for the baseline -- Differences between group and mixed models
+
+
+
+### Multiple time-point -- Mixed models
+
+
+
+
+
+
+
+
+
+
+

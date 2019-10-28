@@ -1,0 +1,397 @@
+---
+title: "Analysis of correlated data - repeated measures designs"
+author: "Daniel Hammarström"
+date: "23 oktober 2018"
+header-includes:
+- \usepackage{booktabs}
+- \usepackage{longtable}
+- \usepackage{array}
+- \usepackage{multirow}
+- \usepackage{wrapfig}
+- \usepackage{float}
+- \usepackage{colortbl}
+- \usepackage{pdflscape}
+- \usepackage{tabu}
+- \usepackage{threeparttable}
+output: beamer_presentation
+---
+
+# What packages do you need?
+
+```{r, eval = FALSE}
+library(readxl) # Read data into R
+library(tidyverse) # Data manipulation
+library(lme4) # For fitting models
+```
+
+
+# Hypothesis testing
+
+- If we are interested in comparing means between groups or within groups (paired observations), the *t-test* can be used, however
+- the t-test is limited to one dependent variable (continuous) and one independent variable (group/condition) and cannot be extended to multiple groups. 
+- Multiple testing of more than two groups would violate the specified false discovery rate ($\alpha$)
+
+**We need something else!**
+
+
+# Repeated measures designs
+
+* Repeated measures designs were typically analyzed using **An**alysis **o**f **Va**riance (ANOVA).
+* ANOVA models have a long history and can be used for hypothesis testing comparing means of more than two groups.
+* The null-hypothesis of a simple ANOVA is that no group is different to the grand mean ($\mu$):
+
+$$\mu_a = \mu_b = \mu_c = \mu_n = \mu$$
+
+* In the simple case (one-way ANOVA), variation between groups is compared to variations within groups
+
+* In the more complex case (e.g. repeated-measures ANOVA), we can take advantage of variation that is due to the experimental unit (e.g. participant).
+
+* We then partition variance into *known* (e.g. treatment) and *unknown* (residual error) sources.  
+
+# ANOVA, linear regression and limitations
+
+* The ANOVA model is a special case of linear regression, we can therefore test for specific effects after doing the initial test (post-hoc tests) by combining terms from the model
+* In the ANOVA, all explaining variables are categorical, we are therefore limited to special study designs
+* The typical ANOVA requires balanced data and no missing values.
+    - Missing values will require the removal of all data from the specific participant in a repeated measures design
+    - Unbalanced data will lead to biased estimates.
+    
+**We need something else!**
+
+# Extending the linear model - Linear Mixed Models (LMM)
+
+* The LMM is an extension of the linear regression, with (quite a few!) exceptions
+* The ordinary linear model assumes independent data
+* An ANOVA can account for a single source of independent data, e.g. participants 
+* LMM is more flexible than the ANOVA/linear model when dealing with correlated data (e.g. repeated-measures designs).
+* Additionally, we can include continuous covariates (e.g. time) analyse more complex designs and we do not have to worry about missing data in the LMM.
+* An example of more a complex design could be multiple levels of "unexplained" variation due to e.g. different participants, located at different facilities, coached by different coaches.
+
+# What is a Linear Mixed Model
+
+* The linear mixed model combines to types of **effects**, an effect being a change in the measured quantity due to some event or condition (continuous or categorical).
+* A **Fixed effect** is an event/condition were we know all values of interest, this can be a grouping variable that we use in a study design.
+* A **Random effect** is an effect that is sampled by random, we do not know all levels of this effect. This can be different participants recruited to a study.
+* If we combine **Random** and **Fixed** effects, our model becomes **mixed**
+
+# What is a LMM
+
+
+* The linear regression model can be written as 
+
+$$y=\beta_0 + \beta_1X_1$$
+
+* We can estimate this model by minimizing the distance from all observations to the "best fit line"
+* The mixed model also includes *random effects* that can be thought of as effects specific to e.g. a certain participant
+
+$$y_i=\beta_0 + \beta_1X_1 + b_{i0} \qquad i = 1,...,n$$
+
+* Every participant gets their own intercept!
+
+# Comparing LM to LMM
+\scriptsize
+```{r, echo = FALSE, warning = FALSE, message=FALSE, results = "asis"}
+library(tidyverse); library(readxl); library(nlme); library(lme4); 
+library(knitr); library(kableExtra)
+
+dat <- read_excel("./data/ten_vs_thirty_complete.xlsx", na = "NA") %>%
+        filter(exercise == "legpress") %>%
+        spread(timepoint, load) %>%
+        gather(timepoint, load, mid:pre) %>%
+        mutate(timepoint = factor(timepoint, levels = c("pre", "mid", "post"))) %>%
+        mutate(log.load = log(load)) 
+
+
+
+m1a <- lm(load ~ timepoint * group, data = dat)
+
+m1 <- lmer(load ~ timepoint * group + (1|subject), data = dat)
+
+
+rbind(summary(m1a)$coef[,c(1,2,3)], summary(m1)$coef[,c(1,2,3)]) %>%
+        kable(format = "latex", 
+              booktabs = TRUE,
+              caption = "Regression coefficients from a linear model and a mixed linear model examining the effects of timepoint (within) and group (between) on 1RM strength", digits = 1) %>%
+        group_rows("Linear model", 1,6) %>%
+        group_rows("Mixed-linear model",7,12)
+     
+
+
+```
+
+
+\normalsize
+
+# Random intercepts and random slopes
+
+* Random effects are used to account for dependence in the data, i.e. when data is not independent. 
+* This will generally improve precision in estimates from the erroneously fitted linear model (we violate assumptions)
+* There are two ways we can include random effects, **random slopes** and **random intercepts**
+* In a longitudinal design, random intercepts are the deviance for each participant from the over-all intercept, each participant gets their own starting point.
+* Random slopes can be added if we think that individuals respond differently to treatments.
+* To estimate random effects, we need data to do so. Random intercepts are straight forward, random slopes requires more than two data points to get the estimate.
+
+# Mixed linear models - Examples
+
+* The 10 vs. 30RM-study also had a "mid-point" measurement after 12 weeks.
+
+```{r, echo=FALSE, warning = FALSE, fig.align='center', fig.dim = c(4,2.5)}
+library(tidyverse); library(readxl); library(nlme); library(lme4); 
+library(knitr); library(kableExtra)
+
+read_excel("./data/ten_vs_thirty_complete.xlsx", na = "NA") %>%
+        filter(exercise == "legpress") %>%
+        spread(timepoint, load) %>%
+        gather(timepoint, load, mid:pre) %>%
+        mutate(timepoint = factor(timepoint, levels = c("pre", "mid", "post"))) %>%
+        mutate(log.load = log(load)) %>%
+        ggplot(aes(timepoint, load, group = subject, color = group)) + geom_line() + 
+        theme_classic()
+
+ten_vs_thirty <- read_excel("./data/ten_vs_thirty_complete.xlsx", na = "NA") %>%
+        filter(exercise == "legpress") %>%
+        spread(timepoint, load) %>%
+        gather(timepoint, load, mid:pre) %>%
+        mutate(timepoint = factor(timepoint, levels = c("pre", "mid", "post"))) %>%
+        mutate(log.load = log(load))
+
+```
+
+# Mixed linear models - Examples
+
+* The data-set contains missing values
+* Groups are not balanced
+* ANOVA is not an option, we should use mixed models!
+
+# Main effects and interactions
+
+* We want to estimate the effect of time-point, and group. 
+* But we are mostly interested in the **interaction** between group and time-point.
+* This is the main question in the study, do the groups deviate from each other after the training period?
+
+
+# How to fit LMM in R
+\scriptsize
+```{r, eval = FALSE}
+library(lme4)
+
+# Fit model
+m1 <- lmer(load ~ timepoint + group + timepoint:group + (1|subject),
+           data = ten_vs_thirty) 
+
+# This is the same as
+m1 <- lmer(load ~ timepoint * group + (1|subject),
+           data = ten_vs_thirty) 
+
+# Retrieve model coefficients
+summary(m1)$coef
+
+```
+\normalsize
+
+# Including random effects
+
+* Random effects are included in the model using `(1|subject)`, this means that we have specified a random intercept for each participant.
+* A random slope for time could be added to the model if we had more than one measurement at each time-point for each participant or if we treated time as continuous variable.
+* A random slope could be added by `(1 + time|subject)`
+
+
+# How to interpret model coefficients
+
+* Remember the linear regression model, the fixed effects part of an mixed model can be read as an ordinary regression model
+* In the example `timepoint` and `group` are categorical variables (coded as 0 and 1)
+
+* Fit the model, how do you read the coefficients?
+
+
+# Example 
+\scriptsize
+```{r, eval = FALSE}
+ten_vs_thirty <- read_excel("./data/ten_vs_thirty_complete.xlsx", 
+                            na = "NA") %>%
+        filter(exercise == "legpress") %>%
+        spread(timepoint, load) %>%
+        gather(timepoint, load, mid:pre) %>%
+        mutate(timepoint = factor(timepoint, 
+                                  levels = c("pre", "mid", "post")))
+
+# Fit model
+m1 <- lmer(load ~ timepoint + group + timepoint:group + (1|subject),
+           data = ten_vs_thirty) 
+
+# Retrieve model coefficients
+summary(m1)$coef
+```
+\normalsize
+
+# What about baseline corrections?
+
+* In the mixed model we just formulated, the `groupRM30` coefficient is difference between groups at the intercept. 
+* The difference between groups at the intercept is added to time-point and the effect seen in the interaction term
+* Other options for baseline correction could be to model the change scores and include baseline as a covariate
+
+# Interactions
+
+* How do you interpret the interaction term? 
+
+* Make a drawing of the of the model based on the output
+
+```{r, echo = FALSE, warning= FALSE, message = FALSE, results = "asis"}
+summary(m1)$coef %>%
+        kable(format = "latex", 
+              booktabs = TRUE,
+              caption = "Regression coefficients", digits = 1)
+
+```
+
+
+
+
+# Model diagnostics
+
+* As mixed linear models are very similar to regression models, we can use some of the same diagnostic tools
+* For a first look use `plot(model)`
+
+```{r, message = FALSE, warning = FALSE, echo = FALSE, fig.align='center', fig.dim = c(4,2.5)}
+
+ten_vs_thirty <- read_excel("./data/ten_vs_thirty_complete.xlsx", 
+                            na = "NA") %>%
+        filter(exercise == "legpress") %>%
+        spread(timepoint, load) %>%
+        gather(timepoint, load, mid:pre) %>%
+        mutate(timepoint = factor(timepoint, 
+                                  levels = c("pre", "mid", "post"))) %>%
+        mutate(log.load = log(load))
+
+# Fit model
+m1 <- lmer(load ~ timepoint + group + timepoint:group + (1|subject),
+           data = ten_vs_thirty) 
+
+plot(m1)
+
+
+```
+
+# Model diagnostics (2)
+
+```{r, fig.align='center', fig.dim = c(4,2.5)}
+qqnorm(resid(m1)); qqline(resid(m1))
+```
+
+# Assumptions
+
+* We assume that the residuals from the model are equally scattered over the fitted data (homoscedasticity, check with `plot(model)`)
+* We also assume that the residuals are normally distributes (check with `qqnorm(resid(model)); qqline(resid(model))`)
+
+* If we have problems here, transformation of the dependent variable is a first resort
+
+* A efficient transformation is the log transformation
+
+
+# Mixed models using log-transformed data
+
+\scriptsize
+
+```{r, results = "hide"}
+# calculating the log of the dependent variable
+ten_vs_thirty <- read_excel("./data/ten_vs_thirty_complete.xlsx", 
+                            na = "NA") %>%
+        filter(exercise == "legpress") %>%
+        spread(timepoint, load) %>%
+        gather(timepoint, load, mid:pre) %>%
+        mutate(timepoint = factor(timepoint, 
+                                  levels = c("pre", "mid", "post"))) %>%
+        mutate(log.load = log(load)) 
+
+# Fitting the model
+m1_log <- lmer(log.load ~ timepoint + group + timepoint:group + (1|subject),
+           data = ten_vs_thirty) 
+```
+
+\normalsize
+
+# Model diagnostics
+
+```{r, echo = FALSE, fig.align='center', fig.dim = c(4,4)}
+par(mfrow = c(1,2))
+qqnorm(resid(m1_log), main = "Log-transformed");qqline(resid(m1_log))
+qqnorm(resid(m1), main = "Orginal scale", ylab="");qqline(resid(m1))
+```
+
+
+# Mixed models using log-transformed data
+
+* The interpretation of the log-transformed dependent variable is different to the model with the dependent variable on the original scale.
+
+$$log(A)-log(B) = log(\frac{A}{B})$$
+
+* Back-transformed regression coefficients gives fold-changes, can be interpreted as percentage change.  
+* Do not back-transform standard errors, use point-estimates and confidence intervals
+
+\scriptsize
+```{r, eval = FALSE}
+exp(confint(m1_log))
+
+exp(summary(m1_log)$coef[,1])
+
+```
+
+\normalsize
+
+# Back-transformed estimates
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE, results = "asis"}
+cbind(estimate = exp(summary(m1_log)$coef[,1]), exp(confint(m1_log))[c(3:8),]) %>%
+        kable(format = "latex", 
+              booktabs = TRUE,
+              caption = "Regression coefficients", digits = 2)
+```
+
+
+
+# Inference from mixed models
+
+* Confidence intervals can be calculated on model parameters using `confint(model)`, these can be used for hypothesis testing
+* p-values are not provided in `lme4`, this is by design, but there are other ways to calculate p-values for specific effects
+
+# Calculating p-values in the mixed-effects model using likelihood ratio tests
+
+* Likelihood ratio tests (LRT) can be used to calculate p-values. 
+* Here we compare a model with an effect, to a model without the effect, the test compares "goodness of fit"
+
+\scriptsize
+```{r, eval = FALSE}
+
+# Fit a model with all effects
+m1 <- lmer(load ~ timepoint + group + timepoint:group + (1|subject),
+           data = ten_vs_thirty) 
+# Then fit a null model for comparison, we drop the higher order interaction
+m0 <- lmer(load ~ timepoint + group + (1|subject),
+           data = ten_vs_thirty) 
+
+# compare the models using the anova() function
+anova(m0, m1)
+```
+
+# LRT p-values
+
+\scriptsize
+```{r, eval = TRUE, echo = FALSE, warning = FALSE, message = FALSE}
+
+# Fit a model with all effects
+m1 <- lmer(load ~ timepoint + group + timepoint:group + (1|subject),
+           data = ten_vs_thirty, REML = FALSE) 
+# Then fit a null model for comparison, we drop the higher order interaction
+m0 <- lmer(load ~ timepoint + group + (1|subject),
+           data = ten_vs_thirty, REML = FALSE) 
+
+# compare the models using the anova() function
+anova(m0, m1)
+```
+\normalsize
+
+# Exercise / Assignment
+
+* We will use the complete 10 vs 30RM data set `ten_vs_thirty_complete.xlsx`
+* Compare your analyses of the pre-post data set, with the mixed model approach, do you reach the same conclusions?
+
