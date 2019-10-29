@@ -40,7 +40,7 @@ strength <- read_csv("./data/strengthTests.csv") %>%
 
 
 
-### Explorative analysis
+### Exploratory analysis
 
 Use descriptive methods (summary statistics and figures to describe results from the trial). What are the mean and standard deviations of the `load` variable for each `timepoint`, `exercise` and `group`. Use tables and figures to show the results.
 
@@ -64,7 +64,7 @@ Use descriptive methods (summary statistics and figures to describe results from
  <a id="displayText" href="javascript:toggle(1);">Here is a possible solution for a table</a>
   <div id="toggleText1" style="display: none">
 
-We want to summarise data per group, exercise and time-point and we want the means, standad deviations and the number of observations. 
+We want to summarize data per group, exercise and time-point and we want the means, standard deviations and the number of observations. 
 
 ```{r, eval = FALSE}
 
@@ -126,7 +126,7 @@ What can you say about the effect of single- vs. multiple-sets training on muscl
 
 ### Change from baseline
 
-We will now focuse on the change from baseline (`pre`) to the `post` time-point. To only use this data, use the filter function:
+We will now focus on the change from baseline (`pre`) to the `post` time-point. To only use this data, use the filter function:
 
 ```{r, eval = FALSE}
 
@@ -147,7 +147,7 @@ Here we want to perform the following steps:
 1. Filter the data to only contain `pre` and `post` time-points and `exercise == "isok.120"`
 2. Make the data set wider and calculate percentage change as $\frac{post-pre}{pre} \times 100$
 3. Group the data set by group and exercise
-4. Summarise the data and create a figure with groups on the x-axis and %-change on the y-axis.
+4. Summarize the data and create a figure with groups on the x-axis and %-change on the y-axis.
 
  <a id="displayText" href="javascript:toggle(4);">Example code</a>
   <div id="toggleText4" style="display: none">
@@ -181,7 +181,7 @@ read_csv("./data/strengthTests.csv") %>%
 
 ### Model the change
 
-The present data set is an example of a simple randomized trial. Participants have been randoized to either treatment before the trial and we are interested in the difference in treatments. There are several options for analyzing these data. A simple alternative would be to analyse the difference in post-training values with a t-test. This is not very efficient in terms of statistical power, i.e. we would need alot of participants to show a difference if it existed due to differences between participants. In the case of the present data set, we have also collected more data than just follow-up scores. These baseline scores can be used to calculate a change-score which in turn can be used to compare treatments. This is a more direct comparison related to our actual question. We want to know what treatment is more effective in *imporving* strength. 
+The present data set is an example of a simple randomized trial. Participants have been randomized to either treatment before the trial and we are interested in the difference in treatments. There are several options for analyzing these data. A simple alternative would be to analyse the difference in post-training values with a t-test. This is not very efficient in terms of statistical power, i.e. we would need a lot of participants to show a difference if it existed due to differences between participants. In the case of the present data set, we have also collected more data than just follow-up scores. These baseline scores can be used to calculate a change-score which in turn can be used to compare treatments. This is a more direct comparison related to our actual question. We want to know what treatment is more effective in *improving* strength. 
 
 An example. We focus on the `isok.120` data. State a hypothesis that compares the two groups and run a test that test against the corresponding null-hypothesis. Remember that we did this using both `t.test()` and `lm()`. Using `var.equal = TRUE` do the corresponding test also in `lm`. Write a short summary of your results!
 
@@ -241,7 +241,7 @@ read_csv("./data/strengthTests.csv") %>%
   </div>
   </br>  
 
-An association between baseline and change scores means possible problems when we want to compare groups in the ordinary linear model. We can think of it in two ways. In the ordinary linear model (or the t-test of change scores) there is som unexplained variation that goes into the standard errors making it harder to see differences between groups. Taking the relationship into account creates a more powerful model. Secondly, there might be slight differences between groups in the baseline, when accounted for, we get an estimate of the difference between groups taking the baseline into account.
+An association between baseline and change scores means possible problems when we want to compare groups in the ordinary linear model. We can think of it in two ways. In the ordinary linear model (or the t-test of change scores) there is some unexplained variation that goes into the standard errors making it harder to see differences between groups. Taking the relationship into account creates a more powerful model. Secondly, there might be slight differences between groups in the baseline, when accounted for, we get an estimate of the difference between groups taking the baseline into account.
 
 This extended model is called ANCOVA (ANalysis of CO-VAriance). The ordinary linear model we use above can be written as:
 
@@ -289,7 +289,7 @@ tidy(m2) %>%
 
 ```
 
-In this case, modelling change-scores (percentage-change) together with the baseline makes a difference. We can be more confident on the results as some of the unexplained variation is catched in the assciation with the baseline.
+In this case, modelling change-scores (percentage-change) together with the baseline makes a difference. We can be more confident on the results as some of the unexplained variation is cached in the association with the baseline.
 
 We can use confidence intervals to see the estimates for the group effect:
 
@@ -354,9 +354,224 @@ summary(m1)
 
 ### Accounting for the baseline -- Differences between group and mixed models
 
+In a randomized trial, there might be difference between groups at baseline just by chance. These differences can be controlled for using the ANCOVA model as described above. Another way to account for the baseline is to analyze raw scores (not e.g. percentage change) given potential baseline differences. This can be done using another "extension" of the ordinary linear model, the mixed effects model.
+
+#### Statistical name dropping
+Here we will very briefly talk about *mixed effects models* (or *linear mixed models*, or *hierarchical models*) which are models for *continuous outcomes* with *normally distributed errors*. These models can account for *non-independence* between data-points, meaning that we can fit a model using *correlated data*. This is advantageous when we want to analyze the same participants in a time-course manner (*repeated measures design*). Traditionally in exercise science, this has been done using *repeated measures analysis of variance* (*repeated measures ANOVA*). One might say that this is an outdated technique as the modern *mixed effects model* is more flexible and robust as it allows for e.g. *unbalanced data* (e.g. different number of participants in each group), *missing data* and more complex model formulations.
+
+The purpose of this section is to introduce a simple mixed effects model. The mixed effects model can be extended to other problems and it is related to the *generalized linear models* that brings further flexibility as data from different distributions can be modeled. 
+
+#### The model
+
+The thing with a mixed model is that it contains to kinds of effects. In our previous models (made with `lm()`), we have dealt with "fixed effects", these are the effects we try to estimate. This can be the difference between groups, or the slope in a model where we try to explain VO~2max~ with height. In the mixed model, we also include "random effects". In the simple case we can think of these as a separate starting point in the model for each participant. This simple case is called a model with *random intercepts*. Why *random*? This is because we can think of these effects as sampled from a population of possible effects. A fixed effect on the other hand has a fixed number of possible values. In the model we will create this will be time-points (three) and training conditions (two). These are fixed by design in the study, but participants has been sampled at random. 
+
+We will use the function `lmer()` from the package `lme` to fit mixed effects models. 
+
+Hold up! Why use this new stuff, can we not just use the `lm` function? 
+
+Let's try. Before we do, we should agree that when fitting correlated data (data from the same participants sampled multiple times therefore creating data points "related" to each other) we violate an assumption of the ordinary linear model, the assumption of independence. 
+
+In the data we have for these examples, we have two groups. One group has performed training with multiple sets (3 exercises in legs, 2-3 sessions per week for twelve weeks) and the other group with a single set per exercise. Testing was done twice before the training period and once after. We will use time-points `pre` and `post` and exercise `isok.60` in this example.
+
+Let's start by fitting a model where we try to estimate the difference between groups over time using `lm()`.
+
+
+```{r, eval = FALSE, echo = TRUE}
+
+
+isok.data <- read_csv("./data/strengthTests.csv") %>% 
+  filter(exercise == "isok.60", 
+         timepoint %in% c("pre", "post")) %>%
+  # fix the order of timepoint factor
+  mutate(timepoint = factor(timepoint, levels = c("pre", "post"))) %>%
+  
+  print()
+
+
+# The model
+
+lm1 <- lm(load ~ timepoint * group, data = isok.data)
+
+summary(lm1)
+
+```
+
+The model formulation estimates four parameters. The intercept is the mean in the multiple-set group at baseline (`pre`). `timepointpost` is the mean in the multiple-set group at time-point `post`. `groupsingle` is the difference at baseline between groups and `timepointpost:groupsingle` is the difference in single-set compared to multiple-set at time-point `post`. This is the parameter of interest in this model. We want to know if the change from pre to post differs between groups, we can assess this by testing if the difference is smaller or greater than zero. This is done with the difference at baseline in mind (we control for the baseline).
+
+The model formulation contains an interaction, meaning that the two groups are allowed to change differently between time-points.
+
+We can see that we estimate the difference to about -24 units. However, this is not significant. 
+
+Now let's try to fit a mixed effects model.
+
+```{r, eval = FALSE, echo = TRUE}
+# Load packages
+library(lme4)
+
+isok.data <- read_csv("./data/strengthTests.csv") %>% 
+  filter(exercise == "isok.60", 
+         timepoint %in% c("pre", "post")) %>%
+  # fix the order of timepoint factor
+  mutate(timepoint = factor(timepoint, levels = c("pre", "post"))) %>%
+  
+  print()
+
+
+# The model
+lmer1 <- lmer(load ~ timepoint * group + (1|subject), data = isok.data)
+
+summary(lmer1)
+```
+
+From the fixed effects part of the summary, we can read about the same parameters. However the estimates differs from the linear model. We can also compare t-values, these differ considerably. 
+
+Notice that `lme4` does not produce p-values. If you write `?pvalues` in your console you will get some explanation to why. 
+
+Instead of p-values we can use confidence intervals to evaluate our fixed effects. These are accessed from both `lm`and `lmer` with the `confint` function.
+
+```{r, eval = FALSE, echo = TRUE}
+# Confidence intervals from lm
+confint(lm1)
+
+
+# Confidence intervals from lmer
+confint(lmer1)
+
+```
+
+What is your interpretation of the results from these two models.
+
+In this comparison we have seen that the mixed effects model is more powerful by accounting for correlated data. 
+
+
+#### Exercise 
+
+Fit a mixed effects model to `isom` data from `pre` and `post` training. Interpret the model parameters and estimates. 
+
+ <a id="displayText" href="javascript:toggle(7);">Example code</a>
+  <div id="toggleText7" style="display: none">
+
+```{r, eval = TRUE, echo = TRUE}
+# Load packages
+library(lme4)
+
+isom.data <- read_csv("./data/strengthTests.csv") %>% 
+  filter(exercise == "isom", 
+         timepoint %in% c("pre", "post")) %>%
+  # fix the order of timepoint factor
+  mutate(timepoint = factor(timepoint, levels = c("pre", "post")))
+
+
+
+# The model
+lmer2 <- lmer(load ~ timepoint * group + (1|subject), data = isom.data)
+
+
+```
+
+The resulting model has the same parameters as in the previous example. 
+
+```{r, echo = FALSE, results="asis", message = FALSE, warning = FALSE}
+library(knitr); library(broom)
+
+tidy(lmer2) %>%
+  filter(group == "fixed") %>%
+  select(term, estimate, std.error, statistic) %>%
+  kable(col.names = c("Parameter", "Estimate", "SE", "t-value"))
+
+```
+
+
+The intercept is the mean in the reference group (multiple-set group) at `pre`. `timepointpost` is the mean in the reference group at time-point `post`. `groupsingle` is the difference at baseline between groups and `timepointpost:groupsingle` is the difference between single-set and multiple-set at time-point `post`. This is the parameter of interest in this model. We want to know if the change from pre to post differs between groups, we can assess this by testing if the difference is smaller or greater than zero. This is done with the difference at baseline in mind (we control for the baseline).
+
+Using the `confint`we can see that the interaction term (`timepointpost:groupsingle`) contains zero. 
+
+
+  </div>
+  </br>  
+
+
 
 
 ### Multiple time-point -- Mixed models
+The model can be extended using all time-point, we do not anticipate any differences between time-points `pre` and `session1`, lets see if we are correct. We use the `isom` data.
+
+```{r, eval = FALSE, echo = TRUE}
+# Load packages
+library(lme4)
+
+isom.data <- read_csv("./data/strengthTests.csv") %>% 
+  filter(exercise == "isom") %>%
+  # fix the order of timepoint factor
+  mutate(timepoint = factor(timepoint, levels = c("pre", "session1","post"))) 
+
+
+
+# The model
+lmer3 <- lmer(load ~ timepoint * group + (1|subject), data = isom.data)
+
+summary(lmer3)
+```
+
+Do your best to interpret the output from the model
+
+
+
+ <a id="displayText" href="javascript:toggle(7);">An interpretation</a>
+  <div id="toggleText7" style="display: none">
+```{r, eval = TRUE, echo = FALSE, warning = FALSE, message=FALSE}
+# Load packages
+
+
+isom.data <- read_csv("./data/strengthTests.csv") %>% 
+  filter(exercise == "isom") %>%
+  # fix the order of timepoint factor
+  mutate(timepoint = factor(timepoint, levels = c("pre", "session1","post"))) 
+
+
+
+# The model
+lmer3 <- lmer(load ~ timepoint * group + (1|subject), data = isom.data)
+
+coefs <- round(coef(summary(lmer3)), 1)
+```
+
+The mean in the multiple-set group at `pre` is `r coefs[1,1]` Nm. From `pre` to `session1` the multiple-set group increases by `r coefs[2, 1]` Nm, from `pre` to `post` the multiple-set group increases by `r coefs[3, 1]` Nm. At `pre` there is a `r coefs[4,1]` unit difference between groups. Given this difference, at time-point `session1` the single set group is `r coefs[5,1]` units lower than the multiple-sets group, and at time-point `post` the single-set group is `r coefs[6, 1]` Nm lower than the multiple set group given a baseline difference and an increase in the multiple-set group.
+
+By adding these terms we can get the estimated mean for each group at `post`:
+
+`multiple-set at post = (Intercept) + timepointpost`
+
+`single-set at post = (Intercept) + timepointpost + groupsingle + timepointpost:groupsingle`
+
+
+  </div>
+  </br>  
+
+### Diagnostics
+
+The same rules apply for the mixed effects model as for the ordinary linear model (except for the independence assumption). Using simple commands we can first check the residual plot:
+
+`plot(lmer2)`
+
+The residuals should show no pattern.
+
+We can also make a qqplot of the residuals to check for normality:
+
+`qqnorm(resid(lmer2)); qqline(resid(lmer2))`
+
+This is really two commands separated with a ;. The first plots the data, the second ad the line.
+
+
+### More about mixed effects models
+We have only scratched the surface. The models can be extended far beyond this course but if you do an experiment in your master thesis, I'm pretty sure you will analyze it with a mixed model! I might be a good idea to read further. 
+
+This is a nice paper:
+
+Harrison, X. A., et al. (2018). "A brief introduction to mixed effects modelling and multi-model inference in ecology." PeerJ 6: e4794-e4794.
+
+
+
 
 
 

@@ -60,6 +60,8 @@ navbar:
           href: assignments_week2.html
         - text: "Week 3"
           href: assignments_week3.html
+        - text: "Week 4"
+          href: assignments_week4.html
   right:
     - icon: fa-question fa-lg
       href: faq.html

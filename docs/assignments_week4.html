@@ -12,7 +12,7 @@
 
 
 
-<title>Assignments Week 3</title>
+<title>Assignments Week 4</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -398,51 +398,26 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">Assignments Week 3</h1>
+<h1 class="title toc-ignore">Assignments Week 4</h1>
 
 </div>
 
 
-<div id="regression-models" class="section level2">
-<h2>Regression models</h2>
-<p>This week you are expected to perform statistical analysis using regression models. You are expected to perform all assignments below and hand in a .Rmd-file and a .html report (hide the code in the report).</p>
-</div>
-<div id="problem-1" class="section level2">
-<h2>Problem 1</h2>
-<p>Using the cycling data set. Fit the following model:</p>
-<p><span class="math display">\[VO_{2max} = Height\]</span></p>
-<p>Use data from time-point <code>meso2</code>. Check your assumptions and interpret the model.</p>
-</div>
-<div id="problem-2" class="section level2">
-<h2>Problem 2</h2>
-<p>Phosphorylation of the p70 S6 kinase induces increased translational efficiency. In this study (Mitchel et al. 2013), the researcher asked if baseline exercise-induced phosphorylation of p70S6K could explain changes in Cross Sectional Area (CSA) of muscle fibers after a training period.</p>
-<p>Methods: Young male participants (n=23) completed a 16 wk training period with 4 weekly strength training sessions. Muscle biopsies were collected from from vastus lateralis before and after the training period. Two biopsies were collected before the training period, before and after an acute exercise session in order to study activation of molecular pathways involved in protein synthesis. Muscle fiber CSA were analyzed from muscle tissue cross sections.</p>
-<p>Data analysis questions: 1. What is the relationship between phosphorylation status and increase in CSA? 2. How much of the variation in CSA can be explained by p70 S6K? 3. Examine the model fit and check assumptions, identify potential outliers and compare your conclusions to the conslusions reported in the paper.</p>
-<p>Reference: Mitchell, C. J., et al. (2013). “Muscular and Systemic Correlates of Resistance Training-Induced Muscle Hypertrophy.” PLoS One 8(10): e78636.</p>
-<div id="where-to-start" class="section level3">
-<h3>Where to start?</h3>
-<p>The data can be found on canvas. After download to your data folder, use the following code to import the data.</p>
-<pre class="r"><code>library(tidyverse); library(readxl)
-
-csaP70 &lt;- read_excel(&quot;./data/Mitchell2013.xlsx&quot;) %&gt;%
-        print()</code></pre>
-</div>
-</div>
-<div id="problem-3" class="section level2">
-<h2>Problem 3</h2>
-<p>Using the cycling data set. Select a performance variable from the list</p>
+<div id="the-problem" class="section level2">
+<h2>The problem</h2>
+<p>Pre- to post-exercise trial may be analyzed in many different ways. This week we have looked at t-test of change-scores, ANCOVA with baseline correction and change scores as outcome and mixed effects models on raw scores.</p>
+<p>This week you are expected to write a short report containing</p>
 <ul>
-<li><code>VO2.max</code> (VO<sub>2max</sub>)</li>
-<li><code>peak.power</code> (peak power in wingate test)</li>
-<li><code>tte</code> (time to exhaustion in VO<sub>2max</sub> test)</li>
-<li><code>sj.max</code></li>
+<li>Introduction: Using at least three references, describe the field of training volume and strength gains. State the objective of your study.</li>
+<li>Methods: Use the information you have about the study and write a short methods section about how the data (or how you think the data was collected). Write a <strong>Statistics</strong> section to describe how you analyzed the data.</li>
+<li>Results: The results should contain estimates of group differences, a figure to show trends over time and numbers used to draw inference (p-values or confidence intervals). Use mixed models or ANCOVA to estimate differences.</li>
+<li>Discussion: A short section where you interpret your results in relation to the studies you have presented in the introduction.</li>
 </ul>
-<p>Find 2-4 variables that might explain the variation in one of these performance variables. Fit a full model (using all of your selected variables). Remove variables that do not add information to the model. The goal is to explain as much as possible of the performance.</p>
-<p>You might use p-values, <span class="math inline">\(R^2\)</span> or the <code>AIC()</code> function to select variables.</p>
-<p>Check your assumptions and interpret the final model.</p>
-<p>For this assignment you are expected to use the course literature to motivate your work-flow.</p>
-<p>Diez, D. M., C. D. Barr, and M. Çetinkaya-Rundel. 2015. <a href="https://leanpub.com/openintro-statistics">OpenIntro Statistics. OpenIntro, Incorporated</a></p>
-<p>Navarro, Daniel. 2019. <a href="https://learningstatisticswithr.com/book/">Learning Statistics with R: A Tutorial for Psychology Students and Other Beginners (Version 0.6.1)</a></p>
+<p>Use the strengtTests.csv data set. A more detailed description of the study can be found here:</p>
+<p>Daniel Hammarström, Sjur Øfsteng, Lise Koll, Marita Hanestadhaugen, Ivana Hollan, William Apro, Jon Elling Whist, Eva Blomstrand, Bent R. Rønnestad, Stian Ellefsen bioRxiv 666347; doi: <a href="https://doi.org/10.1101/666347">https://doi.org/10.1101/666347</a>.</p>
+<p>The data set was constructed from this study. You have analyzed only one leg per participant!</p>
+<p>You may do this assignment in groups of 3-4 students.</p>
+<p>Good luck</p>
 </div>
 
 

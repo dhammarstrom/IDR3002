@@ -1,0 +1,26 @@
+---
+title: "Assignments Week 4"
+output: html_document
+---
+
+## The problem
+
+Pre- to post-exercise trial may be analyzed in many different ways. This week we have looked at t-test of change-scores, ANCOVA with baseline correction and change scores as outcome and mixed effects models on raw scores.
+
+This week you are expected to write a short report containing 
+
+- Introduction: Using at least three references, describe the field of training volume and strength gains. State the objective of your study.
+- Methods: Use the information you have about the study and write a short methods section about how the data (or how you think the data was collected). Write a **Statistics** section to describe how you analyzed the data.
+- Results: The results should contain estimates of group differences, a figure to show trends over time and numbers used to draw inference (p-values or confidence intervals). Use mixed models or ANCOVA to estimate differences.
+- Discussion: A short section where you interpret your results in relation to the studies you have presented in the introduction.
+
+Use the strengtTests.csv data set. A more detailed description of the study can be found here:
+
+Daniel Hammarström, Sjur Øfsteng, Lise Koll, Marita Hanestadhaugen, Ivana Hollan, William Apro, Jon Elling Whist, Eva Blomstrand, Bent R. Rønnestad, Stian Ellefsen
+bioRxiv 666347; doi: [https://doi.org/10.1101/666347](https://doi.org/10.1101/666347).
+
+The data set was constructed from this study. You have analyzed only one leg per participant!
+
+You may do this assignment in groups of 3-4 students.
+
+Good luck
