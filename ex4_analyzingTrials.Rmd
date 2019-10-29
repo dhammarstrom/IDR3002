@@ -312,8 +312,8 @@ Perform an analysis of `isok.120` data, infer on the effect of single- vs. multi
 
 
 
- <a id="displayText" href="javascript:toggle(6);">Example code</a>
-  <div id="toggleText6" style="display: none">
+ <a id="displayText" href="javascript:toggle(7);">Example code</a>
+  <div id="toggleText7" style="display: none">
 
 ```{r, eval = FALSE, echo = TRUE}
 
@@ -448,8 +448,8 @@ In this comparison we have seen that the mixed effects model is more powerful by
 
 Fit a mixed effects model to `isom` data from `pre` and `post` training. Interpret the model parameters and estimates. 
 
- <a id="displayText" href="javascript:toggle(7);">Example code</a>
-  <div id="toggleText7" style="display: none">
+ <a id="displayText" href="javascript:toggle(8);">Example code</a>
+  <div id="toggleText8" style="display: none">
 
 ```{r, eval = TRUE, echo = TRUE}
 # Load packages
@@ -517,8 +517,8 @@ Do your best to interpret the output from the model
 
 
 
- <a id="displayText" href="javascript:toggle(7);">An interpretation</a>
-  <div id="toggleText7" style="display: none">
+ <a id="displayText" href="javascript:toggle(9);">An interpretation</a>
+  <div id="toggleText9" style="display: none">
 ```{r, eval = TRUE, echo = FALSE, warning = FALSE, message=FALSE}
 # Load packages
 
@@ -560,17 +560,17 @@ We can also make a qqplot of the residuals to check for normality:
 
 `qqnorm(resid(lmer2)); qqline(resid(lmer2))`
 
-This is really two commands separated with a ;. The first plots the data, the second ad the line.
+This is really two commands separated with a `;` . The first plots the data, the second adds the line.
 
 
 ### More about mixed effects models
 We have only scratched the surface. The models can be extended far beyond this course but if you do an experiment in your master thesis, I'm pretty sure you will analyze it with a mixed model! I might be a good idea to read further. 
 
-This is a nice paper:
+This is a nice paper (the first part is a general introduction):
 
 Harrison, X. A., et al. (2018). "A brief introduction to mixed effects modelling and multi-model inference in ecology." PeerJ 6: e4794-e4794.
 
-
+### References
 
 
 

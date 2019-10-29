@@ -674,8 +674,8 @@ tidy(m1) %&gt;%
 <div id="exercises" class="section level4">
 <h4>Exercises</h4>
 <p>Perform an analysis of <code>isok.120</code> data, infer on the effect of single- vs. multiple-sets on change in strength using the confidence intervals from an ANCOVA model. Remember to mean center the baseline per sex.</p>
-<a id="displayText" href="javascript:toggle(6);">Example code</a>
-<div id="toggleText6" style="display: none">
+<a id="displayText" href="javascript:toggle(7);">Example code</a>
+<div id="toggleText7" style="display: none">
 <pre class="r"><code># Store the data set 
 
 # Load data
@@ -772,8 +772,8 @@ confint(lmer1)</code></pre>
 <div id="exercise" class="section level4">
 <h4>Exercise</h4>
 <p>Fit a mixed effects model to <code>isom</code> data from <code>pre</code> and <code>post</code> training. Interpret the model parameters and estimates.</p>
-<a id="displayText" href="javascript:toggle(7);">Example code</a>
-<div id="toggleText7" style="display: none">
+<a id="displayText" href="javascript:toggle(8);">Example code</a>
+<div id="toggleText8" style="display: none">
 <pre class="r"><code># Load packages
 library(lme4)</code></pre>
 <pre><code>## Loading required package: Matrix</code></pre>
@@ -860,8 +860,8 @@ lmer3 &lt;- lmer(load ~ timepoint * group + (1|subject), data = isom.data)
 
 summary(lmer3)</code></pre>
 <p>Do your best to interpret the output from the model</p>
-<a id="displayText" href="javascript:toggle(7);">An interpretation</a>
-<div id="toggleText7" style="display: none">
+<a id="displayText" href="javascript:toggle(9);">An interpretation</a>
+<div id="toggleText9" style="display: none">
 <p>The mean in the multiple-set group at <code>pre</code> is 211.8 Nm. From <code>pre</code> to <code>session1</code> the multiple-set group increases by 6.1 Nm, from <code>pre</code> to <code>post</code> the multiple-set group increases by 54.4 Nm. At <code>pre</code> there is a 3.3 unit difference between groups. Given this difference, at time-point <code>session1</code> the single set group is -3.9 units lower than the multiple-sets group, and at time-point <code>post</code> the single-set group is -20 Nm lower than the multiple set group given a baseline difference and an increase in the multiple-set group.</p>
 <p>By adding these terms we can get the estimated mean for each group at <code>post</code>:</p>
 <p><code>multiple-set at post = (Intercept) + timepointpost</code></p>
@@ -876,13 +876,16 @@ summary(lmer3)</code></pre>
 <p>The residuals should show no pattern.</p>
 <p>We can also make a qqplot of the residuals to check for normality:</p>
 <p><code>qqnorm(resid(lmer2)); qqline(resid(lmer2))</code></p>
-<p>This is really two commands separated with a ;. The first plots the data, the second ad the line.</p>
+<p>This is really two commands separated with a <code>;</code> . The first plots the data, the second adds the line.</p>
 </div>
 <div id="more-about-mixed-effects-models" class="section level3">
 <h3>More about mixed effects models</h3>
 <p>We have only scratched the surface. The models can be extended far beyond this course but if you do an experiment in your master thesis, I’m pretty sure you will analyze it with a mixed model! I might be a good idea to read further.</p>
-<p>This is a nice paper:</p>
+<p>This is a nice paper (the first part is a general introduction):</p>
 <p>Harrison, X. A., et al. (2018). “A brief introduction to mixed effects modelling and multi-model inference in ecology.” PeerJ 6: e4794-e4794.</p>
+</div>
+<div id="references" class="section level3 unnumbered">
+<h3>References</h3>
 <div id="refs" class="references">
 <div id="ref-senn2006">
 <p>Senn, S. 2006. “Change from Baseline and Analysis of Covariance Revisited.” Journal Article. <em>Stat Med</em> 25 (24): 4334–44. <a href="https://doi.org/10.1002/sim.2682">https://doi.org/10.1002/sim.2682</a>.</p>
