@@ -1,0 +1,25 @@
+---
+title: "Assignments Week 5"
+output: html_document
+bibliography: bib.bib
+---
+
+## Literature review: Study design and analysis
+
+You are expected to write a short literature review (including 4-8 studies) with focus on **study designs** in a specific field. The title of your review should be "Research designs and analyses in studies examining X" where "X" is an exercise-physiology related problem. An example could be "exercise-induced protein synthesis" or "cardiovascular response to acute exercise". The first part of your review should focus on design. Your review should cover what aspects are common in all studies that you have examined and a discussion on why this might be the case. You should also highlight differences between studies. With regard to study design, you are also expected to discuss if the field is in need of new, better designed studies.
+
+The second part of your review should examine statistical aspects of studies. Below is a list of possible questions that you can use to examine statistical aspects of selected studies.
+
+- How many participants (or experimental units) are recruited to the study?
+- Are there *a-priori* sample-size calculations?
+- Are sample size calculations based on clinically important thresholds?
+- What statistical tests are used to answer questions/hypotheses?
+- Are statistical tests reported in full (estimates, p-values, test statistics)?
+- Are assumptions about statistical tests discussed?
+- Do conclusions match questions/hypotheses and statistical analyses?
+
+### References that might help you
+
+Thiese [-@thiese2014] provides an overview of study designs. Lakens [-@lakens2015] discusses problems related to error rates in science. This paper provides you with a more specific discussion regarding statistical power and error rates extending the course literature [@Navarro; @diez2015openintro].  
+
+## References

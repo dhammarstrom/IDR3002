@@ -12,7 +12,7 @@
 
 
 
-<title>Introduction to R and RStudio</title>
+<title>Assignments Week 5</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -401,89 +401,45 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">Introduction to R and RStudio</h1>
+<h1 class="title toc-ignore">Assignments Week 5</h1>
 
 </div>
 
 
-<div id="learning-objectives" class="section level2">
-<h2>Learning objectives</h2>
-<p>By the end of this session you will be able to answer these questions:</p>
+<div id="literature-review-study-design-and-analysis" class="section level2">
+<h2>Literature review: Study design and analysis</h2>
+<p>You are expected to write a short literature review (including 4-8 studies) with focus on <strong>study designs</strong> in a specific field. The title of your review should be “Research designs and analyses in studies examining X” where “X” is an exercise-physiology related problem. An example could be “exercise-induced protein synthesis” or “cardiovascular response to acute exercise”. The first part of your review should focus on design. Your review should cover what aspects are common in all studies that you have examined and a discussion on why this might be the case. You should also highlight differences between studies. With regard to study design, you are also expected to discuss if the field is in need of new, better designed studies.</p>
+<p>The second part of your review should examine statistical aspects of studies. Below is a list of possible questions that you can use to examine statistical aspects of selected studies.</p>
 <ul>
-<li>What is R and RStudio?</li>
-<li>How can I interact with R?</li>
-<li>What is a reproducible computing?</li>
-<li>How do I maintain a reproducible workflow in R and RStudio?</li>
+<li>How many participants (or experimental units) are recruited to the study?</li>
+<li>Are there <em>a-priori</em> sample-size calculations?</li>
+<li>Are sample size calculations based on clinically important thresholds?</li>
+<li>What statistical tests are used to answer questions/hypotheses?</li>
+<li>Are statistical tests reported in full (estimates, p-values, test statistics)?</li>
+<li>Are assumptions about statistical tests discussed?</li>
+<li>Do conclusions match questions/hypotheses and statistical analyses?</li>
 </ul>
-</div>
-<div id="r-and-rstudio" class="section level2">
-<h2>R and RStudio</h2>
-<p>You have already downloaded and installed both R and RStudio. R is a software used for scientific/statistical computing. If R is the engine, RStudio is the rest of the car. What does this mean?</p>
-<p>When doing operations in R, you are actually writing interaction with R through RStudio. RStudio have some important components to help you interact with R.</p>
-<div id="the-source" class="section level3">
-<h3>The source</h3>
-<p>The source is where you keep your code. When writing your code in a text-file, you can call it a script, this is essentially a computer program where you tell R what to do. It is executed from top to bottom. You can send one line of code, multiple lines or whole sections into R. In the image below, the source window is in the top left corner.</p>
+<div id="references-that-might-help-you" class="section level3">
+<h3>References that might help you</h3>
+<p>Thiese <span class="citation">(2014)</span> provides an overview of study designs. Lakens <span class="citation">(2015)</span> discusses problems related to error rates in science. This paper provides you with a more specific discussion regarding statistical power and error rates extending the course literature <span class="citation">(Navarro 2019; Diez, Barr, and Çetinkaya-Rundel 2015)</span>.</p>
 </div>
 </div>
-<div id="environment" class="section level2">
-<h2>Environment</h2>
-<p>The environment is where all your objects are located. Objects can be variables or data sets that you are working with. In RStudio the environment is listed under the environment tab (bottom left in the image).</p>
-<p>Copy and run the code below.</p>
-<pre class="r"><code>a &lt;- c(1, 2, 4)</code></pre>
-<p>What happend in your environment?</p>
+<div id="references" class="section level2 unnumbered">
+<h2>References</h2>
+<div id="refs" class="references">
+<div id="ref-diez2015openintro">
+<p>Diez, D. M., C. D. Barr, and M. Çetinkaya-Rundel. 2015. <em>OpenIntro Statistics</em>. OpenIntro, Incorporated. <a href="https://leanpub.com/openintro-statistics">https://leanpub.com/openintro-statistics</a>.</p>
 </div>
-<div id="the-console" class="section level2">
-<h2>The console</h2>
-<p>Here you can directly interact with R. This is also where output from R is printed. In the image below, the console is in the top right corner.</p>
+<div id="ref-lakens2015">
+<p>Lakens, D. 2015. “On the challenges of drawing conclusions from p-values just below 0.05.” <em>PeerJ</em> 3: e1142.</p>
 </div>
-<div id="files-plots-packages-and-help-files" class="section level2">
-<h2>Files, plots, packages and help files</h2>
-<p>In RStudio files are accessible from the Files tab. When opening a project, the files tab shows the files in you root folder.</p>
-<p>Plots are displayed in the Plot tab. Packages are listed in the packages tab.</p>
-<p>If you access the help files, these will be displayed in the help tab.</p>
-<p>In the image below all these tabs are in the bottom right corner.</p>
-<div class="figure">
-<img src="img/rstudio_blank.png" alt="RStudio." />
-<p class="caption">RStudio.</p>
+<div id="ref-Navarro">
+<p>Navarro, Daniel. 2019. <em>Learning Statistics with R: A Tutorial for Psychology Students and Other Beginners (Version 0.6.1)</em>. <a href="https://learningstatisticswithr.com/book/">https://learningstatisticswithr.com/book/</a>.</p>
+</div>
+<div id="ref-thiese2014">
+<p>Thiese, M. S. 2014. “Observational and interventional study design types; an overview.” <em>Biochem Med (Zagreb)</em> 24 (2): 199–210.</p>
 </div>
 </div>
-<div id="customizing-the-apperance-of-rstudio" class="section level2">
-<h2>Customizing the apperance of RStudio</h2>
-<p>To access options for RStudio, go to Tools -&gt; Global options</p>
-<div class="figure">
-<img src="img/rstudio_options1.png" alt="RStudio." />
-<p class="caption">RStudio.</p>
-</div>
-<p>Under apperance you can customize the theme of RStudio, select something that is easy on the eye!</p>
-<div class="figure">
-<img src="img/rstudio_options2.png" alt="RStudio." />
-<p class="caption">RStudio.</p>
-</div>
-<p>Under pane layout, you can set where you want your tabs, I like to have the source on the left, above the environment. This way you can have the source window at full vertical size and still look at plots and the console to the right.</p>
-<div class="figure">
-<img src="img/rstudio_options3.png" alt="RStudio." />
-<p class="caption">RStudio.</p>
-</div>
-</div>
-<div id="reproducible-computing" class="section level2">
-<h2>Reproducible computing</h2>
-<p>Computations are reproducible when you can show how they were performed. This is achieved by creating “programs” from where your analyses are done. In R, these programs are lines or R code stored in a text-file, either .R-files or .Rmd-files. .R-files are scripts only containing code and comments. A .Rmd-file is a special script combining text and computer code, when the Rmd-file is executed, it creates a report and outputs the results from the code.</p>
-<p>This means that to work in a reproducible way, you need to script all your operations.</p>
-<div class="figure">
-<img src="img/reproducible_workflow.png" alt="Reproducible vs. non-reproducible workflow" />
-<p class="caption">Reproducible vs. non-reproducible workflow</p>
-</div>
-<p>Importantly, in RStudio you can shut down storing temporary objects in a environment that is relaunched on startup. What is the consequence of having such a situation?</p>
-<p>To diasble this option, set save workspace to NEVER!</p>
-<div class="figure">
-<img src="img/rstudio_options4.png" alt="RStudio." />
-<p class="caption">RStudio.</p>
-</div>
-</div>
-<div id="on-to-the-next-session" class="section level2">
-<h2>On to the next session</h2>
-<p>Time for a break!</p>
-<p><a href="./introduction_2.html">Continue with the next session</a></p>
 </div>
 
 

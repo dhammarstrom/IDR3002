@@ -1,0 +1,219 @@
+---
+title: "Assignment Week 4 Soultions/Examples"
+output: html_document
+---
+
+## Loading data for the assignment and creating descriptive graphics:
+
+
+
+
+```{r load_data_figure, message=FALSE, warning = FALSE}
+library(tidyverse) # Tidyverse includes the readr package
+
+read_csv("./data/strengthTests.csv") %>%
+        filter(!is.na(load)) %>% # Removes missing values
+        # Summarise values per group, timepoint, exercise
+        group_by(timepoint, group, exercise) %>% 
+        summarise(m = mean(load), 
+                  s = sd(load), 
+                  n = n()) %>%
+        group_by() %>% # removes grouping from data frame
+        # Change levels in timepoint
+        mutate(timepoint = factor(timepoint, 
+                                  levels = c("pre", 
+                                             "session1", 
+                                             "post"))) %>%
+        # Creates plot
+        ggplot(aes(timepoint, m, group = group, color = group)) + 
+        geom_errorbar(aes(ymin = m-s, ymax = m + s), 
+                      width = 0.2, 
+                      position = position_dodge(width = 0.2)) +
+        geom_line(position = position_dodge(width = 0.2)) + 
+        facet_wrap(~ exercise, scales = "free")
+
+```
+
+
+A pre- to post-training design may be analyzed by post-values only. This is "ineffective" as we need many more participants to show a difference that is true. The example below is an example of such analysis. 
+
+
+```{r, message=FALSE, warning = FALSE}
+
+## Bad example, inefficient statistical test
+temp <- read_csv("./data/strengthTests.csv") %>%
+        filter(!is.na(load), 
+               timepoint == "post", 
+               exercise == "isom") %>%
+        print()
+ 
+
+t.test(load ~ group, data = temp)
+
+
+```
+
+Instead of using post-training data only, we can model the change. This can also be done in a t-test:
+
+```{r, message=FALSE, warning = FALSE}
+
+change.data <- read_csv("./data/strengthTests.csv") %>%
+        filter(!is.na(load), 
+               exercise == "isom") %>%
+        mutate(timepoint = if_else(timepoint == "session1", 
+                                   "pre", timepoint)) %>%
+        group_by(subject, timepoint, group, sex) %>%
+        summarise(load = mean(load, na.rm = TRUE)) %>%
+        
+        pivot_wider(names_from = timepoint, 
+                    values_from = load) %>%
+        mutate(change = (post - pre)/pre * 100) %>%
+        ungroup() %>%
+        mutate(pre.mc = pre - mean(pre)) 
+
+
+t.test(change ~ group, data = change.data, var.equal = TRUE)
+
+```
+
+The t-test "controls" for baseline as we model the change from each individual baseline. To further account for the baseline, we can include it in a model.
+The t-test can be performed as a linear model, which can be extended.
+
+```{r, message=FALSE, warning = FALSE}
+
+## Linear model (same as t-test)
+m1 <- lm(change ~ group, data = change.data)
+summary(m1)
+
+
+## Linear model with baseline values as covariate
+m2 <- lm(change ~ pre.mc + group, data = change.data)
+summary(m2)
+
+
+
+
+
+```
+
+### Creating tables
+
+In the code chunk options, remember to set `results = "asis"` to get a table from `kable`.
+
+```{r table1, results = "asis", message=FALSE, warning = FALSE}
+
+library(broom) # is used for formatting model summaries 
+library(knitr) # is used for making tables
+
+# A simple table from m2 above
+
+tidy(m2) %>%
+        # Change names of the term column
+        mutate(term = if_else(term == "(Intercept)", "Intercept", 
+                              if_else(term == "pre.mc", "Baseline",
+                                      "Single-set"))) %>%
+        # kable is used to "create" the table. In practice, it 
+        # translates your table to html-code.
+        kable(col.names = c("Parameter", 
+                            "Estimate", "SE", 
+                            "t-value", "p-value"), 
+              digits = c(NA, 2, 2, 2, 3))
+
+
+```
+
+
+## Mixed models
+
+
+```{r mixed-models, message=FALSE, warning = FALSE}
+
+library(lme4); library(broom)
+
+# Alternative 1 (Two pre- time-points)
+raw.data <- read_csv("./data/strengthTests.csv") %>%
+        filter(!is.na(load), 
+               exercise == "isom") %>%
+        mutate(timepoint = if_else(timepoint == "session1", 
+                                   "pre", timepoint)) %>%
+        mutate(timepoint = factor(timepoint, 
+                                  levels = c("pre", "post"))) %>%
+        
+        print()
+
+# Alternative 2 (combine pre and session1 into one time-point)
+raw.data <- read_csv("./data/strengthTests.csv") %>%
+        filter(!is.na(load), 
+               exercise == "isom") %>%
+        mutate(timepoint = factor(timepoint, 
+                                  levels = c("pre",
+                                             "session1", 
+                                             "post"))) %>%
+        
+        print()
+
+
+
+### Mixed model
+# See lessons for interpretation of the model
+m2 <- lmer(load ~ timepoint * group + (1|subject), 
+           data = raw.data)
+
+# Model summary
+summary(m2)
+
+# Diagnostics
+plot(m2)
+
+# Confidence intervals
+confint(m2)
+
+
+```
+
+
+```{r table, results = "asis", message=FALSE, warning = FALSE}
+
+library(knitr); library(broom)
+
+
+# creating a table
+
+# We can combine two data frames by adding columns or rows
+
+# The cbind function adds two data frames with simialr rows.
+
+# First we save a tidy output of model 2
+ 
+tidy.m2 <- tidy(m2) %>%
+        filter(group == "fixed") # removes random effects from summary
+
+# Next we store the confidence intervals from confint
+# We have to select row 3 to 8 to get the same number of rows
+confint.m2 <- data.frame(confint(m2))[c(3:8),]
+
+# Next we can comine these by column
+cbind(tidy.m2, confint.m2) %>%
+        select(-group) %>% # deselect "group"-column
+        kable(row.names = FALSE, 
+              col.names = c("Parameter", 
+                            "Estimate", 
+                            "SE", 
+                            "Statistic", 
+                            "Lower CI", 
+                            "Upper CI"), 
+              digits = c(NA, 1, 1, 2, 1, 1)) %>%
+                      print()
+
+
+
+
+```
+
+
+
+
+
+
+
+

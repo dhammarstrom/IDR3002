@@ -1,0 +1,29 @@
+---
+title: "Untitled"
+author: "Daniel Hammarström"
+date: "5 11 2019"
+output: pdf_document
+header-includes:
+- \usepackage{booktabs}
+- \usepackage{longtable}
+- \usepackage{array}
+- \usepackage{multirow}
+- \usepackage{wrapfig}
+- \usepackage{float}
+- \usepackage{colortbl}
+- \usepackage{pdflscape}
+- \usepackage{tabu}
+- \usepackage{threeparttable}
+---
+
+\small
+\begin{table}[]
+\begin{tabular}{@{}lllll@{}}
+\toprule
+Fisher & Neyman-Pearson &  &  &  \\ \midrule
+1. State $H_0$   & 1. State $H_0$ and $H_1$  &  &  &  \\
+2. Specify test statistic  & 2. Specify $\alpha$ (for example 0.05) &  &  &  \\
+\begin{tabular}[c]{@{}l@{}}3. Collect data, calculate test \\ statistic and determine $p$-value\end{tabular} & \begin{tabular}[c]{@{}l@{}}3. Specify test statistics and\\  critical value\end{tabular}               &  &  &  \\ 4. Reject $H_0$ if p is small & \begin{tabular}[c]{@{}l@{}}4. Collect data, calculate test \\ statistic and determine $p$\end{tabular} &  &  &  \\ & \begin{tabular}[c]{@{}l@{}}5. Reject $H_0$ in favor of $H_1$ if \\ $p<\alpha$\end{tabular} &  &  &  \\ \bottomrule
+\end{tabular}
+\end{table}
+\normalsize

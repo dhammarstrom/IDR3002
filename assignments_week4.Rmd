@@ -3,6 +3,12 @@ title: "Assignments Week 4"
 output: html_document
 ---
 
+
+### Examples
+
+You may find examples related to the problem [here](assignments_week4_solutions.html)
+
+
 ## The problem
 
 Pre- to post-exercise trial may be analyzed in many different ways. This week we have looked at t-test of change-scores, ANCOVA with baseline correction and change scores as outcome and mixed effects models on raw scores.

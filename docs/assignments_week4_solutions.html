@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Assignment Week 4 Soultions/Examples</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-inverse  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">IDR3002 Course notes</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+    Home
+  </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Software
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="installation.html">Installing and starting up R and RStudio</a>
+    </li>
+    <li>
+      <a href="markdown.html">Creating a report using rmarkdown</a>
+    </li>
+    <li>
+      <a href="structure.html">Structuring an analysis</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Lessons
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="introduction_1.html">Introduction to R</a>
+    </li>
+    <li>
+      <a href="import_data.html">Import data</a>
+    </li>
+    <li>
+      <a href="make_summaries.html">Make summaries</a>
+    </li>
+    <li>
+      <a href="plot_ggplot2.html">Create plots with ggplot2</a>
+    </li>
+    <li>
+      <a href="descriptive_statistics.html">Assignment: Descriptive statistics</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="ex2_introInference.html">Statistical inference</a>
+    </li>
+    <li>
+      <a href="ex2_introInference2.html">Statistical inference 2</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="ex3_regressionModels.html">Regression models</a>
+    </li>
+    <li>
+      <a href="ex4_analyzingTrials.html">Extendning regression models</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Exercises
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="ex1_intro.html">Introduction to R and RStudio</a>
+    </li>
+    <li>
+      <a href="ex1_import.html">Import data</a>
+    </li>
+    <li>
+      <a href="ex1_summarise.html">Summarise data</a>
+    </li>
+    <li>
+      <a href="ex1_figures.html">Making figures</a>
+    </li>
+    <li>
+      <a href="exercise_week3.html">Regression models</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Assignments
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="assignments_week1.html">Week 1</a>
+    </li>
+    <li>
+      <a href="assignments_week2.html">Week 2</a>
+    </li>
+    <li>
+      <a href="assignments_week3.html">Week 3</a>
+    </li>
+    <li>
+      <a href="assignments_week4.html">Week 4</a>
+    </li>
+    <li>
+      <a href="assignments_week5.html">Week 5</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="faq.html">
+    <span class="fa fa-question fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Assignment Week 4 Soultions/Examples</h1>
+
+</div>
+
+
+<div id="loading-data-for-the-assignment-and-creating-descriptive-graphics" class="section level2">
+<h2>Loading data for the assignment and creating descriptive graphics:</h2>
+<pre class="r"><code>library(tidyverse) # Tidyverse includes the readr package
+
+read_csv(&quot;./data/strengthTests.csv&quot;) %&gt;%
+        filter(!is.na(load)) %&gt;% # Removes missing values
+        # Summarise values per group, timepoint, exercise
+        group_by(timepoint, group, exercise) %&gt;% 
+        summarise(m = mean(load), 
+                  s = sd(load), 
+                  n = n()) %&gt;%
+        group_by() %&gt;% # removes grouping from data frame
+        # Change levels in timepoint
+        mutate(timepoint = factor(timepoint, 
+                                  levels = c(&quot;pre&quot;, 
+                                             &quot;session1&quot;, 
+                                             &quot;post&quot;))) %&gt;%
+        # Creates plot
+        ggplot(aes(timepoint, m, group = group, color = group)) + 
+        geom_errorbar(aes(ymin = m-s, ymax = m + s), 
+                      width = 0.2, 
+                      position = position_dodge(width = 0.2)) +
+        geom_line(position = position_dodge(width = 0.2)) + 
+        facet_wrap(~ exercise, scales = &quot;free&quot;)</code></pre>
+<p><img src="assignments_week4_solutions_files/figure-html/load_data_figure-1.png" width="672" /></p>
+<p>A pre- to post-training design may be analyzed by post-values only. This is “ineffective” as we need many more participants to show a difference that is true. The example below is an example of such analysis.</p>
+<pre class="r"><code>## Bad example, inefficient statistical test
+temp &lt;- read_csv(&quot;./data/strengthTests.csv&quot;) %&gt;%
+        filter(!is.na(load), 
+               timepoint == &quot;post&quot;, 
+               exercise == &quot;isom&quot;) %&gt;%
+        print()</code></pre>
+<pre><code>## # A tibble: 33 x 6
+##    subject timepoint exercise  load sex    group   
+##    &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;    &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;   
+##  1 FP11    post      isom      281  male   single  
+##  2 FP12    post      isom      308  female single  
+##  3 FP13    post      isom      294. male   multiple
+##  4 FP14    post      isom      226  female single  
+##  5 FP15    post      isom      298. male   single  
+##  6 FP16    post      isom      248  female single  
+##  7 FP17    post      isom      336. male   multiple
+##  8 FP19    post      isom      266  male   single  
+##  9 FP2     post      isom      216. female multiple
+## 10 FP20    post      isom      146. female single  
+## # ... with 23 more rows</code></pre>
+<pre class="r"><code>t.test(load ~ group, data = temp)</code></pre>
+<pre><code>## 
+##  Welch Two Sample t-test
+## 
+## data:  load by group
+## t = 0.7171, df = 30.143, p-value = 0.4788
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -29.43928  61.31060
+## sample estimates:
+## mean in group multiple   mean in group single 
+##               265.4062               249.4706</code></pre>
+<p>Instead of using post-training data only, we can model the change. This can also be done in a t-test:</p>
+<pre class="r"><code>change.data &lt;- read_csv(&quot;./data/strengthTests.csv&quot;) %&gt;%
+        filter(!is.na(load), 
+               exercise == &quot;isom&quot;) %&gt;%
+        mutate(timepoint = if_else(timepoint == &quot;session1&quot;, 
+                                   &quot;pre&quot;, timepoint)) %&gt;%
+        group_by(subject, timepoint, group, sex) %&gt;%
+        summarise(load = mean(load, na.rm = TRUE)) %&gt;%
+        
+        pivot_wider(names_from = timepoint, 
+                    values_from = load) %&gt;%
+        mutate(change = (post - pre)/pre * 100) %&gt;%
+        ungroup() %&gt;%
+        mutate(pre.mc = pre - mean(pre)) 
+
+
+t.test(change ~ group, data = change.data, var.equal = TRUE)</code></pre>
+<pre><code>## 
+##  Two Sample t-test
+## 
+## data:  change by group
+## t = 1.9157, df = 31, p-value = 0.06466
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -0.6369364 20.3495114
+## sample estimates:
+## mean in group multiple   mean in group single 
+##               27.15581               17.29952</code></pre>
+<p>The t-test “controls” for baseline as we model the change from each individual baseline. To further account for the baseline, we can include it in a model. The t-test can be performed as a linear model, which can be extended.</p>
+<pre class="r"><code>## Linear model (same as t-test)
+m1 &lt;- lm(change ~ group, data = change.data)
+summary(m1)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = change ~ group, data = change.data)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -23.154 -10.528  -2.159  11.050  32.369 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)   27.156      3.693   7.354  2.8e-08 ***
+## groupsingle   -9.856      5.145  -1.916   0.0647 .  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 14.77 on 31 degrees of freedom
+##   (1 observation deleted due to missingness)
+## Multiple R-squared:  0.1059, Adjusted R-squared:  0.07701 
+## F-statistic:  3.67 on 1 and 31 DF,  p-value: 0.06466</code></pre>
+<pre class="r"><code>## Linear model with baseline values as covariate
+m2 &lt;- lm(change ~ pre.mc + group, data = change.data)
+summary(m2)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = change ~ pre.mc + group, data = change.data)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -20.662  -9.025  -1.546   5.773  33.753 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) 26.96193    3.03338   8.888  6.6e-10 ***
+## pre.mc      -0.13325    0.03336  -3.994 0.000388 ***
+## groupsingle -9.57619    4.22633  -2.266 0.030839 *  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 12.13 on 30 degrees of freedom
+##   (1 observation deleted due to missingness)
+## Multiple R-squared:  0.4163, Adjusted R-squared:  0.3774 
+## F-statistic:  10.7 on 2 and 30 DF,  p-value: 0.0003113</code></pre>
+<div id="creating-tables" class="section level3">
+<h3>Creating tables</h3>
+<p>In the code chunk options, remember to set <code>results = "asis"</code> to get a table from <code>kable</code>.</p>
+<pre class="r"><code>library(broom) # is used for formatting model summaries 
+library(knitr) # is used for making tables
+
+# A simple table from m2 above
+
+tidy(m2) %&gt;%
+        # Change names of the term column
+        mutate(term = if_else(term == &quot;(Intercept)&quot;, &quot;Intercept&quot;, 
+                              if_else(term == &quot;pre.mc&quot;, &quot;Baseline&quot;,
+                                      &quot;Single-set&quot;))) %&gt;%
+        # kable is used to &quot;create&quot; the table. In practice, it 
+        # translates your table to html-code.
+        kable(col.names = c(&quot;Parameter&quot;, 
+                            &quot;Estimate&quot;, &quot;SE&quot;, 
+                            &quot;t-value&quot;, &quot;p-value&quot;), 
+              digits = c(NA, 2, 2, 2, 3))</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Parameter</th>
+<th align="right">Estimate</th>
+<th align="right">SE</th>
+<th align="right">t-value</th>
+<th align="right">p-value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Intercept</td>
+<td align="right">26.96</td>
+<td align="right">3.03</td>
+<td align="right">8.89</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="even">
+<td align="left">Baseline</td>
+<td align="right">-0.13</td>
+<td align="right">0.03</td>
+<td align="right">-3.99</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="odd">
+<td align="left">Single-set</td>
+<td align="right">-9.58</td>
+<td align="right">4.23</td>
+<td align="right">-2.27</td>
+<td align="right">0.031</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="mixed-models" class="section level2">
+<h2>Mixed models</h2>
+<pre class="r"><code>library(lme4); library(broom)
+
+# Alternative 1 (Two pre- time-points)
+raw.data &lt;- read_csv(&quot;./data/strengthTests.csv&quot;) %&gt;%
+        filter(!is.na(load), 
+               exercise == &quot;isom&quot;) %&gt;%
+        mutate(timepoint = if_else(timepoint == &quot;session1&quot;, 
+                                   &quot;pre&quot;, timepoint)) %&gt;%
+        mutate(timepoint = factor(timepoint, 
+                                  levels = c(&quot;pre&quot;, &quot;post&quot;))) %&gt;%
+        
+        print()</code></pre>
+<pre><code>## # A tibble: 101 x 6
+##    subject timepoint exercise  load sex    group   
+##    &lt;chr&gt;   &lt;fct&gt;     &lt;chr&gt;    &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;   
+##  1 FP11    pre       isom      256. male   single  
+##  2 FP11    pre       isom      252  male   single  
+##  3 FP11    post      isom      281  male   single  
+##  4 FP12    pre       isom      246. female single  
+##  5 FP12    pre       isom      290. female single  
+##  6 FP12    post      isom      308  female single  
+##  7 FP13    pre       isom      204  male   multiple
+##  8 FP13    pre       isom      210. male   multiple
+##  9 FP13    post      isom      294. male   multiple
+## 10 FP14    pre       isom      197  female single  
+## # ... with 91 more rows</code></pre>
+<pre class="r"><code># Alternative 2 (combine pre and session1 into one time-point)
+raw.data &lt;- read_csv(&quot;./data/strengthTests.csv&quot;) %&gt;%
+        filter(!is.na(load), 
+               exercise == &quot;isom&quot;) %&gt;%
+        mutate(timepoint = factor(timepoint, 
+                                  levels = c(&quot;pre&quot;,
+                                             &quot;session1&quot;, 
+                                             &quot;post&quot;))) %&gt;%
+        
+        print()</code></pre>
+<pre><code>## # A tibble: 101 x 6
+##    subject timepoint exercise  load sex    group   
+##    &lt;chr&gt;   &lt;fct&gt;     &lt;chr&gt;    &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;   
+##  1 FP11    pre       isom      256. male   single  
+##  2 FP11    session1  isom      252  male   single  
+##  3 FP11    post      isom      281  male   single  
+##  4 FP12    pre       isom      246. female single  
+##  5 FP12    session1  isom      290. female single  
+##  6 FP12    post      isom      308  female single  
+##  7 FP13    pre       isom      204  male   multiple
+##  8 FP13    session1  isom      210. male   multiple
+##  9 FP13    post      isom      294. male   multiple
+## 10 FP14    pre       isom      197  female single  
+## # ... with 91 more rows</code></pre>
+<pre class="r"><code>### Mixed model
+# See lessons for interpretation of the model
+m2 &lt;- lmer(load ~ timepoint * group + (1|subject), 
+           data = raw.data)
+
+# Model summary
+summary(m2)</code></pre>
+<pre><code>## Linear mixed model fit by REML [&#39;lmerMod&#39;]
+## Formula: load ~ timepoint * group + (1 | subject)
+##    Data: raw.data
+## 
+## REML criterion at convergence: 969.7
+## 
+## Scaled residuals: 
+##      Min       1Q   Median       3Q      Max 
+## -2.61049 -0.50959 -0.02093  0.46177  2.57787 
+## 
+## Random effects:
+##  Groups   Name        Variance Std.Dev.
+##  subject  (Intercept) 3777.6   61.46   
+##  Residual              441.1   21.00   
+## Number of obs: 101, groups:  subject, 34
+## 
+## Fixed effects:
+##                               Estimate Std. Error t value
+## (Intercept)                    211.765     15.753  13.443
+## timepointsession1                6.118      7.204   0.849
+## timepointpost                   54.405      7.368   7.384
+## groupsingle                      3.265     22.278   0.147
+## timepointsession1:groupsingle   -3.941     10.188  -0.387
+## timepointpost:groupsingle      -19.964     10.304  -1.937
+## 
+## Correlation of Fixed Effects:
+##             (Intr) tmpnt1 tmpntp grpsng tmpn1:
+## timpntsssn1 -0.229                            
+## timepontpst -0.224  0.489                     
+## groupsingle -0.707  0.162  0.158              
+## tmpntsssn1:  0.162 -0.707 -0.346 -0.229       
+## tmpntpst:gr  0.160 -0.350 -0.715 -0.226  0.494</code></pre>
+<pre class="r"><code># Diagnostics
+plot(m2)</code></pre>
+<p><img src="assignments_week4_solutions_files/figure-html/mixed-models-1.png" width="672" /></p>
+<pre class="r"><code># Confidence intervals
+confint(m2)</code></pre>
+<pre><code>##                                    2.5 %       97.5 %
+## .sig01                         47.309659  77.79019886
+## .sigma                         17.350856  24.36772641
+## (Intercept)                   181.056314 242.47309821
+## timepointsession1              -7.772323  20.00761664
+## timepointpost                  40.196724  68.60797974
+## groupsingle                   -40.163519  46.69293080
+## timepointsession1:groupsingle -23.584560  15.70220690
+## timepointpost:groupsingle     -39.829013  -0.09333071</code></pre>
+<pre class="r"><code>library(knitr); library(broom)
+
+
+# creating a table
+
+# We can combine two data frames by adding columns or rows
+
+# The cbind function adds two data frames with simialr rows.
+
+# First we save a tidy output of model 2
+ 
+tidy.m2 &lt;- tidy(m2) %&gt;%
+        filter(group == &quot;fixed&quot;) # removes random effects from summary
+
+# Next we store the confidence intervals from confint
+# We have to select row 3 to 8 to get the same number of rows
+confint.m2 &lt;- data.frame(confint(m2))[c(3:8),]
+
+# Next we can comine these by column
+cbind(tidy.m2, confint.m2) %&gt;%
+        select(-group) %&gt;% # deselect &quot;group&quot;-column
+        kable(row.names = FALSE, 
+              col.names = c(&quot;Parameter&quot;, 
+                            &quot;Estimate&quot;, 
+                            &quot;SE&quot;, 
+                            &quot;Statistic&quot;, 
+                            &quot;Lower CI&quot;, 
+                            &quot;Upper CI&quot;), 
+              digits = c(NA, 1, 1, 2, 1, 1)) %&gt;%
+                      print()</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Parameter</th>
+<th align="right">Estimate</th>
+<th align="right">SE</th>
+<th align="right">Statistic</th>
+<th align="right">Lower CI</th>
+<th align="right">Upper CI</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">(Intercept)</td>
+<td align="right">211.8</td>
+<td align="right">15.8</td>
+<td align="right">13.44</td>
+<td align="right">181.1</td>
+<td align="right">242.5</td>
+</tr>
+<tr class="even">
+<td align="left">timepointsession1</td>
+<td align="right">6.1</td>
+<td align="right">7.2</td>
+<td align="right">0.85</td>
+<td align="right">-7.8</td>
+<td align="right">20.0</td>
+</tr>
+<tr class="odd">
+<td align="left">timepointpost</td>
+<td align="right">54.4</td>
+<td align="right">7.4</td>
+<td align="right">7.38</td>
+<td align="right">40.2</td>
+<td align="right">68.6</td>
+</tr>
+<tr class="even">
+<td align="left">groupsingle</td>
+<td align="right">3.3</td>
+<td align="right">22.3</td>
+<td align="right">0.15</td>
+<td align="right">-40.2</td>
+<td align="right">46.7</td>
+</tr>
+<tr class="odd">
+<td align="left">timepointsession1:groupsingle</td>
+<td align="right">-3.9</td>
+<td align="right">10.2</td>
+<td align="right">-0.39</td>
+<td align="right">-23.6</td>
+<td align="right">15.7</td>
+</tr>
+<tr class="even">
+<td align="left">timepointpost:groupsingle</td>
+<td align="right">-20.0</td>
+<td align="right">10.3</td>
+<td align="right">-1.94</td>
+<td align="right">-39.8</td>
+<td align="right">-0.1</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
