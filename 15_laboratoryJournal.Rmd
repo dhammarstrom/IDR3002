@@ -1,0 +1,56 @@
+---
+title: "IDR3002: The Laboratory Journal"
+author: "Daniel Hammarström"
+date: "2019-11-20"
+output: pdf_document
+---
+
+
+## Introduction
+Your laboratory journal fills several purposes. It helps you in keeping track of what you have done, why you did it, what were the results of your experiments and what were your conclusions. The journal also helps your collaborators (fellow students, supervisors, laboratory managers) to understand what you have done. In a broader perspective the laboratory journal can be viewed as a primary source of data for your prospective manuscript, and when the manuscript has been published, the journal is source data kept for records at your department. The laboratory journal also serves as a safety check as planning and precisely documenting your experiments will prevent danger and if an accident occur others may check your work.
+
+## Paper and pen vs. electronic alternatives
+There are several electronic solutions (e.g. https://scinote.net/) for keeping a laboratory journal. However, pen and paper at your side when things get rough and the Wi-Fi is down is a good idea. We will implement the pen-paper model in this course.
+
+## What kind of notebook to choose?
+It is a good idea to choose a notebook that can accommodate extra material such as notes that needs to be taped in, or membranes or even immunohistochemistry glass slides. To do this one can choose a notebook with extra spacing between pages.
+Every experiment is unique, you might want to draw a scheme, or make a table etc. to describe your experiment. To do this without distractions, choose a notebook without lines. 
+
+## Starting a new journal
+When you have purchased your notebook, start with numbering all pages of the book (if this is not already done). Keep the first four pages blank, here you will keep your table of content. 
+
+## What to write
+A laboratory journal should consist of all necessary information needed to replicate your experiments. The tricky thing is that you do not always know what information is needed to do a replication. This means that you will need to include all relevant information about your experiment, and a bit more, within reasonable limits. 
+
+## Structure of the journal entry
+The top of every page should include (1) the date, (2) a title of the experiment (or page reference for continuing from earlier entry). Every experiment should include a (1) purpose of the experiment, (2) the method describing the experiment, (3) results from the experiment (or where results are stored) and (4) conclusions. 
+
+### Title
+Choose a title that is informative and preferably holds information about whether the experiment is one in a series of experiment in a study or project. An informative title could be “Preparation of muscle homogenate for determination of myosin heavy chain composition (Project x)”. The title explains what you are doing, and suggests that the results of the experiment (the homogenate) is to be included in a later experiment. We have also included a main project title in parentheses so you can easily find all entries related to your Project X.
+
+### Purpose
+The purpose should in a clear manner state WHY you are doing the experiment and WHAT you hope to achieve. This section can refer to an earlier experiment or outline a new experiment. Explain to the reader (you in two months or your collaborator) very explicitly what the purpose of the experiment is. A informative purpose could be: “In order to separate myosin heavy chain isoforms on SDS-PAGE, muscle samples are to be homogenized in myosin lysis buffer. In order to normalize amount of protein loaded on the gel. The samples are to be measured for protein content and normalized.
+
+### Method
+The method describes the experiment, e.g. by a step-by-step approach. This section includes recipes of solutions, what samples were used, in what order different steps of the protocol was done, if any problems occurred and so on. Remember to write explicit, you might remember tomorrow, but in one week or one year, you have no idea. A method section (as the other sections) can refer back in the laboratory journal. For example, maybe you prepared the lysis buffer earlier, write this and refer to the page describing the buffer. A part of a method section can look something like this:
+
+> “Overview: Freeze dried muscle samples are homogenized in lysis buffer (p. 6) and protein concentrations are determined in the plate reader. Based on protein concentrations, supernatant is normalized to a common 2 $\mu$g/$\mu$l.
+1.	Freeze dry muscle over-night (at least 20 h).
+2.	Dissect away fat, connective tissue and blood
+3.	Move ~2 mg to a new tube and add 80 $\mu$l of ice-cold lysis buffer per mg of tissue.
+4.	 …”
+
+One can outline the method section before the experiment begins and leave some space in the marginal for notes. E.g. if you needed more lysis buffer to homogenize the sample, add this information. 
+
+### Results  
+The results describes the results, or where the results can be found. When we do a lot of measurements, we do not include all results, instead we can state that the results in full can be found in the project folder on dropbox (or similar). We might include a summary of the results, e.g. “All samples were homogenized successfully and the average protein concentrations were 2.8 (0.5) $\mu$g/$\mu$l prior to normalization. All samples were normalized to 2  $\mu$g/$\mu$l.”
+
+### Conclusions 
+The conclusions are important, here you can explicitly state what is the next step in your project. E.g. “all samples are ready to be separated on SDS-PAGE for determination of myosin heavy chain characterization”. If something needs to be re-done, this is also the place to say so, e.g. “sample 12 was not homogenized and needs to be re-extracted from a fresh piece of tissue”. From this information you know what to do next.
+
+## Relationship between the laboratory journal and your samples, solutions, tubes etc. 
+When you do work in the laboratory, you will notice that you accumulate a lot of micro-centrifuge tubes, boxes full of intermediate sample preparations, solutions etc. To keep track of all this you need to “connect” the content of your laboratory journal to the place where you keep all your stuff. For example, when marking a new cryo-box, this should be done with information about what is the content of the box, the date when the box was “started”, and your name. Your name and date can be tracked back to your laboratory journal. This means that when your collaborator finds a mystical “Sample X1 2017 10 10”, she can go back to your journal and find out what you did. 
+
+In summary: label everything!  
+
+

@@ -1,5 +1,5 @@
 ---
-title: "Week 3 Solutions"
+title: "Week 2 Solutions"
 author: "Daniel Hammarström"
 date: '2019-10-21'
 output:
